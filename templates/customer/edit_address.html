@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Address | ShopNow</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { pdark: '#362F4F', primary: '#5B23FF', accent: '#008BFF', highlight: '#E4FF30', lightbg: '#F8F9FA' },
+                    fontFamily: { sans: ['Inter', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Highlight invalid fields only after user touches them */
+        input:invalid:not(:placeholder-shown) {
+            border-color: #ef4444;
+        }
+    </style>
+</head>
+<body class="bg-lightbg font-sans antialiased text-gray-800">
+    
+    <div class="flex flex-col gap-0">
+        {% include 'customer/navbar.html' %}            
+        {% include 'customer/profile_navbar.html' %}            
+    </div>   
+
+    <main class="container mx-auto px-4 py-10 max-w-4xl">
+        
+        <div class="mb-8 flex items-center justify-between">
+            <div>
+                <h1 class="text-2xl font-bold text-pdark">Edit Address</h1>
+                <p class="text-gray-500 text-sm mt-1">Please ensure all fields are filled correctly.</p>
+            </div>
+            <a href="{% url 'view_addresses' %}" class="text-sm font-bold text-primary hover:text-pdark transition flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                Back to List
+            </a>
+        </div>
+
+        {% if form.errors or error %}
+        <div class="mb-6 flex items-center gap-3 bg-red-50 border border-red-100 text-red-600 p-4 rounded-2xl animate-shake">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+            </svg>
+            <p class="text-sm font-medium">Please correct the errors in the form below.</p>
+        </div>
+        {% endif %}
+
+        <div class="bg-white rounded-3xl shadow-sm border border-gray-100">
+            <form id="addressForm" action="#" method="POST" class="p-6 md:p-10 space-y-8" novalidate>
+                {% csrf_token %}
+
+                <div class="space-y-6">
+                    <h3 class="text-sm font-bold text-pdark border-l-4 border-primary pl-3">Contact Details</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-2">
+                            <label class="text-xs font-black text-gray-400 uppercase tracking-widest">Full Name</label>
+                            <input type="text" name="full_name" value="{{address.full_name}}" placeholder="Receiver's name" required minlength="3"
+                                class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition">
+                            <span class="error-msg hidden text-[10px] text-red-500 font-bold uppercase tracking-tight">Name is too short</span>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-xs font-black text-gray-400 uppercase tracking-widest">Phone Number</label>
+                            <input type="tel" name="phone" value="{{address.phone}}" placeholder="10-digit mobile number" required pattern="[0-9]{10}"
+                                class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition">
+                            <span class="error-msg hidden text-[10px] text-red-500 font-bold uppercase tracking-tight">Enter a valid 10-digit number</span>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="border-gray-50">
+
+                <div class="space-y-6">
+                    <h3 class="text-sm font-bold text-pdark border-l-4 border-primary pl-3">Address Information</h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-2">
+                            <label class="text-xs font-black text-gray-400 uppercase tracking-widest">House Name / Flat No.</label>
+                            <input type="text" name="house_name" value="{{address.house_name}}" placeholder="e.g. Skyline Apartments" required
+                                class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition">
+                            <span class="error-msg hidden text-[10px] text-red-500 font-bold uppercase tracking-tight">Field required</span>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-xs font-black text-gray-400 uppercase tracking-widest">Street / Area</label>
+                            <input type="text" name="street" value="{{address.street}}" placeholder="e.g. Main Road, Sector 4" required
+                                class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition">
+                            <span class="error-msg hidden text-[10px] text-red-500 font-bold uppercase tracking-tight">Field required</span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="space-y-2">
+                            <label class="text-xs font-black text-gray-400 uppercase tracking-widest">City</label>
+                            <input type="text" name="city" value="{{address.city}}"  placeholder="Kochi" required
+                                class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-xs font-black text-gray-400 uppercase tracking-widest">State</label>
+                            <input type="text" name="state" value="{{address.state}}" placeholder="Kerala" required
+                                class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-xs font-black text-gray-400 uppercase tracking-widest">Pincode</label>
+                            <input type="text" name="pincode" value="{{address.pincode}}"  placeholder="6-digit PIN" required pattern="[0-9]{6}"
+                                class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition">
+                            <span class="error-msg hidden text-[10px] text-red-500 font-bold uppercase tracking-tight">Invalid Pincode</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-10 pt-8 border-t border-gray-100 flex justify-end gap-4">
+                    <button type="button" class="px-8 py-3 rounded-xl font-bold text-gray-400 hover:bg-gray-50 transition">
+                        Discard
+                    </button>
+                    <button type="submit" class="bg-primary text-white font-bold py-3 px-12 rounded-xl shadow-lg hover:shadow-primary/30 transition transform active:scale-95">
+                        Save Address
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <script>
+        const form = document.getElementById('addressForm');
+        
+        form.addEventListener('submit', function(e) {
+            let isValid = true;
+            const inputs = form.querySelectorAll('input[required]');
+            
+            inputs.forEach(input => {
+                const errorSpan = input.parentElement.querySelector('.error-msg');
+                
+                // Validate using browser's built-in checkValidity
+                if (!input.checkValidity()) {
+                    isValid = false;
+                    input.classList.add('border-red-500');
+                    if (errorSpan) errorSpan.classList.remove('hidden');
+                } else {
+                    input.classList.remove('border-red-500');
+                    if (errorSpan) errorSpan.classList.add('hidden');
+                }
+            });
+
+            if (!isValid) {
+                e.preventDefault(); // Stop form submission
+            }
+        });
+
+        // Real-time cleanup: remove error when user starts typing again
+        form.querySelectorAll('input').forEach(input => {
+            input.addEventListener('input', () => {
+                if (input.checkValidity()) {
+                    input.classList.remove('border-red-500');
+                    const errorSpan = input.parentElement.querySelector('.error-msg');
+                    if (errorSpan) errorSpan.classList.add('hidden');
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>

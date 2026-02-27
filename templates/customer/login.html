@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop Now | Customer Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { pdark: '#362F4F', primary: '#5B23FF', accent: '#008BFF', highlight: '#E4FF30' },
+                    fontFamily: { sans: ['Inter', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="bg-[url('https://images.unsplash.com/photo-1586880244406-556ebe35f282?q=80&w=2000&auto=format&fit=crop')] bg-cover bg-center bg-no-repeat bg-fixed font-sans antialiased flex flex-col min-h-screen relative">
+
+    <div class="absolute inset-0 bg-gray-900/60 z-0"></div>
+
+    <div class="relative z-10 flex flex-col min-h-screen w-full">
+
+        <nav class="sticky top-0 z-50 bg-pdark/90 backdrop-blur-md text-white shadow-lg border-b border-white/10">
+            <div class="container mx-auto px-4 py-4 flex items-center justify-between">
+                <a href="#" class="text-2xl font-bold italic tracking-tighter flex items-center gap-1">
+                    <span class="text-highlight">Shop</span>Now <span class="text-sm not-italic font-normal opacity-80 border-l border-gray-400 pl-3 ml-1 text-gray-200">Customer Login</span>
+                </a>
+                <a href="index.html" class="text-sm font-medium hover:text-highlight transition flex items-center gap-1 text-white">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                    Home
+                </a>
+            </div>
+        </nav>
+
+        <main class="flex-grow flex items-center justify-center p-4">
+            <div class="w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden border-t-4 border-primary bg-opacity-95 backdrop-blur-sm">
+                
+                <div class="p-8">
+                    <div class="text-center mb-8">
+                        <h2 class="text-2xl font-bold text-pdark">Welcome Back</h2>
+                        <p class="text-gray-500 text-sm mt-1">Sign in to your account to continue shopping.</p>
+                    </div>
+
+                    <form method="POST" class="space-y-5">
+                        {% csrf_token %}
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Email Address</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.206"></path></svg>
+                                </span>
+                                <input type="email" name="email" required placeholder="name@example.com" class="w-full border border-gray-300 rounded-lg py-3 pl-10 pr-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition bg-gray-50 focus:bg-white">
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between items-center mb-1">
+                                <label class="block text-xs font-bold text-gray-500 uppercase">Password</label>
+                                <a href="#" class="text-xs text-primary hover:underline">Forgot?</a>
+                            </div>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                                </span>
+                                <input type="password" name="password" required placeholder="••••••••" class="w-full border border-gray-300 rounded-lg py-3 pl-10 pr-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition bg-gray-50 focus:bg-white">
+                            </div>
+                        </div>
+
+                        <!-- <div class="flex items-center">
+                            <input type="checkbox" id="remember_customer" class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary">
+                            <label for="remember_customer" class="ml-2 text-sm text-gray-600">Remember me</label>
+                        </div> -->
+
+                        <div class="flex justify-center">
+                            {% if error %}
+                                <p class="text-red-500 text-center font-medium mt-2">
+                                    {{ error }}
+                                </p>
+                            {% endif %}
+                        </div>
+
+                        <button type="submit" class="w-full bg-pdark text-white font-bold py-3 rounded-lg shadow-md hover:bg-opacity-90 transition transform active:scale-[0.98]">
+                            Sign In
+                        </button>
+                    </form>
+
+                    <div class="mt-8 text-center pt-6 border-t border-gray-100">
+                        <p class="text-sm text-gray-600">New here? <a href="customer-register.html" class="font-bold text-primary hover:underline">Create an account</a></p>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="bg-black/80 text-white/70 py-6 text-center text-xs backdrop-blur-md">
+            &copy; 2026 Shop Now. All rights reserved.
+        </footer>
+    </div>
+
+</body>
+</html>

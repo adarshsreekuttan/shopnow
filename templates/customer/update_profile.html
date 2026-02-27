@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile | ShopNow</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { pdark: '#362F4F', primary: '#5B23FF', accent: '#008BFF', highlight: '#E4FF30', lightbg: '#F8F9FA' },
+                    fontFamily: { sans: ['Inter', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body class="bg-lightbg font-sans antialiased text-gray-800">
+    
+    <div class="flex flex-col gap-0">
+        {% include 'customer/navbar.html' %}            
+        {% include 'customer/profile_navbar.html' %}            
+    </div>    
+
+    <main class="container mx-auto px-4 py-10 max-w-5xl flex-grow">
+        <div class="flex flex-col md:flex-row gap-8">
+            <div class="flex-grow space-y-6">
+                
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col sm:flex-row items-center gap-6">
+                    <div class="relative group">
+                        <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center font-bold text-2xl text-primary border-4 border-gray-50 overflow-hidden">
+                            <img id="avatar-preview" src="https://ui-avatars.com/api/?name=John+Doe&background=5B23FF&color=fff" class="w-full h-full object-cover">
+                        </div>
+                        <label for="avatar-input" class="absolute bottom-0 right-0 bg-pdark text-white p-1.5 rounded-full cursor-pointer hover:bg-primary transition shadow-md border-2 border-white">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                            <input type="file" id="avatar-input" class="hidden" accept="image/*">
+                        </label>
+                    </div>
+                    <div class="text-center sm:text-left">
+                        <h3 class="font-bold text-pdark text-lg">Profile Picture</h3>
+                        <p class="text-sm text-gray-500">JPG, GIF or PNG. Max size of 2MB.</p>
+                    </div>
+                </div>
+
+                <form method="POST" class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-100">
+                    {% csrf_token %}
+                    <h2 class="text-lg font-bold text-pdark mb-6">General Information</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-2">
+                            <label class="text-xs font-black text-gray-400 uppercase tracking-widest">First Name</label>
+                            <input type="text" name="first_name" value="{{user.first_name}}" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-xs font-black text-gray-400 uppercase tracking-widest">Last Name</label>
+                            <input type="text" name="last_name" value="{{user.last_name}}" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-xs font-black text-gray-400 uppercase tracking-widest">Email Address</label>
+                            <input type="email" name="email" value="{{user.email}}" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-xs font-black text-gray-400 uppercase tracking-widest">Phone Number</label>
+                            <input type="tel" name="phone" value="{{user.phone}}" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition">
+                        </div>
+                    </div>
+                    <div class="mt-8 pt-6 border-t border-gray-100 flex justify-end">
+                        <button type="submit" class="bg-primary text-white font-bold py-3 px-10 rounded-xl shadow-lg hover:shadow-primary/30 transition transform active:scale-95">
+                            Save Changes
+                        </button>
+                    </div>
+                </form>
+
+                <!-- <form class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-100">
+                    <h2 class="text-lg font-bold text-pdark mb-6">Security & Password</h2>
+                    <div class="space-y-4 max-w-md">
+                        <div class="space-y-2">
+                            <label class="text-xs font-black text-gray-400 uppercase tracking-widest">Current Password</label>
+                            <input type="password" placeholder="••••••••" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-xs font-black text-gray-400 uppercase tracking-widest">New Password</label>
+                            <input type="password" placeholder="Min. 8 characters" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition">
+                        </div>
+                    </div>
+                    <div class="mt-8 pt-6 border-t border-gray-100">
+                        <button type="submit" class="text-primary font-bold hover:underline">Update Password</button>
+                    </div>
+                </form> -->
+
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Simple preview for avatar upload
+        document.getElementById('avatar-input').onchange = evt => {
+            const [file] = evt.target.files;
+            if (file) {
+                document.getElementById('avatar-preview').src = URL.createObjectURL(file);
+            }
+        }
+    </script>
+        
+
+</body>
+
+</html>
