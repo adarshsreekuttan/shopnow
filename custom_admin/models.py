@@ -1,6 +1,5 @@
 from django.db import models
-from seller.models import *
-from customer.models import *
+from core.models import *
 
 # Create your models here.
 
@@ -31,7 +30,7 @@ class Brand(models.Model):
 
 class ProductApproval(models.Model):
     product = models.ForeignKey(Product,on_delete=models.CASCADE) 
-    approved_by = models.ForeignKey(UserProfile,on_delete=models.SET_NULL,null=True) 
+    approved_by = models.ForeignKey(User,on_delete=models.SET_NULL,null=True) 
     status = models.CharField(max_length=20) 
     reviewed_at = models.DateTimeField(auto_now_add=True)
 
