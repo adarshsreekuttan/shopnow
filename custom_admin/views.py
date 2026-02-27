@@ -18,6 +18,7 @@ def admin_login(request):
             admin = AdminLogin.objects.get(email=email, password=password)
             request.session['admin_email'] = admin.email
             return redirect('admin_dash')
+        
         except AdminLogin.DoesNotExist:
             return render(request, "admin/adminlogin.html", {"error": "Invalid Email or Password"})
 
@@ -26,7 +27,7 @@ def admin_login(request):
 
 def admin_dash(request):
     if request.session.get('admin_email'):
-        return render(request, "admin/admin_dash.html")
+        return render(request, "admin/admindash.html")
     else:
         return redirect('adminlogin')
 
