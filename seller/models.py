@@ -24,7 +24,7 @@ class Product(models.Model):
     product_price=models.DecimalField(max_digits=100,decimal_places=2)
     product_description=models.TextField(max_length=100)
     product_review=models.TextField(null=True)
-    product_rating=models.DecimalField(decimal_place=1,max_digit=2,default=True,null=True)
+    product_rating=models.DecimalField(decimal_places=1,max_digits=2,default=True,null=True)
     created_at=models.DateTimeField(auto_now_add=True)
 
 class ProductImage(models.Model):
@@ -39,7 +39,7 @@ class Notification(models.Model):
 
 class Discount(models.Model):
     code=models.CharField(max_length=50, unique=True)
-    percentage=models.DecimalField()
-    valid_from=models.DecimalField()
-    valid_to = models.DateTimeField()
+    percentage=models.DecimalField(max_digits=5, decimal_places=2)
+    valid_from=models.DateTimeField(auto_now_add=True)
+    valid_to = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)

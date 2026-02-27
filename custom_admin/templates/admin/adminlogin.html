@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Admin Login | ShopEase</title>
+</head>
+<body class="bg-slate-900 flex items-center justify-center min-h-screen p-4">
+    <div class="max-w-md w-full bg-white rounded-2xl shadow-2xl overflow-hidden">
+        <div class="bg-indigo-600 p-8 text-center">
+            <h1 class="text-white text-2xl font-bold">Admin Portal</h1>
+            <p class="text-indigo-100 text-sm mt-2">Please sign in to manage your store</p>
+        </div>
+        <form method="POST" class="p-8 space-y-6">
+            {% csrf_token %}
+            <div>
+                <label class="block text-sm font-semibold text-gray-700">Admin Email</label>
+                <input type="email" name="email" required class="w-full mt-1 px-4 py-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition">
+            </div>
+            <div>
+                <label class="block text-sm font-semibold text-gray-700">Password</label>
+                <input type="password" name="password" required class="w-full mt-1 px-4 py-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition">
+            </div>
+            <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-lg shadow-lg transition duration-200">
+                Secure Login
+            </button>
+        </form>
+    </div>
+</body>
+</html>
