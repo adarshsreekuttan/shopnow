@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlipShop Seller Hub - Edit Profile</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary_dark: '#362F4F',
+                        primary: '#5B23FF',
+                        accent: '#008BFF',
+                        highlight: '#E4FF30',
+                        bg_light: '#F1F3F6',
+                        text_dark: '#212121',
+                        text_gray: '#878787'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #F1F3F6; }
+        .card-shadow { box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
+    </style>
+</head>
+<body class="text-text_dark">
+
+    <nav class="bg-primary_dark sticky top-0 z-50 shadow-md">
+        <div class="container mx-auto px-4 h-16 flex items-center justify-between gap-4">
+            <a href="#" class="flex items-center gap-2">
+                <div class="w-8 h-8 bg-highlight rounded flex items-center justify-center text-primary_dark font-bold text-xl italic">F</div>
+                <span class="text-white font-bold text-lg tracking-wide hidden sm:block">FlipShop <span class="text-xs font-normal text-highlight ml-1">Seller Hub</span></span>
+            </a>
+
+            <div class="flex-1 max-w-2xl mx-4">
+                <div class="relative group">
+                    <input type="text" placeholder="Search..." class="w-full h-9 px-4 rounded-sm text-sm focus:outline-none focus:ring-2 focus:ring-accent shadow-sm transition-all text-black">
+                    <button class="absolute right-0 top-0 h-9 w-10 text-primary font-bold">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-5 text-white font-medium text-sm">
+                <div class="flex items-center gap-2 cursor-pointer relative hover:text-highlight transition">
+                    <i class="fa-solid fa-bell text-lg"></i>
+                </div>
+                <button class="flex items-center gap-2 bg-white/20 px-3 py-1.5 rounded-sm transition">
+                    <i class="fa-solid fa-user-tie text-highlight"></i>
+                    <span class="hidden sm:block">{{ seller.shop_name }}</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto px-4 py-8 max-w-6xl">
+        
+        <div class="mb-6">
+            <h1 class="text-2xl font-bold text-primary_dark">Profile Management</h1>
+            <p class="text-gray-500 text-sm">Update your store details and account information.</p>
+        </div>
+
+        <div class="flex flex-col lg:flex-row gap-6">
+            
+            <div class="w-full lg:w-1/3 space-y-6">
+                
+                <div class="bg-white rounded-xl card-shadow p-6 text-center relative overflow-hidden">
+                    <div class="h-20 bg-primary absolute top-0 left-0 w-full z-0"></div>
+                    
+                    <div class="relative z-10 mt-6">
+                        <div class="w-24 h-24 bg-white rounded-full border-4 border-white shadow-md mx-auto flex items-center justify-center text-4xl text-primary overflow-hidden">
+                            <i class="fa-solid fa-store bg-gray-100 w-full h-full flex items-center justify-center"></i>
+                        </div>
+                        
+                        <h2 class="text-xl font-bold mt-3 text-primary_dark">{{ seller.shop_name }}</h2>
+                        <p class="text-gray-500 text-sm mb-4">Seller ID: {{ seller.id }}</p>
+
+                        <div class="flex flex-col gap-2 w-full max-w-[200px] mx-auto mb-4">
+                            {% if seller.is_verified %}
+                            <div class="flex items-center justify-center gap-2 bg-green-50 text-green-700 py-1.5 px-3 rounded-full text-xs font-bold border border-green-200">
+                                <i class="fa-solid fa-circle-check"></i> Verified Seller
+                            </div>
+                            {% else %}
+                            <div class="flex items-center justify-center gap-2 bg-yellow-50 text-yellow-700 py-1.5 px-3 rounded-full text-xs font-bold border border-yellow-200">
+                                <i class="fa-solid fa-clock"></i> Verification Pending
+                            </div>
+                            {% endif %}
+                            
+                            {% if seller.is_active %}
+                            <div class="flex items-center justify-center gap-2 bg-blue-50 text-blue-700 py-1.5 px-3 rounded-full text-xs font-bold border border-blue-200">
+                                <i class="fa-solid fa-bolt"></i> Account Active
+                            </div>
+                            {% else %}
+                            <div class="flex items-center justify-center gap-2 bg-red-50 text-red-700 py-1.5 px-3 rounded-full text-xs font-bold border border-red-200">
+                                <i class="fa-solid fa-ban"></i> Account Inactive
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="border-t border-gray-100 pt-4 mt-2 text-xs text-gray-400 text-left space-y-1">
+                            <p><i class="fa-solid fa-calendar-days w-4 text-center mr-1"></i> Joined: <span class="text-gray-600 font-medium">{{ seller.created_at|date:"M d, Y" }}</span></p>
+                            <p><i class="fa-solid fa-clock-rotate-left w-4 text-center mr-1"></i> Last Updated: <span class="text-gray-600 font-medium">{{ seller.updated_at|timesince }} ago</span></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl card-shadow p-2">
+                    <ul class="text-sm font-medium text-gray-600">
+                        <li>
+                            <a href="#" class="flex items-center gap-3 px-4 py-3 bg-blue-50 text-primary rounded-lg transition">
+                                <i class="fa-solid fa-user"></i> General Information
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 hover:text-primary_dark rounded-lg transition">
+                                <i class="fa-solid fa-shield-halved"></i> Security & Password
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="w-full lg:w-2/3">
+                <form action="#" method="POST" class="bg-white rounded-xl card-shadow p-6 sm:p-8">
+                    {% csrf_token %}
+                    <div class="flex items-center justify-between border-b border-gray-100 pb-4 mb-6">
+                        <h3 class="text-lg font-bold text-primary_dark">Edit Profile Details</h3>
+                    </div>
+
+                    <h4 class="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-4">Personal & Shop Info</h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-8">
+                        <div class="sm:col-span-2">
+                            <label class="block text-xs font-bold text-gray-500 mb-1.5">Shop Name <span class="text-red-500">*</span></label>
+                            <input type="text" name="shop_name" value="{{ seller.shop_name }}" required maxlength="100" class="w-full border border-gray-300 rounded-md p-2.5 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 mb-1.5">Email Address <span class="text-red-500">*</span></label>
+                            <input type="email" name="email" value="{{ seller.email }}" required class="w-full border border-gray-300 rounded-md p-2.5 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 mb-1.5">Phone Number <span class="text-red-500">*</span></label>
+                            <input type="tel" name="phone" value="{{ seller.phone }}" required maxlength="15" class="w-full border border-gray-300 rounded-md p-2.5 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors">
+                        </div>
+                    </div>
+
+                    <h4 class="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-4">Business & Location Info</h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 gap-5 mb-8">
+                        
+                        <div class="sm:col-span-2 md:col-span-6">
+                            <label class="block text-xs font-bold text-gray-500 mb-1.5">Full Address <span class="text-red-500">*</span></label>
+                            <textarea name="address" required rows="2" class="w-full border border-gray-300 rounded-md p-2.5 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors resize-none">{{ seller.address }}</textarea>
+                        </div>
+                        
+                        <div class="sm:col-span-1 md:col-span-2">
+                            <label class="block text-xs font-bold text-gray-500 mb-1.5">City <span class="text-red-500">*</span></label>
+                            <input type="text" name="city" value="{{ seller.city }}" required maxlength="100" class="w-full border border-gray-300 rounded-md p-2.5 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors">
+                        </div>
+
+                        <div class="sm:col-span-1 md:col-span-2">
+                            <label class="block text-xs font-bold text-gray-500 mb-1.5">State <span class="text-red-500">*</span></label>
+                            <input type="text" name="state" value="{{ seller.state }}" required maxlength="100" class="w-full border border-gray-300 rounded-md p-2.5 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors">
+                        </div>
+                        
+                        <div class="sm:col-span-1 md:col-span-2">
+                            <label class="block text-xs font-bold text-gray-500 mb-1.5">Pincode <span class="text-red-500">*</span></label>
+                            <input type="text" name="pincode" value="{{ seller.pincode }}" required maxlength="6" class="w-full border border-gray-300 rounded-md p-2.5 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors">
+                        </div>
+                        
+                        <div class="sm:col-span-2 md:col-span-3">
+                            <label class="block text-xs font-bold text-gray-500 mb-1.5">GST Number <span class="text-gray-400 font-normal">(Optional)</span></label>
+                            <input type="text" name="gst_number" value="{{ seller.gst_number }}" maxlength="100" class="w-full border border-gray-300 rounded-md p-2.5 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors font-mono uppercase">
+                        </div>
+                    </div>
+
+                    <div class="border-t border-gray-100 pt-6 flex items-center justify-end gap-3">
+                        <button type="reset" class="px-5 py-2.5 text-sm font-semibold text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 transition">
+                            Cancel
+                        </button>
+                        <button type="submit" class="px-6 py-2.5 text-sm font-bold text-white bg-primary rounded-md shadow hover:bg-opacity-90 transition active:scale-95 flex items-center gap-2">
+                            <i class="fa-solid fa-floppy-disk"></i> Save Changes
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </main>
+
+</body>
+</html>

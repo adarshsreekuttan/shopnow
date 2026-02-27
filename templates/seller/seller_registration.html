@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlipShop Seller Hub - Registration</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary_dark: '#362F4F',
+                        primary: '#5B23FF',
+                        accent: '#008BFF',
+                        highlight: '#E4FF30',
+                        bg_light: '#F1F3F6', 
+                        text_dark: '#212121',
+                        text_gray: '#878787'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .card-shadow { box-shadow: 0 10px 40px -10px rgba(0,0,0,0.1); }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #E5E7EB; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #D1D5DB; }
+    </style>
+</head>
+<body class="bg-bg_light text-text_dark min-h-screen flex items-center justify-center p-0 sm:p-4 md:p-8 lg:p-12">
+
+    <div class="w-full max-w-6xl bg-white sm:rounded-2xl sm:card-shadow overflow-hidden flex flex-col md:flex-row md:max-h-[90vh]">
+        
+        <div class="w-full md:w-5/12 lg:w-4/12 text-white p-6 sm:p-8 md:p-10 flex flex-col justify-between relative overflow-hidden bg-cover bg-center shrink-0" 
+             style="background-image: linear-gradient(rgba(54, 47, 79, 0.85), rgba(91, 35, 255, 0.85)), url('http://googleusercontent.com/image_collection/image_retrieval/11268683216802354975');">
+            
+            <div class="absolute top-0 right-0 w-64 h-64 bg-primary rounded-full mix-blend-multiply filter blur-3xl opacity-50 translate-x-1/3 -translate-y-1/3"></div>
+            <div class="absolute bottom-0 left-0 w-64 h-64 bg-accent rounded-full mix-blend-multiply filter blur-3xl opacity-30 -translate-x-1/3 translate-y-1/3"></div>
+            
+            <div class="relative z-10">
+                <div class="flex items-center gap-3 mb-6 md:mb-10">
+                    <div class="w-10 h-10 bg-highlight rounded flex items-center justify-center text-primary_dark font-bold text-xl italic shadow-md">F</div>
+                    <span class="text-xl font-bold tracking-wide">ShopNOW</span>
+                </div>
+                
+                <h1 class="text-2xl sm:text-3xl font-bold mb-3 md:mb-4 leading-tight">Start your selling journey today.</h1>
+                <p class="hidden sm:block text-gray-300 mb-6 md:mb-8 text-sm leading-relaxed">Fill in your details to create your seller account. Verification takes less than 24 hours.</p>
+                
+                <div class="bg-white/10 p-4 sm:p-5 rounded-lg border border-white/20 backdrop-blur-sm">
+                    <h4 class="font-semibold text-highlight mb-2 text-sm"><i class="fa-solid fa-circle-check mr-2"></i> What you need:</h4>
+                    <ul class="text-xs text-gray-300 space-y-1.5 sm:space-y-2">
+                        <li>• Active Mobile Number & Email</li>
+                        <li>• Business/Shop Address</li>
+                        <li>• GST Number (Optional)</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="hidden md:block relative z-10 mt-8 pt-6 border-t border-white/20 text-xs text-gray-300">
+                © 2024 FlipShop Inc.
+            </div>
+        </div>
+
+        <div class="w-full flex-1 p-5 sm:p-8 md:p-10 flex flex-col justify-start bg-white md:overflow-y-auto custom-scrollbar">
+            
+            <div class="max-w-3xl w-full mx-auto">
+                <h2 class="text-2xl font-bold text-primary_dark mb-1">Register as a Seller</h2>
+                <p class="text-gray-500 text-sm mb-6 sm:mb-8">Join the marketplace and reach millions of customers.</p>
+                
+                <form action="#" method="POST">
+                    {% csrf_token %}
+                    <h3 class="text-sm font-bold text-primary border-b pb-2 mb-4">Account Details</h3>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6 sm:mb-8">
+                        <div>
+                            <label class="block text-[11px] font-bold text-gray-500 uppercase mb-1 tracking-wide">Shop Name <span class="text-red-500">*</span></label>
+                            <input type="text" name="shop_name" required maxlength="100" class="w-full border border-gray-300 rounded-md p-2.5 sm:p-3 md:p-2.5 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors" placeholder="e.g. Tech World">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-[11px] font-bold text-gray-500 uppercase mb-1 tracking-wide">Email Address <span class="text-red-500">*</span></label>
+                            <input type="email" name="email" required class="w-full border border-gray-300 rounded-md p-2.5 sm:p-3 md:p-2.5 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors" placeholder="name@example.com">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-[11px] font-bold text-gray-500 uppercase mb-1 tracking-wide">Phone Number <span class="text-red-500">*</span></label>
+                            <input type="tel" name="phone" required maxlength="15" class="w-full border border-gray-300 rounded-md p-2.5 sm:p-3 md:p-2.5 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors" placeholder="+91 98765 43210">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-[11px] font-bold text-gray-500 uppercase mb-1 tracking-wide">Password <span class="text-red-500">*</span></label>
+                            <input type="password" name="password" required maxlength="150" class="w-full border border-gray-300 rounded-md p-2.5 sm:p-3 md:p-2.5 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors" placeholder="Create a strong password (min 8 characters)">
+                        </div>
+                    </div>
+
+                    <h3 class="text-sm font-bold text-primary border-b pb-2 mb-4">Business Details</h3>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 gap-4 mb-6">
+                        
+                        <div class="sm:col-span-2 md:col-span-6">
+                            <label class="block text-[11px] font-bold text-gray-500 uppercase mb-1 tracking-wide">Full Address <span class="text-red-500">*</span></label>
+                            <textarea name="address" required rows="3" class="w-full border border-gray-300 rounded-md p-2.5 sm:p-3 md:p-2.5 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors resize-none" placeholder="Shop No., Building, Street, Area"></textarea>
+                        </div>
+                        
+                        <div class="sm:col-span-1 md:col-span-2">
+                            <label class="block text-[11px] font-bold text-gray-500 uppercase mb-1 tracking-wide">Pincode <span class="text-red-500">*</span></label>
+                            <input type="text" name="pincode" required maxlength="6" class="w-full border border-gray-300 rounded-md p-2.5 sm:p-3 md:p-2.5 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors" placeholder="e.g. 400001">
+                        </div>
+                        
+                        <div class="sm:col-span-1 md:col-span-2">
+                            <label class="block text-[11px] font-bold text-gray-500 uppercase mb-1 tracking-wide">City <span class="text-red-500">*</span></label>
+                            <input type="text" name="city" required maxlength="100" class="w-full border border-gray-300 rounded-md p-2.5 sm:p-3 md:p-2.5 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors" placeholder="e.g. Mumbai">
+                        </div>
+                        
+                        <div class="sm:col-span-1 md:col-span-2">
+                            <label class="block text-[11px] font-bold text-gray-500 uppercase mb-1 tracking-wide">State <span class="text-red-500">*</span></label>
+                            <input type="text" name="state" required maxlength="100" class="w-full border border-gray-300 rounded-md p-2.5 sm:p-3 md:p-2.5 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors" placeholder="e.g. Maharashtra">
+                        </div>
+                        
+                        <div class="sm:col-span-1 md:col-span-6">
+                            <label class="block text-[11px] font-bold text-gray-500 uppercase mb-1 tracking-wide">GST Number <span class="text-gray-400 font-normal normal-case">(Optional)</span></label>
+                            <input type="text" name="gst_number" maxlength="100" class="w-full border border-gray-300 rounded-md p-2.5 sm:p-3 md:p-2.5 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors" placeholder="GSTIN...">
+                        </div>
+                    </div>
+
+                    <div class="mt-6 sm:mt-8">
+                        <p class="text-xs text-gray-500 mb-4 text-center md:text-left">
+                            By clicking create account, you agree to our <a href="#" class="text-accent hover:underline">Seller Terms</a> & <a href="#" class="text-accent hover:underline">Privacy Policy</a>.
+                        </p>
+                        
+                        <button type="submit" class="w-full bg-primary text-white font-bold py-3.5 sm:py-4 md:py-3.5 px-4 rounded-md shadow-md hover:bg-opacity-90 transition duration-200 transform active:scale-[0.99] text-sm md:text-base">
+                            Create Seller Account
+                        </button>
+                    </div>
+                </form>
+
+                <div class="mt-6 sm:mt-8 pb-4 sm:pb-6 text-center">
+                    <p class="text-sm text-gray-600">
+                        Already have a seller account? 
+                        <a href="{% url 'seller_login' %}" class="font-bold text-primary hover:text-accent transition-colors">Login here</a>
+                    </p>
+                </div>
+
+            </div>
+        </div>
+        
+    </div>
+
+</body>
+</html>

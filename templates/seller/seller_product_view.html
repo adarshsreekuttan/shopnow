@@ -1,0 +1,227 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details | MarketShop</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary_dark: '#362F4F',
+                        primary: '#5B23FF',
+                        accent: '#008BFF',
+                        highlight: '#E4FF30',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 text-gray-900 font-sans antialiased flex flex-col min-h-screen">
+
+    <nav class="sticky top-0 z-50 bg-primary_dark text-white shadow-md">
+        <div class="max-w-7xl mx-auto px-4 py-3">
+            <div class="flex flex-wrap items-center justify-between gap-3 lg:flex-nowrap">
+                <div class="flex items-center space-x-2">
+                    <span class="text-2xl font-bold tracking-tight text-highlight">Market<span class="text-white">Shop</span></span>
+                </div>
+
+                <div class="flex-grow w-full order-3 lg:order-none lg:w-auto lg:max-w-2xl">
+                    <div class="relative flex w-full">
+                        <input type="text" placeholder="Search for products, brands and more" class="w-full px-4 py-2 rounded-l-md text-gray-900 focus:outline-none focus:ring-2 focus:ring-accent">
+                        <button class="bg-highlight text-primary_dark px-6 py-2 rounded-r-md font-semibold hover:brightness-105 transition-all">
+                            Search
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex items-center space-x-6 order-2 lg:order-none font-medium">
+                    <a href="#" class="hover:text-highlight transition">Login</a>
+                    <a href="#" class="hover:text-highlight transition hidden sm:block">Orders</a>
+                    <a href="#" class="relative hover:text-highlight transition flex items-center">
+                        <svg class="w-6 h-6 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                        Cart
+                        <span class="absolute -top-2 -right-3 bg-highlight text-primary_dark text-xs font-bold px-1.5 py-0.5 rounded-full">3</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full">
+        
+        <nav class="flex text-sm text-gray-500 mb-6" aria-label="Breadcrumb">
+            <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                <li class="inline-flex items-center">
+                    <a href="#" class="hover:text-primary transition">Home</a>
+                </li>
+                <li>
+                    <div class="flex items-center">
+                        <svg class="w-4 h-4 text-gray-400 mx-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        <a href="#" class="hover:text-primary transition">{{ product.sub_category.category }}</a> </div>
+                </li>
+                <li aria-current="page">
+                    <div class="flex items-center">
+                        <svg class="w-4 h-4 text-gray-400 mx-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        <span class="text-gray-800 font-medium">{{ product.name }}</span> </div>
+                </li>
+            </ol>
+        </nav>
+
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-0">                
+                <div class="md:col-span-5 p-6 border-b md:border-b-0 md:border-r border-gray-100 flex flex-col">
+                    <div class="w-full aspect-square bg-gray-50 rounded-lg flex items-center justify-center p-4 relative mb-4">
+                        {% if product.image %}
+                        <img src="{{ product.image.url }}" alt="Samsung Galaxy M14 5G" class="max-w-full max-h-full object-contain mix-blend-darken">
+                        {% else %}
+                        <img src="{% static 'images/no-image.jpg' %}" alt="Samsung Galaxy M14 5G" class="max-w-full max-h-full object-contain mix-blend-darken">
+                        {% endif %}
+                        <button class="absolute top-4 right-4 bg-white p-2 rounded-full shadow hover:bg-gray-100 transition text-gray-600">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg>
+                        </button>
+                    </div>
+
+                    <div class="flex space-x-2 justify-center mb-6">
+                        <button class="w-16 h-16 border-2 border-primary rounded overflow-hidden p-1 bg-white">
+                            <img src="https://placehold.co/100x100/eeeeee/362F4F?text=1" class="w-full h-full object-contain">
+                        </button>
+                        <button class="w-16 h-16 border border-gray-200 rounded overflow-hidden p-1 bg-white hover:border-accent transition">
+                            <img src="https://placehold.co/100x100/eeeeee/362F4F?text=2" class="w-full h-full object-contain">
+                        </button>
+                        <button class="w-16 h-16 border border-gray-200 rounded overflow-hidden p-1 bg-white hover:border-accent transition">
+                            <img src="https://placehold.co/100x100/eeeeee/362F4F?text=3" class="w-full h-full object-contain">
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4 mt-auto">
+                        <button class="w-full bg-primary text-white font-bold py-3.5 px-4 rounded shadow-md hover:bg-opacity-90 hover:shadow-lg transition flex justify-center items-center">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                            </svg>
+                            Edit
+                        </button>
+
+                        <button class="w-full bg-red-600 text-white font-bold py-3.5 px-4 rounded shadow-md hover:bg-red-700 hover:shadow-lg transition flex justify-center items-center">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                            </svg>
+                            Delete
+                        </button>
+                    </div>
+                </div>
+
+                <div class="md:col-span-7 p-6 md:p-8">
+                    
+                    <h1 class="text-xl md:text-2xl font-medium text-gray-900 mb-2 leading-snug">
+                       {{ product.name }}
+                    </h1>
+                    
+                    <div class="flex items-center space-x-3 mb-4">
+                        <span class="bg-green-600 text-white text-xs font-bold px-2 py-1 rounded flex items-center">
+                            4.3 <svg class="w-3.5 h-3.5 ml-1" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                        </span>
+                        <span class="text-sm text-gray-500 font-medium">2,145 Ratings & 182 Reviews</span>
+                    </div>
+
+                    <div class="mb-6">
+                        <div class="flex items-end space-x-3 mb-1">
+                            <span class="text-3xl font-bold text-gray-900">{{ product.price }}</span>
+                            <span class="text-base text-gray-500 line-through mb-1">{{ product.discount_price }}</span>
+                            <span class="text-base font-bold text-green-600 mb-1">21% off</span>
+                        </div>
+                        <p class="text-xs text-gray-500">Inclusive of all taxes</p>
+                    </div>
+
+                    <div class="bg-gray-50 border border-gray-100 rounded-lg p-4 mb-6">
+                        <div class="flex items-center space-x-2 mb-2">
+                            <span class="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse"></span>
+                            <span class="text-sm font-bold text-green-600">In Stock</span>
+                        </div>
+                        <p class="text-sm text-gray-600">Only <span class="font-bold text-gray-900">12</span> items left in stock. Order soon!</p>
+                    </div>
+
+                    <div class="mb-8">
+                        <h3 class="text-lg font-bold text-gray-900 mb-3 border-b border-gray-200 pb-2">Description</h3>
+                        <p class="text-sm text-gray-700 leading-relaxed">
+                            Experience lightning-fast 5G speeds and capture stunning photos with the 50MP triple camera setup. The massive 6000mAh battery ensures you stay connected all day without worrying about running out of charge.
+                        </p>
+                    </div>
+
+                    <div class="mb-8">
+                        <h3 class="text-lg font-bold text-gray-900 mb-3 border-b border-gray-200 pb-2">Available Offers</h3>
+                        <ul class="space-y-3">
+                            <li class="flex items-start">
+                                <svg class="w-5 h-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M17.707 9.293a1 1 0 010 1.414l-7 7a1 1 0 01-1.414 0l-7-7A.997.997 0 012 10V5a3 3 0 013-3h5c.256 0 .512.098.707.293l7 7zM5 6a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"></path></svg>
+                                <span class="text-sm text-gray-700"><strong>Bank Offer:</strong> 5% Cashback on MarketShop Axis Bank Card <a href="#" class="text-accent font-medium hover:underline">T&C</a></span>
+                            </li>
+                            <li class="flex items-start">
+                                <svg class="w-5 h-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M17.707 9.293a1 1 0 010 1.414l-7 7a1 1 0 01-1.414 0l-7-7A.997.997 0 012 10V5a3 3 0 013-3h5c.256 0 .512.098.707.293l7 7zM5 6a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"></path></svg>
+                                <span class="text-sm text-gray-700"><strong>Partner Offer:</strong> Sign up for MarketShop Pay Later and get free Times Prime Benefits <a href="#" class="text-accent font-medium hover:underline">Know More</a></span>
+                            </li>
+                        </ul>
+                    </div>
+                    <button class="w-full md:w-auto border-2 border-accent text-accent font-bold py-2 px-6 rounded hover:bg-accent hover:text-white transition">
+                        Add to Wishlist
+                    </button>
+                    
+                    <div class="mt-8 text-xs text-gray-400">
+                        Product listed on: Oct 24, 2023 </div>
+
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-primary_dark text-gray-300 pt-12 pb-8 mt-12 border-t border-gray-700 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <h4 class="text-white font-bold mb-4 text-sm uppercase tracking-wider">About</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="hover:text-highlight transition">Contact Us</a></li>
+                        <li><a href="#" class="hover:text-highlight transition">About Us</a></li>
+                        <li><a href="#" class="hover:text-highlight transition">Careers</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold mb-4 text-sm uppercase tracking-wider">Help</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="hover:text-highlight transition">Payments</a></li>
+                        <li><a href="#" class="hover:text-highlight transition">Shipping</a></li>
+                        <li><a href="#" class="hover:text-highlight transition">Cancellation & Returns</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold mb-4 text-sm uppercase tracking-wider">Policy</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="hover:text-highlight transition">Return Policy</a></li>
+                        <li><a href="#" class="hover:text-highlight transition">Terms of Use</a></li>
+                        <li><a href="#" class="hover:text-highlight transition">Privacy</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold mb-4 text-sm uppercase tracking-wider">Social</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="hover:text-highlight transition">Facebook</a></li>
+                        <li><a href="#" class="hover:text-highlight transition">Twitter</a></li>
+                        <li><a href="#" class="hover:text-highlight transition">Instagram</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-700 pt-8 flex flex-col md:flex-row items-center justify-between text-sm">
+                <div class="flex items-center space-x-2 mb-4 md:mb-0">
+                    <span class="text-xl font-bold tracking-tight text-highlight">Market<span class="text-white">Shop</span></span>
+                </div>
+                <p>&copy; 2026 MarketShop. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

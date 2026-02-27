@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlipShop Seller Hub - Login & Register</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary_dark: '#362F4F',
+                        primary: '#5B23FF',
+                        accent: '#008BFF',
+                        highlight: '#E4FF30',
+                        bg_light: '#F1F3F6', 
+                        text_dark: '#212121',
+                        text_gray: '#878787'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .card-shadow { box-shadow: 0 10px 40px -10px rgba(0,0,0,0.1); }
+    </style>
+</head>
+<body class="bg-bg_light text-text_dark min-h-screen flex items-center justify-center p-4 sm:p-8">
+
+    <div class="w-full max-w-5xl bg-white rounded-2xl card-shadow overflow-hidden flex flex-col md:flex-row">
+        
+        <div class="w-full md:w-5/12 text-white p-8 md:p-12 flex flex-col justify-between relative overflow-hidden bg-cover bg-center" 
+             style="background-image: linear-gradient(rgba(54, 47, 79, 0.85), rgba(91, 35, 255, 0.85)), url('http://googleusercontent.com/image_collection/image_retrieval/11268683216802354975');">
+            
+            <div class="absolute top-0 right-0 w-64 h-64 bg-primary rounded-full mix-blend-multiply filter blur-3xl opacity-50 translate-x-1/3 -translate-y-1/3"></div>
+            <div class="absolute bottom-0 left-0 w-64 h-64 bg-accent rounded-full mix-blend-multiply filter blur-3xl opacity-30 -translate-x-1/3 translate-y-1/3"></div>
+            
+            <div class="relative z-10">
+                <div class="flex items-center gap-3 mb-10">
+                    <div class="w-10 h-10 bg-highlight rounded flex items-center justify-center text-primary_dark font-bold text-xl italic shadow-md">F</div>
+                    <span class="text-xl font-bold tracking-wide">FlipShop Seller Hub</span>
+                </div>
+                
+                <h1 class="text-3xl md:text-4xl font-bold mb-4 leading-tight">Grow your business with us.</h1>
+                <p class="text-gray-300 mb-10 text-sm md:text-base leading-relaxed">Join our rapidly growing marketplace and reach millions of customers instantly with 0% onboarding fees.</p>
+                
+                <ul class="space-y-5">
+                    <li class="flex items-start gap-4">
+                        <div class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-highlight shrink-0 mt-0.5">
+                            <i class="fa-solid fa-bolt text-sm"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-white">Quick Onboarding</h4>
+                            <p class="text-xs text-gray-300 mt-1">Set up your shop and list products in under 10 minutes.</p>
+                        </div>
+                    </li>
+                    <li class="flex items-start gap-4">
+                        <div class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-highlight shrink-0 mt-0.5">
+                            <i class="fa-solid fa-chart-line text-sm"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-white">Lowest Commission</h4>
+                            <p class="text-xs text-gray-300 mt-1">Keep more of your profits with our industry-leading rates.</p>
+                        </div>
+                    </li>
+                    <li class="flex items-start gap-4">
+                        <div class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-highlight shrink-0 mt-0.5">
+                            <i class="fa-solid fa-headset text-sm"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-white">Dedicated Support</h4>
+                            <p class="text-xs text-gray-300 mt-1">24/7 seller support to help you scale your operations.</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="relative z-10 mt-12 pt-6 border-t border-white/20 text-xs text-gray-300">
+                © 2024 ShopNow Inc. Seller Services.
+            </div>
+        </div>
+
+        <div class="w-full md:w-7/12 p-8 md:p-12 lg:p-16 flex flex-col justify-center bg-white">
+            
+            <div class="max-w-md w-full mx-auto">
+                <h2 class="text-2xl font-bold text-primary_dark mb-2">Welcome Back</h2>
+                <p class="text-gray-500 text-sm mb-8">Please enter your credentials to access your dashboard.</p>
+                
+                <form action="#" method="POST" class="space-y-5">
+                    {% csrf_token %}
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1.5 tracking-wide">Email <span class="text-red-500">*</span></label>
+                        <input type="email" name="seller_email" required class="w-full border border-gray-300 rounded-md p-3 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors" placeholder="Enter registered seller username">
+                    </div>
+                    
+                    <div>
+                        <div class="flex items-center justify-between mb-1.5">
+                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide">Password <span class="text-red-500">*</span></label>
+                            <a href="#" class="text-xs font-semibold text-accent hover:underline">Forgot Password?</a>
+                        </div>
+                        <input type="password" name="seller_password" required class="w-full border border-gray-300 rounded-md p-3 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors" placeholder="••••••••">
+                    </div>
+
+                    <div class="flex items-center gap-2 mt-2">
+                        <input type="checkbox" id="remember" class="w-4 h-4 text-primary rounded border-gray-300 focus:ring-primary">
+                        <label for="remember" class="text-sm text-gray-600 cursor-pointer">Remember me for 30 days</label>
+                    </div>
+
+                    <button type="submit" class="w-full bg-primary text-white font-semibold py-3 px-4 rounded-md shadow-md hover:bg-opacity-90 transition duration-200 mt-2">
+                        Login to Dashboard
+                    </button>
+                </form>
+
+                <div class="flex items-center my-8">
+                    <div class="flex-grow border-t border-gray-200"></div>
+                    <span class="mx-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">New to FlipShop?</span>
+                    <div class="flex-grow border-t border-gray-200"></div>
+                </div>
+
+                <div class="bg-bg_light rounded-xl p-6 text-center border border-gray-200">
+                    <h3 class="font-semibold text-primary_dark mb-2">Start Selling Today</h3>
+                    <p class="text-sm text-gray-500 mb-5">Create your seller account in just 5 minutes with your GST and Bank details.</p>
+                    
+                    <a href="#register" class="block w-full bg-highlight text-primary_dark font-bold py-3 rounded-md shadow hover:shadow-md transition transform active:scale-95 text-center">
+                        Register as a New Seller
+                    </a>
+                </div>
+
+            </div>
+        </div>
+        
+    </div>
+
+</body>
+</html>

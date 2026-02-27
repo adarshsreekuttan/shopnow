@@ -62,3 +62,4 @@ class Address(models.Model):
 #     rating=models.PositiveIntegerField()
 #     comment=models.TextField()
 #     is_active=models.BooleanField(default=True)
+

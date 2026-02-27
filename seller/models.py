@@ -1,6 +1,21 @@
 from django.db import models
 from django.utils.text import slugify
 
+class SellerProfile(models.Model):
+    shop_name=models.CharField(max_length=100)
+    password=models.CharField(max_length=150)
+    email=models.EmailField(unique=True)
+    phone=models.CharField(max_length=15,unique=True)
+    address=models.TextField()
+    pincode=models.CharField(max_length=6)
+    state=models.CharField(max_length=100)
+    city=models.CharField(max_length=100)
+    gst_number=models.CharField(max_length=100,blank=True,null=True)
+    is_verified=models.BooleanField(default=False)
+    is_active=models.BooleanField(default=True)
+    created_at=models.DateTimeField(auto_now_add=True)
+    updated_at=models.DateTimeField(auto_now=True)
+
 class Category(models.Model):
     name = models.CharField(max_length=30)
     slug = models.SlugField(unique=True, blank=True)
@@ -67,3 +82,5 @@ class SubCategory(models.Model):
 #     valid_from=models.DecimalField()
 #     valid_to = models.DateTimeField()
 #     is_active = models.BooleanField(default=True)
+    
+
