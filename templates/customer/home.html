@@ -26,13 +26,40 @@
 {% include 'customer/navbar.html' %}
 <body>
 
-    <section class="relative h-[400px] md:h-[500px] bg-[url('https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?q=80&w=2000&auto=format&fit=crop')] bg-cover bg-center flex items-center">
-        <div class="absolute inset-0 bg-gradient-to-r from-pdark/90 to-transparent"></div>
-        <div class="container mx-auto px-6 relative z-10 text-white">
-            <span class="bg-highlight text-pdark text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide mb-4 inline-block">Season Sale</span>
-            <h1 class="text-4xl md:text-6xl font-bold mb-4 leading-tight">Elevate Your Style <br><span class="text-primary font-light text-3xl md:text-5xl">Up to 50% Off</span></h1>
-            <p class="mb-8 max-w-md text-gray-200">Discover the latest trends in fashion, electronics, and home decor. Shop the best deals today.</p>
-            <a href="#" class="bg-primary hover:bg-opacity-90 text-white font-bold py-3 px-8 rounded-full transition shadow-lg inline-block">Shop Now</a>
+    <section class="relative h-[500px] md:h-[650px] overflow-hidden bg-[#0F1111]">
+        <div class="absolute inset-0">
+            <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=2000&auto=format&fit=crop" 
+                alt="Featured Products" 
+                class="w-full h-full object-cover object-center opacity-40">
+            <div class="absolute inset-0 bg-gradient-to-t from-[#F8F9FA] via-transparent to-transparent"></div>
+            <div class="absolute inset-0 bg-gradient-to-r from-pdark via-pdark/40 to-transparent"></div>
+        </div>
+
+        <div class="container mx-auto px-6 relative z-10 h-full flex flex-col justify-center">
+            <div class="max-w-3xl">
+                <div class="inline-flex items-center gap-2 bg-highlight text-pdark px-4 py-1.5 rounded-sm font-black text-xs uppercase italic tracking-tighter mb-6 shadow-lg shadow-highlight/20">
+                    Fast Delivery Included
+                </div>
+
+                <h1 class="text-5xl md:text-8xl font-extrabold text-white mb-4 tracking-tighter leading-none">
+                    THE <span class="text-primary italic">BIG</span> <br>TECH EVENT.
+                </h1>
+
+                <p class="text-xl md:text-2xl text-gray-200 mb-8 max-w-xl font-medium border-l-4 border-primary pl-6">
+                    Save on the brands you love. <br>
+                    <span class="text-highlight">Up to 60% off</span> headphones, watches, and smart home.
+                </p>
+
+                <div class="flex items-center gap-6">
+                    <a href="#" class="bg-primary hover:bg-white hover:text-pdark text-white px-10 py-4 rounded-full font-bold transition-all duration-300 transform hover:scale-105 shadow-2xl">
+                        Shop All Deals
+                    </a>
+                    <div class="hidden md:block">
+                        <p class="text-white/50 text-xs uppercase font-bold tracking-widest">Ends in:</p>
+                        <p class="text-white font-mono text-xl">24:00:00</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 

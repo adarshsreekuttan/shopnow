@@ -5,7 +5,7 @@ from django.http import HttpResponse
 from core.models import Product
 from seller.models import Category, SubCategory
 from django.contrib.auth.decorators import login_required
-from .models import Address
+from .models import Address, Cart, CartItem, WishList
 
 def customer_login(request):
     if request.method == 'POST':
@@ -50,8 +50,12 @@ def home_view(request):
 
 def single_product_view(request, slug):
     product = Product.objects.get(slug=slug)
-    return render(request, 'customer/single_product_view.html', {"product":product})
+    is_in_wishlist = False
+    if request.user.is_authenticated:
+        is_in_wishlist = WishList.objects.filter(user=request.user, product=product).exists()
+    return render(request, 'customer/single_product_view.html', {"product":product, "is_in_wishlist":is_in_wishlist})
 
+@login_required
 def profile_page(request):
     return render(request, 'customer/profile.html')
 
@@ -59,6 +63,7 @@ def customer_logout(request):
     logout(request)
     return redirect('home')
 
+@login_required
 def update_profile(request):
     user = request.user
     if request.method == "POST":
@@ -137,7 +142,108 @@ def edit_address(request,id):
         return redirect('view_addresses')
     return render(request, 'customer/edit_address.html', {"address":address})
 
+@login_required
 def delete_address(request,id):
     address = get_object_or_404(Address, id=id, user=request.user)
     address.delete()
     return redirect('view_addresses')
+
+
+@login_required
+def view_cart(request):
+    cart = Cart.objects.filter(user=request.user).first()
+    return render(request, 'customer/view_cart.html', {"cart":cart})
+
+@login_required
+def add_to_cart(request, id):
+    user = request.user
+    product = get_object_or_404(Product, id=id)
+    
+    cart, created = Cart.objects.get_or_create(
+        user = user,
+    )
+
+    cart_item, item_created = CartItem.objects.get_or_create(
+        cart = cart,
+        product = product,
+        defaults={
+        'price': product.discount_price
+    }
+    )
+
+    if not item_created:
+        cart_item.quantity += 1
+        cart_item.save()
+
+    return redirect('view_cart')
+
+@login_required
+def delete_cart_item(request, id):
+    cart_item = CartItem.objects.get(id=id)
+    cart_item.delete()
+    return redirect('view_cart')
+
+@login_required
+def clear_all_cart(request):
+    user = request.user
+    cart = Cart.objects.filter(user=user).first()
+    if cart:
+        cart.cartitem_set.all().delete()
+    return redirect('view_cart')
+
+def increment_decrement_cartquantity(request, id, action):
+    user = request.user
+    cart_item = get_object_or_404(CartItem, id=id)
+    if action == 'increment':
+        cart_item.quantity += 1
+        cart_item.save()
+    elif action == 'decrement':
+        if cart_item.quantity > 1:
+            cart_item.quantity -= 1
+            cart_item.save()
+        else:
+            cart_item.delete()
+    return redirect('view_cart')
+
+def view_wishlist(request):
+    wishlist = WishList.objects.filter(user=request.user)
+    return render(request, 'customer/view_wishlist.html', {"wishlist":wishlist})
+
+@login_required
+def toggle_wishlist(request, id):
+    if request.method == 'POST':
+        user = request.user
+        product = get_object_or_404(Product, id=id)
+        item = WishList.objects.filter(user=user, product=product)
+        if item.exists():
+            item.delete()
+            return redirect('single_product', slug=product.slug)
+        else:  
+            WishList.objects.create(
+                user=user,
+                product=product
+            )
+            return redirect('single_product', slug=product.slug)
+        
+@login_required
+def remove_from_wishlist(request, id):
+    wishlist_item = get_object_or_404(WishList, id=id, user=request.user)    
+    wishlist_item.delete()
+    return redirect('view_wishlist')
+
+def add_to_cart_from_wishlist(request, id):
+    user = request.user
+    wishlist_item = get_object_or_404(WishList, id=id, user=user)
+    product = wishlist_item.product
+
+    cart, created = Cart.objects.get_or_create(user=user)
+
+    cart_item, item_created = CartItem.objects.get_or_create(cart=cart, product=product, defaults={'price':product.discount_price})
+
+    if not item_created:
+        cart_item.quantity += 1
+        cart_item.save()
+
+    wishlist_item.delete()
+    
+    return redirect('view_cart')

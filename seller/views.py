@@ -1,9 +1,10 @@
 from django.shortcuts import render,redirect
 from seller.models import SellerProfile
-from core.models import Product,SubCategory
+from core.models import Product
 from django.contrib.auth.hashers import make_password,check_password
 from django.contrib import messages
 from django.utils.text import slugify
+from seller.models import SubCategory
 
 
 # Create your views here.

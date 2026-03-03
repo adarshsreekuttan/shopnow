@@ -33,12 +33,17 @@ class Category(models.Model):
 
 class SubCategory(models.Model):
     name = models.CharField(max_length=100)
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    category = models.ForeignKey('seller.Category', on_delete=models.CASCADE)
     is_active = models.BooleanField(default= True)
 
     def __str__(self):
         return self.name
     
+class ProductImage(models.Model):
+    product = models.ForeignKey('core.Product',on_delete=models.CASCADE)
+    image = models.ImageField(upload_to="product_images/")
+    is_primary = models.BooleanField(default=False)
+
 # # Create your models here.
 # class SellerProfile(models.Model):
 #     sellerid=models.AutoField(primary_key=True)

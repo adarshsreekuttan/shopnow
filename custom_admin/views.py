@@ -1,9 +1,10 @@
 from django.shortcuts import render,redirect
-from custom_admin.models import *
 from django.contrib.auth import login,logout
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.utils.text import slugify
+from seller.models import Category, SubCategory
+from custom_admin.models import AdminLogin
 
 
 # Create your views here.
@@ -32,7 +33,7 @@ def admin_dash(request):
         return redirect('adminlogin')
 
 def category_list(request):
-    categories =  Category.objects.all().order_by('-created_at')
+    categories =  Category.objects.all()
     return render(request,'admin/catlist.html',{'cat':categories})
 
 

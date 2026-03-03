@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-from seller.models import SubCategory
 
 class User(AbstractUser):
  
@@ -35,8 +34,7 @@ class Product(models.Model):
     stock = models.PositiveIntegerField(default=1)
     available = models.BooleanField(default=True)
     
-    sub_category = models.ForeignKey(SubCategory, on_delete=models.CASCADE)
-    image=models.ImageField(upload_to='products_image/',null=True,blank=True)
+    sub_category = models.ForeignKey('seller.SubCategory', on_delete=models.CASCADE)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
