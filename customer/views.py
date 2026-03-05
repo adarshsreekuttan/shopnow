@@ -5,7 +5,7 @@ from django.http import HttpResponse
 from core.models import Product
 from seller.models import Category, SubCategory
 from django.contrib.auth.decorators import login_required
-from .models import Address, Cart, CartItem, WishList
+from .models import Address, Cart, CartItem, WishList, Reviews
 
 def customer_login(request):
     if request.method == 'POST':
@@ -46,14 +46,23 @@ def customer_register(request):
 def home_view(request):
     products = Product.objects.all()
     category = Category.objects.all()
+
+    for product in products:
+        primary = product.productimage_set.filter(is_primary=True).first()
+        if not primary:
+            primary = product.productimage_set.first()
+
+        product.primary_image = primary
+        
     return render(request, 'customer/home.html', {"products":products, "categories":category})
 
 def single_product_view(request, slug):
     product = Product.objects.get(slug=slug)
     is_in_wishlist = False
+    reviews = Reviews.objects.filter(product=product).order_by('-created_at')
     if request.user.is_authenticated:
         is_in_wishlist = WishList.objects.filter(user=request.user, product=product).exists()
-    return render(request, 'customer/single_product_view.html', {"product":product, "is_in_wishlist":is_in_wishlist})
+    return render(request, 'customer/single_product_view.html', {"product":product, "is_in_wishlist":is_in_wishlist, "reviews":reviews})
 
 @login_required
 def profile_page(request):
@@ -231,6 +240,7 @@ def remove_from_wishlist(request, id):
     wishlist_item.delete()
     return redirect('view_wishlist')
 
+@login_required
 def add_to_cart_from_wishlist(request, id):
     user = request.user
     wishlist_item = get_object_or_404(WishList, id=id, user=user)
@@ -245,5 +255,17 @@ def add_to_cart_from_wishlist(request, id):
         cart_item.save()
 
     wishlist_item.delete()
-    
     return redirect('view_cart')
+
+@login_required
+def post_review(request, slug):
+    user = request.user
+    product = get_object_or_404(Product, slug = slug)
+    if request.method == 'POST':
+        rating = request.POST.get('rating')
+        comment = request.POST.get('comment')
+        Reviews.objects.create(rating=rating, comment=comment, user=user, product=product)
+        return redirect('single_product', slug=product.slug)
+
+def checkout_page(request):
+    return render(request, 'customer/checkout.html')

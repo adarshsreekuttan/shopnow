@@ -29,4 +29,8 @@ urlpatterns = [
     path('toggle-wishlist/<int:id>', views.toggle_wishlist, name='toggle_wishlist'),
     path('remove-from-wishlist/<int:id>', views.remove_from_wishlist, name='remove_from_wishlist'),
     path('add-to-cart-from-wishlist/<int:id>', views.add_to_cart_from_wishlist, name='add_to_cart_from_wishlist'),
+
+    path('post-review/<str:slug>/', views.post_review, name='post_review'),
+
+    path('checkout-page/', views.checkout_page, name='checkout_page'),
 ]
