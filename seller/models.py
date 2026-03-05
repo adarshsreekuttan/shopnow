@@ -1,11 +1,10 @@
 from django.db import models
 from django.utils.text import slugify
+from django.conf import settings
 
 class SellerProfile(models.Model):
+    user=models.OneToOneField(settings.AUTH_USER_MODEL,on_delete=models.CASCADE,null=True,related_name='seller_profile')
     shop_name=models.CharField(max_length=100)
-    password=models.CharField(max_length=150)
-    email=models.EmailField(unique=True)
-    phone=models.CharField(max_length=15,unique=True)
     address=models.TextField()
     pincode=models.CharField(max_length=6)
     state=models.CharField(max_length=100)
@@ -15,6 +14,8 @@ class SellerProfile(models.Model):
     is_active=models.BooleanField(default=True)
     created_at=models.DateTimeField(auto_now_add=True)
     updated_at=models.DateTimeField(auto_now=True)
+    approved=models.BooleanField(default=False)
+    shop_logo=models.ImageField(upload_to="seller_profile_pic/",null=True)
 
 class Category(models.Model):
     name = models.CharField(max_length=30)

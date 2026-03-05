@@ -1,54 +1,77 @@
-from django.shortcuts import render,redirect
-from seller.models import SellerProfile
-from core.models import Product
-from django.contrib.auth.hashers import make_password,check_password
+from django.shortcuts import render, redirect
+from django.contrib.auth import login, authenticate
+from django.contrib.auth.hashers import make_password, check_password
 from django.contrib import messages
 from django.utils.text import slugify
-from seller.models import SubCategory
+
+from core.models import User, Product, SubCategory
+from seller.models import SellerProfile
+
+from .decorators import seller_required
 
 
 # Create your views here.
 def seller_registration(request):
-    if request.method == "POST":
-        seller=SellerProfile()
-        seller.shop_name=request.POST.get('shop_name')
-        seller.password=make_password(request.POST.get('password'))
-        seller.email=request.POST.get('email')
-        seller.phone=request.POST.get('phone')
-        seller.address=request.POST.get('address')
-        seller.pincode=request.POST.get('pincode')
-        seller.state=request.POST.get('state')
-        seller.city=request.POST.get('city')
-        seller.gst_number=request.POST.get('gst_number')
-        seller.save()
-        return redirect('seller_login')
+    if request.method=='POST':
+        email=request.POST.get('email')
+        password=request.POST.get('password')
+
+        if User.objects.filter(email=email).exists():
+            messages.error(request,'email already registered')
+            return redirect('seller_login')
+        if password!=request.POST.get('confirm_password'):
+            messages.error(request,'password in not matched')
+            return redirect('seller_login')
+        user=User.objects.create_user(
+            username=email,
+            email=email,
+            password=password,
+            phone=request.POST.get('phone'),
+            role='seller',
+            is_verified=False
+                    )
+        SellerProfile.objects.create(
+                user=user,
+                shop_name=request.POST.get('shop_name'),
+                address=request.POST.get('address'),
+                pincode=request.POST.get('pincode'),
+                state=request.POST.get('state'),
+                city=request.POST.get('city'),
+                gst_number=request.POST.get('gst_number'),  
+                shop_logo=request.POST.get('shop_logo')      
+                )
+        messages.success(request,'succesfully created seller account')
+        return redirect('seller_login')     
     return render(request,"seller/seller_registration.html")
 
 def seller_login(request):
     if request.method=="POST":
         email=request.POST.get('seller_email')
         password=request.POST.get('seller_password')
-        
-        try:
-            seller=SellerProfile.objects.get(email=email)           
-            if check_password(password,seller.password):
-                request.session['seller_id']=seller.id
-                return redirect('seller_home')
-        except SellerProfile.DoesNotExist:
-            messages.error(request,"seller not found !!")  
+        user=authenticate(request,username=email,password=password)
+        print("USER:", user)
+        if user is not None and user.role=='seller':
+            sellerprofile=user.seller_profile
+            if not sellerprofile.approved:
+                messages.error(request,'your seller account not approved')
+                return redirect('seller_login')
+            login(request,user)  
+            return redirect('seller_home')
+        else:
+            messages.error(request,'error')              
     return render(request,"seller/seller_login.html")
 
+@seller_required
 def seller_home(request):
-    product=Product.objects.all()
-    seller_id=request.session.get('seller_id')
-    if not seller_id:
-        return redirect('seller_login')
-    seller=SellerProfile.objects.get(id=seller_id)
-    return render(request,"seller/seller_home.html",{'seller':seller ,'product':product})   
+    seller=request.user
+    sellerprofile=seller.seller_profile
+
+    return render(request, "seller/seller_home.html",{'sellerprofile':sellerprofile})  
+
 def seller_profile(request):
-    seller_id=request.session.get('seller_id')
-    seller=SellerProfile.objects.get(id=seller_id)
-    return render(request,"seller/seller_profile.html",{'seller':seller}) 
+    seller=request.user
+    sellerprofile=seller.seller_profile
+    return render(request,"seller/seller_profile.html",{'sellerprofile':sellerprofile}) 
  
 def seller_profile_edit(request):
     seller_id=request.session.get('seller_id')
@@ -79,7 +102,7 @@ def seller_add_product(request):
         product.stock=request.POST.get('stock')
         product.sub_category=SubCategory.objects.get(id=request.POST.get('sub_category'))        
         base_slug=slugify(product.name)
-        
+    
         slug=base_slug
         count=1
         

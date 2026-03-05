@@ -102,7 +102,7 @@
                     {% csrf_token %}
                     <div>
                         <label class="block text-xs font-bold text-gray-500 uppercase mb-1.5 tracking-wide">Email <span class="text-red-500">*</span></label>
-                        <input type="email" name="seller_email" required class="w-full border border-gray-300 rounded-md p-3 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors" placeholder="Enter registered seller username">
+                        <input type="text" name="seller_email" required class="w-full border border-gray-300 rounded-md p-3 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors" placeholder="Enter registered seller username">
                     </div>
                     
                     <div>
@@ -133,7 +133,7 @@
                     <h3 class="font-semibold text-primary_dark mb-2">Start Selling Today</h3>
                     <p class="text-sm text-gray-500 mb-5">Create your seller account in just 5 minutes with your GST and Bank details.</p>
                     
-                    <a href="#register" class="block w-full bg-highlight text-primary_dark font-bold py-3 rounded-md shadow hover:shadow-md transition transform active:scale-95 text-center">
+                    <a href="{%url 'seller_registration'%}" class="block w-full bg-highlight text-primary_dark font-bold py-3 rounded-md shadow hover:shadow-md transition transform active:scale-95 text-center">
                         Register as a New Seller
                     </a>
                 </div>

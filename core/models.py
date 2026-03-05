@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.conf import settings
+
 
 class User(AbstractUser):
  
@@ -24,11 +26,19 @@ class User(AbstractUser):
 
 
 class Product(models.Model):
-    name = models.CharField(max_length=200)
+
+    seller = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     slug = models.SlugField(unique=True,null=True,blank=True)
 
     price = models.IntegerField()
     discount_price = models.IntegerField()
+    STATUS_CHOICES = (
+        ('pending','PENDING'),
+        ('approved','APPROVED'),
+        ('rejected','REJECTED'),
+    )
+
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
 
     description = models.CharField(max_length=200)
     stock = models.PositiveIntegerField(default=1)
@@ -42,4 +52,15 @@ class Product(models.Model):
     def __str__(self):
         return self.name
 
-    
+class Category(models.Model):
+    name = models.CharField(max_length=100)
+    slug = models.SlugField(unique=True)
+    description = models.TextField(blank=True)
+    is_activate = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
+class SubCategory(models.Model):
+    category = models.ForeignKey(Category,on_delete=models.CASCADE)
+    name = models.CharField(max_length=100)
+    is_active = models.BooleanField(default=True)

@@ -3,7 +3,7 @@ from core.models import User
 from django.contrib.auth import login, authenticate, logout, update_session_auth_hash
 from django.http import HttpResponse
 from core.models import Product
-from seller.models import Category, SubCategory
+from seller.models import Category
 from django.contrib.auth.decorators import login_required
 from .models import Address, Cart, CartItem, WishList, Reviews
 

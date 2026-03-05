@@ -80,7 +80,7 @@
                 <h2 class="text-2xl font-bold text-primary_dark mb-1">Register as a Seller</h2>
                 <p class="text-gray-500 text-sm mb-6 sm:mb-8">Join the marketplace and reach millions of customers.</p>
                 
-                <form action="#" method="POST">
+                <form action="#" method="POST" enctype="multipart/form-data">
                     {% csrf_token %}
                     <h3 class="text-sm font-bold text-primary border-b pb-2 mb-4">Account Details</h3>
                     
@@ -103,6 +103,16 @@
                         <div>
                             <label class="block text-[11px] font-bold text-gray-500 uppercase mb-1 tracking-wide">Password <span class="text-red-500">*</span></label>
                             <input type="password" name="password" required maxlength="150" class="w-full border border-gray-300 rounded-md p-2.5 sm:p-3 md:p-2.5 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors" placeholder="Create a strong password (min 8 characters)">
+                        </div>
+
+                        <div>
+                            <label class="block text-[11px] font-bold text-gray-500 uppercase mb-1 tracking-wide">Confirm Password <span class="text-red-500">*</span></label>
+                            <input type="password" name="confirm_password" required maxlength="150" class="w-full border border-gray-300 rounded-md p-2.5 sm:p-3 md:p-2.5 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors" placeholder="Confirm your password">
+                        </div>
+
+                        <div class="sm:col-span-1">
+                            <label class="block text-[11px] font-bold text-gray-500 uppercase mb-1 tracking-wide">Shop Logo</label>
+                            <input type="file" name="shop_logo" accept="image/*" class="w-full border border-gray-300 rounded-md text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-4 file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors cursor-pointer bg-white">
                         </div>
                     </div>
 
