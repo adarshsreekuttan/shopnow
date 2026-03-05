@@ -1,5 +1,4 @@
 from django.db import models
-from core.models import Product,User
 from seller.models import SellerProfile
 
 # Create your models here.
@@ -9,20 +8,6 @@ class AdminLogin(models.Model):
     password = models.CharField(max_length=10,unique=True)
 
 
-class Category(models.Model):
-    name = models.CharField(max_length=100)
-    slug = models.SlugField(unique=True)
-    description = models.TextField(blank=True)
-    is_activate = models.BooleanField(default=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-
-class SubCategory(models.Model):
-    category = models.ForeignKey(Category,on_delete=models.CASCADE)
-    name = models.CharField(max_length=100)
-    is_active = models.BooleanField(default=True)
-
-
 class Brand(models.Model):
     name = models.CharField(max_length=100)
     logo = models.ImageField(upload_to="brands/")
@@ -30,8 +15,8 @@ class Brand(models.Model):
 
 
 class ProductApproval(models.Model):
-    product = models.ForeignKey(Product,on_delete=models.CASCADE)
-    approved_by = models.ForeignKey(User,on_delete=models.SET_NULL,null=True) 
+    product = models.ForeignKey('core.Product',on_delete=models.CASCADE)
+    approved_by = models.ForeignKey('core.User',on_delete=models.SET_NULL,null=True) 
     status = models.CharField(max_length=20) 
     reviewed_at = models.DateTimeField(auto_now_add=True)
 

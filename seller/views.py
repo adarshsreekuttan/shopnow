@@ -1,12 +1,14 @@
 from django.shortcuts import render,redirect
+from django.contrib.auth import login,authenticate
 from .models import SellerProfile
 from core.models import User
 from django.contrib.auth import get_user_model 
 from core.models import Product
-from custom_admin.models import SubCategory
+from core.models import SubCategory
 from django.contrib.auth.hashers import make_password,check_password
 from django.contrib import messages
 from django.utils.text import slugify
+from .decorators import seller_required
 
 
 # Create your views here.
@@ -36,11 +38,9 @@ def seller_registration(request):
                 pincode=request.POST.get('pincode'),
                 state=request.POST.get('state'),
                 city=request.POST.get('city'),
-                gst_number=request.POST.get('gst_number'),        
+                gst_number=request.POST.get('gst_number'),  
+                shop_logo=request.POST.get('shop_logo')      
                 )
-        print("EMAIL:", email)
-        print("PASSWORD:", password)
-        print("CONFIRM:", request.POST.get('confirm_password'))
         messages.success(request,'succesfully created seller account')
         return redirect('seller_login')     
     return render(request,"seller/seller_registration.html")
@@ -49,28 +49,30 @@ def seller_login(request):
     if request.method=="POST":
         email=request.POST.get('seller_email')
         password=request.POST.get('seller_password')
-        
-        try:
-            seller=SellerProfile.objects.get(email=email)           
-            if check_password(password,seller.password):
-                request.session['seller_id']=seller.id
-                return redirect('seller_home')
-        except SellerProfile.DoesNotExist:
-            messages.error(request,"seller not found !!")  
-            
+        user=authenticate(request,username=email,password=password)
+        print("USER:", user)
+        if user is not None and user.role=='seller':
+            sellerprofile=user.seller_profile
+            if not sellerprofile.approved:
+                messages.error(request,'your seller account not approved')
+                return redirect('seller_login')
+            login(request,user)  
+            return redirect('seller_home')
+        else:
+            messages.error(request,'error')              
     return render(request,"seller/seller_login.html")
 
+@seller_required
 def seller_home(request):
-    product=Product.objects.all()
-    seller_id=request.session.get('seller_id')
-    if not seller_id:
-        return redirect('seller_login')
-    seller=SellerProfile.objects.get(id=seller_id)
-    return render(request,"seller/seller_home.html",{'seller':seller ,'product':product})   
+    seller=request.user
+    sellerprofile=seller.seller_profile
+
+    return render(request, "seller/seller_home.html",{'sellerprofile':sellerprofile})  
+
 def seller_profile(request):
-    seller_id=request.session.get('seller_id')
-    seller=SellerProfile.objects.get(id=seller_id)
-    return render(request,"seller/seller_profile.html",{'seller':seller}) 
+    seller=request.user
+    sellerprofile=seller.seller_profile
+    return render(request,"seller/seller_profile.html",{'sellerprofile':sellerprofile}) 
  
 def seller_profile_edit(request):
     seller_id=request.session.get('seller_id')
