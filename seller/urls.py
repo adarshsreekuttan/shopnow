@@ -11,6 +11,6 @@ urlpatterns = [
     path('seller_password',views.seller_password,name="seller_password"),
     path('seller_add_product',views.seller_add_product,name="seller_add_product"),
     path('seller_product_view/<str:slug>',views.seller_product_view,name="seller_product_view"),
-    path('seller_product_edit/<str:slug>',views.seller_product_edit,name="seller_product_edit"),
+    path('seller_product_edit',views.seller_product_edit,name="seller_product_edit"),
 ]
 

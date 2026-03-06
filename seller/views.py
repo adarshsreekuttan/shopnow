@@ -4,7 +4,7 @@ from .models import SellerProfile
 from core.models import User
 from django.contrib.auth import get_user_model 
 from core.models import Product
-from core.models import SubCategory
+from .models import SubCategory,Category
 from django.contrib.auth.hashers import make_password,check_password
 from django.contrib import messages
 from django.utils.text import slugify
@@ -12,17 +12,18 @@ from .decorators import seller_required
 
 
 # Create your views here.
+User = get_user_model()
+
 def seller_registration(request):
     if request.method=='POST':
         email=request.POST.get('email')
         password=request.POST.get('password')
-
         if User.objects.filter(email=email).exists():
             messages.error(request,'email already registered')
-            return redirect('seller_login')
+            return redirect('seller_registration')
         if password!=request.POST.get('confirm_password'):
             messages.error(request,'password in not matched')
-            return redirect('seller_login')
+            return redirect('seller_registration')
         user=User.objects.create_user(
             username=email,
             email=email,
@@ -39,28 +40,36 @@ def seller_registration(request):
                 state=request.POST.get('state'),
                 city=request.POST.get('city'),
                 gst_number=request.POST.get('gst_number'),  
-                shop_logo=request.POST.get('shop_logo')      
+                shop_logo=request.FILES.get('shop_logo')      
                 )
         messages.success(request,'succesfully created seller account')
         return redirect('seller_login')     
     return render(request,"seller/seller_registration.html")
-
 def seller_login(request):
-    if request.method=="POST":
-        email=request.POST.get('seller_email')
-        password=request.POST.get('seller_password')
-        user=authenticate(request,username=email,password=password)
-        print("USER:", user)
-        if user is not None and user.role=='seller':
-            sellerprofile=user.seller_profile
-            if not sellerprofile.approved:
-                messages.error(request,'your seller account not approved')
-                return redirect('seller_login')
-            login(request,user)  
-            return redirect('seller_home')
-        else:
-            messages.error(request,'error')              
-    return render(request,"seller/seller_login.html")
+    if request.method == "POST":
+        email = request.POST.get('seller_email')
+        password = request.POST.get('seller_password')
+
+        user = authenticate(request, username=email, password=password)
+
+        if user is None:
+            messages.error(request, "Invalid email or password")
+            return redirect('seller_login')
+
+        if user.role != 'seller':
+            messages.error(request, "You are not a seller")
+            return redirect('seller_login')
+
+        sellerprofile = user.seller_profile
+
+        if not sellerprofile.approved:
+            messages.error(request, "Your seller account is waiting for admin approval")
+            return redirect('seller_login')
+
+        login(request, user)
+        return redirect('seller_home')
+
+    return render(request, "seller/seller_login.html")
 
 @seller_required
 def seller_home(request):
@@ -68,31 +77,32 @@ def seller_home(request):
     sellerprofile=seller.seller_profile
 
     return render(request, "seller/seller_home.html",{'sellerprofile':sellerprofile})  
-
+@seller_required
 def seller_profile(request):
     seller=request.user
     sellerprofile=seller.seller_profile
     return render(request,"seller/seller_profile.html",{'sellerprofile':sellerprofile}) 
- 
+@seller_required
 def seller_profile_edit(request):
-    seller_id=request.session.get('seller_id')
-    seller=SellerProfile.objects.get(id=seller_id)        
+    seller=request.user
+    sellerprofile=seller.seller_profile        
     if request.method == "POST":
-        seller.shop_name=request.POST.get('shop_name')
-        seller.password=make_password(request.POST.get('password'))
-        seller.email=request.POST.get('email')
-        seller.phone=request.POST.get('phone')
-        seller.address=request.POST.get('address')
-        seller.pincode=request.POST.get('pincode')
-        seller.state=request.POST.get('state')
-        seller.city=request.POST.get('city')
-        seller.gst_number=request.POST.get('gst_number')
-        seller.save()
+        sellerprofile.shop_name=request.POST.get('shop_name')
+        sellerprofile.password=make_password(request.POST.get('password'))
+        sellerprofile.email=request.POST.get('email')
+        sellerprofile.phone=request.POST.get('phone')
+        sellerprofile.address=request.POST.get('address')
+        sellerprofile.pincode=request.POST.get('pincode')
+        sellerprofile.state=request.POST.get('state')
+        sellerprofile.city=request.POST.get('city')
+        sellerprofile.gst_number=request.POST.get('gst_number')
+        sellerprofile.save()
         return redirect('seller_profile')
-    return render(request,"seller/seller_profile_edit.html",{'seller':seller})   
-
+    return render(request,"seller/seller_profile_edit.html",{'seller':sellerprofile})   
+@seller_required
 def seller_add_product(request):
     subcategory=SubCategory.objects.all()
+    category=Category.objects.all()
     if request.method=="POST":
         product=Product()
         product.name=request.POST.get('product_name')
@@ -101,7 +111,10 @@ def seller_add_product(request):
         product.discount_price=request.POST.get('discount_price')
         product.description=request.POST.get('description')
         product.stock=request.POST.get('stock')
-        product.sub_category=SubCategory.objects.get(id=request.POST.get('sub_category'))        
+        sub_category_slug=request.POST.get('sub_category')        
+        product.sub_category=SubCategory.objects.get(slug=sub_category_slug)        
+        category_slug=request.POST.get('category')      
+        product.category=Category.objects.get(slug=category_slug)        
         base_slug=slugify(product.name)
     
         slug=base_slug
@@ -115,7 +128,7 @@ def seller_add_product(request):
         product.slug= slug
         product.save()
         return redirect('seller_home')        
-    return render(request,"seller/seller_add_product.html",{'subcategory':subcategory})
+    return render(request,"seller/seller_add_product.html",{'category':category,'subcategory':subcategory})
 
 def seller_product_view(request,slug):
     product=Product.objects.get(slug=slug)
