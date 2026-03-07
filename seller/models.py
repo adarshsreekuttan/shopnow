@@ -1,9 +1,9 @@
 from django.db import models
 from django.utils.text import slugify
-from django.conf import settings
+from core.models import User
 
 class SellerProfile(models.Model):
-    user=models.OneToOneField(settings.AUTH_USER_MODEL,on_delete=models.CASCADE,null=True,related_name='seller_profile')
+    user=models.OneToOneField(User,on_delete=models.CASCADE,null=True,related_name='seller_profile')
     shop_name=models.CharField(max_length=100)
     address=models.TextField()
     pincode=models.CharField(max_length=6)
@@ -34,7 +34,7 @@ class Category(models.Model):
 
 class SubCategory(models.Model):
     name = models.CharField(max_length=100)
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    category = models.ForeignKey('seller.Category', on_delete=models.CASCADE)
     is_active = models.BooleanField(default= True)
     slug = models.SlugField(unique=True, blank=True)
 
@@ -46,6 +46,11 @@ class SubCategory(models.Model):
     def __str__(self):
         return self.name
     
+class ProductImage(models.Model):
+    product = models.ForeignKey('core.Product',on_delete=models.CASCADE)
+    image = models.ImageField(upload_to="product_images/")
+    is_primary = models.BooleanField(default=False)
+
 # # Create your models here.
 # class SellerProfile(models.Model):
 #     sellerid=models.AutoField(primary_key=True)

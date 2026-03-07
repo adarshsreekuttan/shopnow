@@ -1,11 +1,14 @@
+
 from django.shortcuts import render,redirect
 from django.contrib.auth import login,authenticate
 from django.contrib.auth import get_user_model 
-from core.models import Product
 from .models import SellerProfile,SubCategory,Category
+from django.contrib.auth import get_user_model
 from django.contrib import messages
 from django.utils.text import slugify
+from core.models import User, Product
 from .decorators import seller_required
+from django.contrib.auth import update_session_auth_hash
 
 
 # Create your views here.
@@ -85,14 +88,19 @@ def seller_profile_edit(request):
     sellerprofile=seller.seller_profile        
     if request.method == "POST":
         sellerprofile.shop_name=request.POST.get('shop_name')
-        sellerprofile.password=make_password(request.POST.get('password'))
-        sellerprofile.email=request.POST.get('email')
         sellerprofile.phone=request.POST.get('phone')
         sellerprofile.address=request.POST.get('address')
         sellerprofile.pincode=request.POST.get('pincode')
         sellerprofile.state=request.POST.get('state')
         sellerprofile.city=request.POST.get('city')
         sellerprofile.gst_number=request.POST.get('gst_number')
+        seller.email=request.POST.get('email')
+
+        password=(request.POST.get('password'))
+        if password:
+            seller.set_password(password)
+            seller.save() 
+            update_session_auth_hash(request,seller)   
         sellerprofile.save()
         return redirect('seller_profile')
     return render(request,"seller/seller_profile_edit.html",{'seller':sellerprofile})   
@@ -154,21 +162,5 @@ def seller_product_edit(request,slug):
         return redirect('seller_product_view')        
     return render(request,"seller/seller_product_edit.html",{'subcategory':subcategory})
 
-def seller_password(request):
-    seller_id=request.session.get('seller_id')
-    seller=SellerProfile.objects.get(id=seller_id)
-    if request.method=='POST':
-        current_password=request.POST.get('current_password')
-        new_password=request.POST.get('new_password')
-        confirm_pssword=request.POST.get('confirm_password')
-                
-        if check_password(current_password,seller.password):
-            if new_password==confirm_pssword:
-                seller.password=make_password(new_password)
-                seller.save()   
-            else:
-                error="new password is not matched"  
-        else:
-            error="current password is incorrect"  
-        return render(request,'seller/seller_password.html',{'seller':seller,'error':error})                       
-    return render(request,'seller/seller_password.html',{'seller':seller})
+def seller_password(request):                       
+    return render(request,'seller/seller_password.html')

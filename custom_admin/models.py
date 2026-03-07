@@ -1,5 +1,4 @@
 from django.db import models
-from seller.models import SellerProfile
 
 # Create your models here.
 
@@ -37,7 +36,6 @@ class SiteSetting(models.Model):
 
 
 class Commission(models.Model):
-    seller = models.ForeignKey(SellerProfile,on_delete=models.CASCADE)
+    seller = models.ForeignKey('seller.SellerProfile',on_delete=models.CASCADE)
     percentage = models.DecimalField(max_digits=5,decimal_places=2)          
-
 

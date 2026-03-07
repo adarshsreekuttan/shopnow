@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Cart | Premium Audio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { pdark: '#362F4F', primary: '#5B23FF', accent: '#008BFF', highlight: '#E4FF30', lightbg: '#F8F9FA' },
+                    fontFamily: { sans: ['DM Sans', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        .qty-btn:hover { background: #5B23FF; color: white; }
+        .cart-item { transition: all 0.2s ease; }
+        .cart-item:hover { box-shadow: 0 4px 24px rgba(91,35,255,0.08); }
+        .promo-input:focus { outline: none; border-color: #5B23FF; box-shadow: 0 0 0 3px rgba(91,35,255,0.12); }
+    </style>
+</head>
+<body class="bg-lightbg font-sans antialiased text-gray-900 min-h-screen">
+
+    {% include 'customer/navbar.html' %}
+
+    <section class="max-w-7xl mx-auto px-4 py-10 grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+    <!-- LEFT SECTION -->
+    <div class="lg:col-span-2 space-y-6">
+
+        <!-- ADDRESS SELECTION -->
+        <div class="bg-white rounded-xl shadow p-6">
+            <h2 class="text-lg font-semibold mb-4">Select Delivery Address</h2>
+
+            {% for address in addresses %}
+            <label class="flex items-start gap-3 border rounded-lg p-4 cursor-pointer hover:border-primary mb-3">
+                
+                <input type="radio" name="address" value="{{address.id}}" class="mt-1">
+
+                <div>
+                    <p class="font-semibold">{{address.name}}</p>
+                    <p class="text-sm text-gray-600">
+                        {{address.address_line}} , {{address.city}}
+                    </p>
+                    <p class="text-sm text-gray-600">
+                        {{address.state}} - {{address.pincode}}
+                    </p>
+                    <p class="text-sm text-gray-600">
+                        Phone: {{address.phone}}
+                    </p>
+                </div>
+
+            </label>
+            {% endfor %}
+
+            <a href="#" class="text-primary font-semibold text-sm">
+                + Add New Address
+            </a>
+        </div>
+
+
+        <!-- ORDER ITEMS -->
+        <div class="bg-white rounded-xl shadow p-6">
+            <h2 class="text-lg font-semibold mb-4">Order Items</h2>
+
+            {% for item in items %}
+            <div class="flex items-center justify-between border-b py-4">
+
+                <div class="flex items-center gap-4">
+
+                    <img src="{{item.product.image.url}}" class="w-16 h-16 object-cover rounded">
+
+                    <div>
+                        <p class="font-semibold">{{item.product.name}}</p>
+                        <p class="text-sm text-gray-500">
+                            Qty: {{item.quantity}}
+                        </p>
+                    </div>
+
+                </div>
+
+                <p class="font-semibold text-primary">
+                    ₹{{item.product.price}}
+                </p>
+
+            </div>
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+
+    <!-- RIGHT SECTION -->
+    <div class="bg-white rounded-xl shadow p-6 h-fit sticky top-24">
+
+        <h2 class="text-lg font-semibold mb-4">Price Details</h2>
+
+        <div class="space-y-3 text-sm">
+
+            <div class="flex justify-between">
+                <span>Price ({{items|length}} items)</span>
+                <span>₹{{subtotal}}</span>
+            </div>
+
+            <div class="flex justify-between">
+                <span>Shipping</span>
+                <span class="text-green-600">FREE</span>
+            </div>
+
+            <div class="border-t pt-3 flex justify-between font-semibold text-lg">
+                <span>Total</span>
+                <span class="text-primary">₹{{total}}</span>
+            </div>
+
+        </div>
+
+        <form method="POST" class="mt-6">
+            {% csrf_token %}
+            <button class="w-full bg-primary text-white py-3 rounded-lg font-semibold hover:bg-indigo-700">
+                Place Order
+            </button>
+        </form>
+
+    </div>
+
+</section>
+
+    
+</body>

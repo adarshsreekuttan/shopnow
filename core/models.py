@@ -31,13 +31,14 @@ class Product(models.Model):
     slug = models.SlugField(unique=True,null=True,blank=True)
     price = models.IntegerField()
     discount_price = models.IntegerField()
-    STATS_CHOICES=(
+    STATUS_CHOICES = (
         ('pending','PENDING'),
-        ('apporved','APPORVED'),
+        ('approved','APPROVED'),
         ('rejected','REJECTED'),
-        
     )
-    status=models.CharField(max_length=10,null=True)
+
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
+
     description = models.CharField(max_length=200)
     stock = models.PositiveIntegerField(default=1)
     available = models.BooleanField(default=True)
