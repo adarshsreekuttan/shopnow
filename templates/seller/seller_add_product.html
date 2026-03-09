@@ -1,9 +1,13 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FlipShop - Add New Product</title>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="{% static 'js/category_subcategory.js' %}"></script>
     
     <script src="https://cdn.tailwindcss.com"></script>
     
@@ -132,7 +136,7 @@
                             <div>
                                 <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-1.5">Category <span class="text-red-500">*</span></label>
                                 <div class="relative">
-                                    <select name="category" required class="w-full border border-gray-300 rounded-md p-3 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors appearance-none bg-white">
+                                    <select name="category" id="category" required class="w-full border border-gray-300 rounded-md p-3 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors appearance-none bg-white">
                                         <option value="" disabled selected>Select Category</option>
                                         {% for c in category %}
                                         <option value="{{ c.slug }}">{{ c.name }}</option>
@@ -145,8 +149,8 @@
                             <div>
                                 <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-1.5">Sub Category <span class="text-red-500">*</span></label>
                                 <div class="relative">
-                                    <select name="sub_category" required class="w-full border border-gray-300 rounded-md p-3 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors appearance-none bg-white">
-                                        <option value="" disabled selected>Select Sub Category</option>
+                                    <select name="sub_category" id="subcategory" required class="w-full border border-gray-300 rounded-md p-3 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors appearance-none bg-white">
+                                        <option value="" disabled selected> Select Sub Category</option>
                                         {% for x in subcategory %}
                                         <option value="{{ x.slug }}">{{ x.name }}</option>
                                         {% endfor %}

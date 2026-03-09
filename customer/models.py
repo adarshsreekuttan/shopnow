@@ -3,7 +3,7 @@ from core.models import User, Product
 from decimal import Decimal
 
 class Address(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey('core.User', on_delete=models.CASCADE)
 
     full_name = models.CharField(max_length=100)
     phone = models.CharField(max_length=15)
@@ -17,7 +17,7 @@ class Address(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
 class Cart(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey('core.User', on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_active = models.BooleanField(default=True)
@@ -37,7 +37,7 @@ class Cart(models.Model):
     
 class CartItem(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    product = models.ForeignKey('core.Product', on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
     price = models.IntegerField()
     added_at = models.DateTimeField(auto_now_add=True)
@@ -47,13 +47,13 @@ class CartItem(models.Model):
         return self.quantity * self.price
 
 class WishList(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    user = models.ForeignKey('core.User', on_delete=models.CASCADE)
+    product = models.ForeignKey('core.Product', on_delete=models.CASCADE)
     added_at = models.DateTimeField(auto_now_add=True)
 
 class Reviews(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    user = models.ForeignKey('core.User', on_delete=models.CASCADE)
+    product = models.ForeignKey('core.Product', on_delete=models.CASCADE)
     rating = models.IntegerField(null=True)
     comment = models.CharField(max_length=200, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
