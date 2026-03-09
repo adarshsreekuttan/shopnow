@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 from django.shortcuts import render,redirect
 from django.contrib.auth import login,authenticate,logout
@@ -5,6 +6,7 @@ from django.contrib.auth import get_user_model,update_session_auth_hash
 from .models import SellerProfile,SubCategory,Category
 from django.contrib import messages
 from django.utils.text import slugify
+from core.models import User, Product
 from core.models import User, Product
 from .decorators import seller_required
 from django.http import JsonResponse
@@ -93,13 +95,13 @@ def seller_profile_edit(request):
     sellerprofile=seller.seller_profile  
     if request.method == "POST":
         sellerprofile.shop_name=request.POST.get('shop_name')
+        sellerprofile.email=request.POST.get('email')
         sellerprofile.phone=request.POST.get('phone')
         sellerprofile.address=request.POST.get('address')
         sellerprofile.pincode=request.POST.get('pincode')
         sellerprofile.state=request.POST.get('state')
         sellerprofile.city=request.POST.get('city')
         sellerprofile.gst_number=request.POST.get('gst_number')
-        seller.email=request.POST.get('email')
 
         password=(request.POST.get('password'))
         if password:
@@ -140,6 +142,7 @@ def seller_add_product(request):
         product.save()
         return redirect('seller_home')        
     return render(request,"seller/seller_add_product.html",{'category':category,'subcategory':subcategory})
+
 @seller_required
 def seller_product_view(request,slug):
     product=Product.objects.get(slug=slug)
