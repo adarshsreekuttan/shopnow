@@ -5,7 +5,7 @@ from django.http import HttpResponse
 from core.models import Product
 from seller.models import Category
 from django.contrib.auth.decorators import login_required
-from .models import Address, Cart, CartItem, WishList, Reviews
+from .models import Address, Cart, CartItem, WishList, Reviews, Order, OrderItem
 from .decorators import customer_required
 
 def customer_login(request):
@@ -54,7 +54,6 @@ def customer_register(request):
 
     return render(request,'customer/register.html')
 
-@customer_required
 def home_view(request):
     products = Product.objects.all()
     category = Category.objects.all()
@@ -68,7 +67,7 @@ def home_view(request):
         
     return render(request, 'customer/home.html', {"products":products, "categories":category})
 
-@customer_required
+
 def single_product_view(request, slug):
     product = Product.objects.get(slug=slug)
     is_in_wishlist = False
@@ -300,4 +299,57 @@ def post_review(request, slug):
     
 @customer_required
 def checkout_page(request):
-    return render(request, 'customer/checkout.html')
+    user=request.user
+    addresses = Address.objects.filter(user=user)
+
+    cart = Cart.objects.filter(user=user).first()
+
+    if not cart:
+        return redirect('cart_page')
+
+    cart_items = CartItem.objects.filter(cart=cart)
+
+    return render(request, 'customer/checkout.html', {
+        "addresses" : addresses,
+        "cart" : cart,
+        "cart_items" : cart_items
+    })
+
+def place_order(request):
+    user = request.user
+
+    address_id = request.POST.get('address')
+    address = get_object_or_404(Address, id=address_id)
+
+    cart = get_object_or_404(Cart, user=user)
+    cart_items = CartItem.objects.filter(cart=cart)
+
+    payment_method = request.POST.get('payment_mode')
+
+    order = Order.objects.create(
+        user = user,
+        address = address,
+        payment_method = payment_method,
+    )
+
+    for cart_item in cart_items:
+        OrderItem.objects.create(
+            order = order,
+            product = cart_item.product,
+            quantity = cart_item.quantity,
+            price = cart_item.price
+        )
+
+    cart_items.delete()
+
+    return redirect('order_success', id=order.id)
+    
+def view_orders(request):
+    orders = Order.objects.filter(user=request.user)
+    return render(request, 'customer/view_orders.html', {
+        "orders" : orders
+    })
+
+def order_success(request, id):
+    order = get_object_or_404(Order, id=id, user=request.user)
+    return render(request, 'customer/order_successfull.html', {'order': order})

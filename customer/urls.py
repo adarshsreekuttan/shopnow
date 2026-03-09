@@ -33,4 +33,7 @@ urlpatterns = [
     path('post-review/<str:slug>/', views.post_review, name='post_review'),
 
     path('checkout-page/', views.checkout_page, name='checkout_page'),
+    path('place-order/', views.place_order, name='place_order'),
+    path('view-orders/', views.view_orders, name='view_orders'),
+    path('order-succes/<int:id>', views.order_success, name='order_success')
 ]

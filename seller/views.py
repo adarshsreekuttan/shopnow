@@ -1,13 +1,11 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
-from django.contrib.auth.hashers import make_password, check_password
 from django.contrib.auth import get_user_model
 from django.contrib import messages
 from django.utils.text import slugify
 
-from core.models import User, Product, SubCategory
-from seller.models import SellerProfile, Category
-from .models import SubCategory
+from core.models import User, Product
+from .models import SellerProfile, Category, SubCategory
 from .decorators import seller_required
 
 
@@ -45,6 +43,7 @@ def seller_registration(request):
         messages.success(request,'succesfully created seller account')
         return redirect('seller_login')     
     return render(request,"seller/seller_registration.html")
+
 def seller_login(request):
     if request.method == "POST":
         email = request.POST.get('seller_email')
@@ -82,13 +81,13 @@ def seller_profile(request):
     seller=request.user
     sellerprofile=seller.seller_profile
     return render(request,"seller/seller_profile.html",{'sellerprofile':sellerprofile}) 
+
 @seller_required
 def seller_profile_edit(request):
     seller=request.user
     sellerprofile=seller.seller_profile        
     if request.method == "POST":
         sellerprofile.shop_name=request.POST.get('shop_name')
-        sellerprofile.password=make_password(request.POST.get('password'))
         sellerprofile.email=request.POST.get('email')
         sellerprofile.phone=request.POST.get('phone')
         sellerprofile.address=request.POST.get('address')
@@ -99,6 +98,7 @@ def seller_profile_edit(request):
         sellerprofile.save()
         return redirect('seller_profile')
     return render(request,"seller/seller_profile_edit.html",{'seller':sellerprofile})   
+
 @seller_required
 def seller_add_product(request):
     subcategory=SubCategory.objects.all()
@@ -130,48 +130,3 @@ def seller_add_product(request):
         return redirect('seller_home')        
     return render(request,"seller/seller_add_product.html",{'category':category,'subcategory':subcategory})
 
-def seller_product_view(request,slug):
-    product=Product.objects.get(slug=slug)
-    return render(request,"seller/seller_product_view.html",{'product':product})
-def seller_product_edit(request,slug):
-    subcategory=SubCategory.objects.all()
-    if request.method=="POST":
-        product=Product()
-        product.name=request.POST.get('product_name')
-        product.price=request.POST.get('product_price')
-        product.image=request.FILES.get('product_image')
-        product.discount_price=request.POST.get('discount_price')
-        product.description=request.POST.get('description')
-        product.stock=request.POST.get('stock')
-        product.sub_category=SubCategory.objects.get(id=request.POST.get('sub_category'))        
-        base_slug=slugify(product.name)
-        
-        slug=base_slug
-        count=1  
-        while Product.objects.filter(slug=slug).exists():
-            slug=f"{base_slug}-{count}"
-            count+=1        
-        product.slug= slug
-        product.save()
-        
-        return redirect('seller_product_view')        
-    return render(request,"seller/seller_product_edit.html",{'subcategory':subcategory})
-
-def seller_password(request):
-    seller_id=request.session.get('seller_id')
-    seller=SellerProfile.objects.get(id=seller_id)
-    if request.method=='POST':
-        current_password=request.POST.get('current_password')
-        new_password=request.POST.get('new_password')
-        confirm_pssword=request.POST.get('confirm_password')
-                
-        if check_password(current_password,seller.password):
-            if new_password==confirm_pssword:
-                seller.password=make_password(new_password)
-                seller.save()   
-            else:
-                error="new password is not matched"  
-        else:
-            error="current password is incorrect"  
-        return render(request,'seller/seller_password.html',{'seller':seller,'error':error})                       
-    return render(request,'seller/seller_password.html',{'seller':seller})
