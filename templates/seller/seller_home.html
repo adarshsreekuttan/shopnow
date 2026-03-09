@@ -213,18 +213,21 @@
                             View
                         </a>
                         <button class="w-8 md:w-10 border border-gray-300 text-gray-500 rounded hover:bg-gray-50 hover:text-red-500 transition">
-                            <i class="fa-solid fa-trash text-xs md:text-sm"></i>
+                            <a href="{% url 'product_delete' x.id %}" class="fa-solid fa-trash text-xs md:text-sm"></a>
                         </button>
                     </div>
                 </div>              
             {% endfor %}    
-                <div class="bg-bg_light border-2 border-dashed border-gray-300 rounded-lg p-3 relative card-hover transition-all duration-300 group flex-col h-full items-center justify-center cursor-pointer hover:border-primary hover:bg-white hidden lg:flex">
-                    <div class="w-16 h-16 rounded-full bg-white shadow flex items-center justify-center text-3xl text-primary mb-3 group-hover:scale-110 transition">
-                        <i class="fa-solid fa-plus"></i>
-                    </div>
-                    <h4 class="text-sm font-bold text-gray-600 group-hover:text-primary">Add New Product</h4>
-                    <p class="text-xs text-gray-400 mt-1 text-center">List a new item in your store</p>
-                </div>
+                   <a href="{% url 'seller_add_product' %}" class="bg-bg_light border-2 border-dashed border-gray-300 rounded-lg p-3 relative card-hover transition-all duration-300 group flex-col h-full items-center justify-center cursor-pointer hover:border-primary hover:bg-white hidden lg:flex">
+    
+                        <div class="w-16 h-16 rounded-full bg-white shadow flex items-center justify-center text-3xl text-primary mb-3 group-hover:scale-110 transition">
+                            <i class="fa-solid fa-plus"></i>
+                        </div>
+                        
+                        <h4 class="text-sm font-bold text-gray-600 group-hover:text-primary">Add New Product</h4>
+                        <p class="text-xs text-gray-400 mt-1 text-center">List a new item in your store</p>
+                        
+                    </a>
 
             </div>
         </section>
