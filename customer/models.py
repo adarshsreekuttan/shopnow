@@ -81,11 +81,11 @@ class Order(models.Model):
 
     @property
     def tax(self):
-        return self.total_price * Decimal("0.18")
+        return (self.total_price * Decimal("0.18")).quantize(Decimal("0.00"))
 
     @property
     def grand_total(self):
-        return self.total_price + self.tax
+        return round(self.total_price + self.tax, 2)
 
 
 class OrderItem(models.Model):

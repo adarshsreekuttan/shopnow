@@ -355,4 +355,5 @@ def order_success(request, id):
     return render(request, 'customer/order_successfull.html', {'order': order})
 
 def view_single_order(request, id):
-    return render(request, 'customer/view_single_order.html')
+    order = get_object_or_404(Order, id=id)
+    return render(request, 'customer/view_single_order.html', {"order":order})
