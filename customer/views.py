@@ -10,6 +10,9 @@ from .decorators import customer_required
 
 from django.core.paginator import Paginator
 
+import pyotp 
+from django.core.mail import send_mail
+from django.conf import settings
 
 def customer_login(request):
     if request.method == 'POST':
