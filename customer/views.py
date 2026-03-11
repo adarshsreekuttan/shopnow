@@ -3,10 +3,13 @@ from core.models import User
 from django.contrib.auth import login, authenticate, logout, update_session_auth_hash
 from django.http import HttpResponse
 from core.models import Product
-from seller.models import Category
+from seller.models import Category, SubCategory
 from django.contrib.auth.decorators import login_required
 from .models import Address, Cart, CartItem, WishList, Reviews, Order, OrderItem
 from .decorators import customer_required
+
+from django.core.paginator import Paginator
+
 
 def customer_login(request):
     if request.method == 'POST':
@@ -55,8 +58,12 @@ def customer_register(request):
     return render(request,'customer/register.html')
 
 def home_view(request):
-    products = Product.objects.all()
-    category = Category.objects.all()
+    all_products = Product.objects.filter(status = "approved")
+    category = Category.objects.filter()
+
+    paginator = Paginator(all_products, 15)
+    page_number = request.GET.get('page')
+    products = paginator.get_page(page_number)
 
     for product in products:
         primary = product.productimage_set.filter(is_primary=True).first()
@@ -357,3 +364,36 @@ def order_success(request, id):
 def view_single_order(request, id):
     order = get_object_or_404(Order, id=id)
     return render(request, 'customer/view_single_order.html', {"order":order})
+
+def category_filter(request, slug):
+    category = get_object_or_404(Category, slug = slug)
+    subcategories = SubCategory.objects.filter(category = category)
+    all_products = Product.objects.filter(category=category)
+
+    paginator = Paginator(all_products, 15)
+    page_number = request.GET.get('page')
+    products = paginator.get_page(page_number)
+
+    return render(request, 'customer/product_category_filter.html', {
+        "products":products,
+        "subcategories":subcategories,
+        "category":category,
+    })
+
+def subcategory_filter(request, slug, sub_slug):
+    category = get_object_or_404(Category, slug = slug)
+    subcategory = get_object_or_404(SubCategory, category=category, slug = sub_slug)
+
+    subcategories = SubCategory.objects.filter(category=category)
+    all_products = Product.objects.filter(category=category, sub_category=subcategory)
+
+    paginator = Paginator(all_products, 15)
+    page_number = request.GET.get('page')
+    products = paginator.get_page(page_number)  
+
+    return render(request, 'customer/product_category_filter.html', {
+        "category":category,
+        "subcategory":subcategory,
+        "subcategories":subcategories,
+        "products":products,
+    })

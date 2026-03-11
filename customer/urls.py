@@ -37,4 +37,7 @@ urlpatterns = [
     path('view-orders/', views.view_orders, name='view_orders'),
     path('order-succes/<int:id>', views.order_success, name='order_success'),
     path('view-single-order/<int:id>', views.view_single_order, name='view_order_details'),
+
+    path('category/<str:slug>', views.category_filter, name='category_detail'),
+    path('subcategory/<slug:slug>/<slug:sub_slug>', views.subcategory_filter, name='subcategory_filter'),
 ]
