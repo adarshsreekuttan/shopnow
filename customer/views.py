@@ -7,6 +7,7 @@ from seller.models import Category, SubCategory
 from django.contrib.auth.decorators import login_required
 from .models import Address, Cart, CartItem, WishList, Reviews, Order, OrderItem
 from .decorators import customer_required
+from django.http import JsonResponse
 
 from django.core.paginator import Paginator
 
@@ -263,13 +264,14 @@ def toggle_wishlist(request, id):
         item = WishList.objects.filter(user=user, product=product)
         if item.exists():
             item.delete()
-            return redirect('single_product', slug=product.slug)
+            status = "removed"
         else:  
             WishList.objects.create(
                 user=user,
                 product=product
             )
-            return redirect('single_product', slug=product.slug)
+            status = "added"
+        return JsonResponse({"status":status})
         
 @customer_required
 @login_required
@@ -400,3 +402,20 @@ def subcategory_filter(request, slug, sub_slug):
         "subcategories":subcategories,
         "products":products,
     })
+
+def search_products(request):
+    search_keyword = request.GET.get("search_keyword", "")
+    all_result_products = Product.objects.filter(name__icontains=search_keyword)
+
+    paginator = Paginator(all_result_products, 12)
+    page_number = request.GET.get('page')
+    result_products = paginator.get_page(page_number)
+
+    for product in result_products:
+        primary = product.productimage_set.filter(is_primary=True).first()
+        if not primary:
+            primary = product.productimage_set.first()
+        product.primary_image = primary
+
+    return render(request, 'customer/search_results.html', {"products":result_products, "search_keyword":search_keyword})
+

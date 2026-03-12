@@ -40,4 +40,6 @@ urlpatterns = [
 
     path('category/<str:slug>', views.category_filter, name='category_detail'),
     path('subcategory/<slug:slug>/<slug:sub_slug>', views.subcategory_filter, name='subcategory_filter'),
+
+    path('search', views.search_products, name='search_products')
 ]

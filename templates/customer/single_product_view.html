@@ -31,13 +31,13 @@
                     <div class="flex flex-col h-full">
                         <div class="p-4 sm:p-6 flex justify-center items-center">
                             <div class="relative w-full max-w-md">
+
                                 <!-- Wishlist -->
-                                <form method="POST" action="{% url 'toggle_wishlist' product.id %}">
-                                    {% csrf_token %}
-                                    <button
-                                        class="absolute top-3 right-3 z-10 p-2 bg-white rounded-md shadow border border-gray-100 hover:text-red-500 transition-colors">
+                                    <button type="button"
+                                        class="wishlist-button absolute top-3 right-3 z-10 p-2 bg-white rounded-md shadow border border-gray-100 hover:text-red-500 transition-colors"
+                                        data-product-id="{{ product.id }}">
                                         <svg
-                                            class="w-5 h-5 {% if is_in_wishlist %}text-red-500 fill-red-500{% else %}text-gray-400 fill-none{% endif %}"
+                                            class="wishlist-icon w-5 h-5 {% if is_in_wishlist %}text-red-500 fill-red-500{% else %}text-gray-400 fill-none{% endif %}"
                                             stroke="currentColor"
                                             viewBox="0 0 24 24">
                                             <path stroke-linecap="round"
@@ -46,7 +46,6 @@
                                                   d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
                                         </svg>
                                     </button>
-                                </form>
 
                                 <!-- Main image -->
                                 <div class="w-full aspect-square bg-white rounded-md border border-gray-100 flex items-center justify-center overflow-hidden">
@@ -294,6 +293,59 @@
     </style>
 
     <script>
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== "") {
+                const cookies = document.cookie.split(";");
+
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+
+                    if (cookie.substring(0, name.length + 1) === (name + "=")) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        document.addEventListener("click", function(e){
+
+            const button = e.target.closest(".wishlist-button")
+            if(!button) return
+
+            const productId = button.dataset.productId
+            const icon = button.querySelector(".wishlist-icon")
+
+            const url = `{% url "toggle_wishlist" 0 %}`.replace("0", productId)
+
+            fetch(url,{
+                method:"POST",
+                headers:{
+                    "X-CSRFToken": getCookie("csrftoken")
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+
+                if(data.status === "added"){
+                    icon.classList.remove("text-gray-400","fill-none")
+                    icon.classList.add("text-red-500","fill-red-500")
+                } else {
+                    icon.classList.remove("text-red-500","fill-red-500")
+                    icon.classList.add("text-gray-400","fill-none")
+                }
+
+            })
+
+        })
+
+
+       
+
+
       function selectThumb(btn) {
         const src = btn.dataset.img;
         const idx = btn.dataset.index;
