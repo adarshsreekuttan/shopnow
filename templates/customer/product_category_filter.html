@@ -75,18 +75,16 @@
 
   <main class="container mx-auto px-4 sm:px-6 lg:px-10 py-10">
     
-    <div class="flex items-center justify-between mb-8 pb-4 border-b border-gray-100">
-        <button class="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-pdark group">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/></svg>
-            Filters
-        </button>
-        <select class="bg-transparent text-sm font-semibold text-gray-600 focus:outline-none cursor-pointer">
-            <option>Sort by: Featured</option>
-            <option>Price: Low to High</option>
-            <option>Price: High to Low</option>
-            <option>Newest Arrivals</option>
-        </select>
-    </div>
+    <form method="GET">
+      <div class="flex items-center justify-between mb-8 pb-4 border-b border-gray-100">
+          <select onchange="this.form.submit()" class="bg-transparent text-sm font-semibold text-gray-600 focus:outline-none cursor-pointer" name="sort_by">
+              <option value="" {% if not request.GET.sort_by == "" %} selected {% endif %}>Sort by: Featured</option>
+              <option value="price_low_to_high" {% if request.GET.sort_by == "price_low_to_high" %} selected {% endif %}>Price: Low to High</option>
+              <option value="price_high_to_low" {% if request.GET.sort_by == "price_high_to_low" %} selected {% endif %}>Price: High to Low</option>
+              <option value="new_arrivals" {% if request.GET.sort_by == "new_arrivals" %} selected {% endif %} >Newest Arrivals</option>
+          </select>
+      </div>
+    </form>
 
     <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6">
       {% for product in products %}

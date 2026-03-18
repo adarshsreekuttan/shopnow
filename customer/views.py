@@ -445,10 +445,23 @@ def view_single_order(request, id):
     order = get_object_or_404(Order, id=id)
     return render(request, 'customer/view_single_order.html', {"order":order})
 
+def apply_filter(request, queryset):
+    sort_by = request.GET.get('sort_by')
+    
+    if sort_by == "price_low_to_high":
+        queryset = queryset.order_by('discount_price')
+    elif sort_by == "price_high_to_low":
+        queryset = queryset.order_by('-discount_price')
+    elif sort_by == "new_arrivals":
+        queryset = queryset.order_by('created_at')
+
+    return queryset
+
 def category_filter(request, slug):
     category = get_object_or_404(Category, slug = slug)
     subcategories = SubCategory.objects.filter(category = category)
     all_products = Product.objects.filter(category=category)
+    all_products = apply_filter(request, all_products)
 
     paginator = Paginator(all_products, 15)
     page_number = request.GET.get('page')
@@ -466,6 +479,7 @@ def subcategory_filter(request, slug, sub_slug):
 
     subcategories = SubCategory.objects.filter(category=category)
     all_products = Product.objects.filter(category=category, sub_category=subcategory)
+    all_products = apply_filter(request, all_products)
 
     paginator = Paginator(all_products, 15)
     page_number = request.GET.get('page')
