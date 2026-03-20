@@ -111,6 +111,107 @@ def home_view(request):
         product.primary_image = primary
         
     return render(request, 'customer/home.html', {"products":products, "categories":category})
+    
+def load_subcategories(request):
+    category_slug = request.GET.get('category')
+    if category_slug:
+        category = get_object_or_404(Category, slug=category_slug)
+        subcategories = SubCategory.objects.filter(category=category)
+    else:
+        subcategories = SubCategory.objects.all().order_by('name')
+
+    data = []
+    for sub in subcategories:
+        data.append({
+            "slug":sub.slug,
+            "name":sub.name
+        })
+
+    return JsonResponse(data, safe=False)
+
+def search_products(request):
+    search_keyword = request.GET.get("search_keyword", "")
+    all_result_products = Product.objects.filter(name__icontains=search_keyword)
+
+    categories = Category.objects.all()
+    subcategories = SubCategory.objects.all()
+
+    min_price = request.GET.get('min_price')
+    max_price = request.GET.get('max_price')
+    category = request.GET.get('category')
+    subcategory = request.GET.get('subcategory')
+
+    if min_price:
+        all_result_products = all_result_products.filter(discount_price__gte=min_price)
+
+    if max_price:
+        all_result_products = all_result_products.filter(discount_price__lte=max_price)
+    
+    if category:
+        category = get_object_or_404(Category, slug=category)
+        all_result_products = all_result_products.filter(category = category)
+    
+    if subcategory:
+        subcategory = get_object_or_404(SubCategory, slug=subcategory)
+        all_result_products = all_result_products.filter(sub_category = subcategory)
+
+    
+    paginator = Paginator(all_result_products, 12)
+    page_number = request.GET.get('page')
+    result_products = paginator.get_page(page_number)
+
+    for product in result_products:
+        primary = product.productimage_set.filter(is_primary=True).first()
+        if not primary:
+            primary = product.productimage_set.first()
+        product.primary_image = primary
+
+    return render(request, 'customer/search_results.html', 
+                  {"products":result_products, 
+                   "search_keyword":search_keyword,
+                   "categories" : categories,
+                   "subcategories" :subcategories})
+
+def search_suggestions(request):
+    query = request.GET.get('q','')
+    products = Product.objects.filter(name__icontains=query)[:5]
+    data = list(products.values('name'))
+    return JsonResponse(data, safe=False)
+
+def category_filter(request, slug):
+    category = get_object_or_404(Category, slug = slug)
+    subcategories = SubCategory.objects.filter(category = category)
+    all_products = Product.objects.filter(category=category)
+    all_products = apply_filter(request, all_products)
+
+    paginator = Paginator(all_products, 15)
+    page_number = request.GET.get('page')
+    products = paginator.get_page(page_number)
+
+    return render(request, 'customer/product_category_filter.html', {
+        "products":products,
+        "subcategories":subcategories,
+        "category":category,
+    })
+
+def subcategory_filter(request, slug, sub_slug):
+    category = get_object_or_404(Category, slug = slug)
+    subcategory = get_object_or_404(SubCategory, category=category, slug = sub_slug)
+
+    subcategories = SubCategory.objects.filter(category=category)
+    all_products = Product.objects.filter(category=category, sub_category=subcategory)
+    all_products = apply_filter(request, all_products)
+
+    paginator = Paginator(all_products, 15)
+    page_number = request.GET.get('page')
+    products = paginator.get_page(page_number)  
+
+    return render(request, 'customer/product_category_filter.html', {
+        "category":category,
+        "subcategory":subcategory,
+        "subcategories":subcategories,
+        "products":products,
+    })
 
 
 def single_product_view(request, slug):
@@ -301,6 +402,14 @@ def increment_decrement_cartquantity(request, id, action):
 @login_required
 def view_wishlist(request):
     wishlist = WishList.objects.filter(user=request.user)
+
+    for item in wishlist:
+        primary = item.product.productimage_set.filter(is_primary=True).first()
+        if not primary:
+            primary = item.product.productimage_set.first()
+
+        item.primary_image = primary
+
     return render(request, 'customer/view_wishlist.html', {"wishlist":wishlist})
 
 @customer_required
@@ -471,57 +580,6 @@ def apply_filter(request, queryset):
         queryset = queryset.order_by('created_at')
 
     return queryset
-
-def category_filter(request, slug):
-    category = get_object_or_404(Category, slug = slug)
-    subcategories = SubCategory.objects.filter(category = category)
-    all_products = Product.objects.filter(category=category)
-    all_products = apply_filter(request, all_products)
-
-    paginator = Paginator(all_products, 15)
-    page_number = request.GET.get('page')
-    products = paginator.get_page(page_number)
-
-    return render(request, 'customer/product_category_filter.html', {
-        "products":products,
-        "subcategories":subcategories,
-        "category":category,
-    })
-
-def subcategory_filter(request, slug, sub_slug):
-    category = get_object_or_404(Category, slug = slug)
-    subcategory = get_object_or_404(SubCategory, category=category, slug = sub_slug)
-
-    subcategories = SubCategory.objects.filter(category=category)
-    all_products = Product.objects.filter(category=category, sub_category=subcategory)
-    all_products = apply_filter(request, all_products)
-
-    paginator = Paginator(all_products, 15)
-    page_number = request.GET.get('page')
-    products = paginator.get_page(page_number)  
-
-    return render(request, 'customer/product_category_filter.html', {
-        "category":category,
-        "subcategory":subcategory,
-        "subcategories":subcategories,
-        "products":products,
-    })
-
-def search_products(request):
-    search_keyword = request.GET.get("search_keyword", "")
-    all_result_products = Product.objects.filter(name__icontains=search_keyword)
-
-    paginator = Paginator(all_result_products, 12)
-    page_number = request.GET.get('page')
-    result_products = paginator.get_page(page_number)
-
-    for product in result_products:
-        primary = product.productimage_set.filter(is_primary=True).first()
-        if not primary:
-            primary = product.productimage_set.first()
-        product.primary_image = primary
-
-    return render(request, 'customer/search_results.html', {"products":result_products, "search_keyword":search_keyword})
 
 def buy_now(request, id):
     user = request.user

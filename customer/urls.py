@@ -40,8 +40,10 @@ urlpatterns = [
 
     path('category/<str:slug>', views.category_filter, name='category_detail'),
     path('subcategory/<slug:slug>/<slug:sub_slug>', views.subcategory_filter, name='subcategory_filter'),
+    path('load-subcategories/', views.load_subcategories, name='load_subcategories'),
 
     path('search', views.search_products, name='search_products'),
+    path('search-suggestions/', views.search_suggestions, name='search_suggestions'),
 
     path('buy-now/<int:id>', views.buy_now, name='buy_now'),
 

@@ -49,26 +49,71 @@
 
         <div class="flex flex-col lg:flex-row gap-8">
             
-            <aside class="w-full lg:w-[260px] flex-shrink-0">
-                <div class="space-y-6">
-                    
-                    <div class="bg-white p-6 rounded-md border border-gray-100 shadow-sm">
-                        <h3 class="text-xs font-black uppercase tracking-[0.15em] text-pdark mb-4 border-l-4 border-primary pl-3">Price Range</h3>
-                        <div class="space-y-4">
-                            <div class="flex items-center gap-2">
-                                <input type="number" placeholder="Min" class="w-full bg-lightbg border-none rounded-md p-2 text-sm focus:ring-2 focus:ring-primary/20">
-                                <span class="text-gray-300">—</span>
-                                <input type="number" placeholder="Max" class="w-full bg-lightbg border-none rounded-md p-2 text-sm focus:ring-2 focus:ring-primary/20">
+            <form method="GET">
+
+                <input type="hidden" name="search_keyword" value="{{ search_keyword }}">
+
+                <aside class="w-full lg:w-[260px] flex-shrink-0">
+                    <div class="space-y-6">
+
+                        <!-- 💰 Price Range -->
+                        <div class="bg-white p-6 rounded-md border shadow-sm">
+                            <h3 class="text-xs font-bold uppercase mb-3">Price Range</h3>
+
+                            <div class="flex gap-2">
+                                <input type="number" name="min_price" placeholder="Min"
+                                    value="{{ request.GET.min_price }}"
+                                    class="w-full bg-gray-100 rounded-md p-2 text-sm">
+
+                                <input type="number" name="max_price" placeholder="Max"
+                                    value="{{ request.GET.max_price }}"
+                                    class="w-full bg-gray-100 rounded-md p-2 text-sm">
                             </div>
-                            <button class="w-full bg-pdark text-white py-2 rounded-md text-xs font-bold uppercase tracking-widest hover:bg-primary transition-all shadow-md shadow-pdark/10">
-                                Apply Filter
-                            </button>
                         </div>
+
+                        <!-- 📂 Category -->
+                        <div class="bg-white p-6 rounded-md border shadow-sm">
+                            <h3 class="text-xs font-bold uppercase mb-3">Category</h3>
+
+                            <select name="category" id="category" class="w-full bg-gray-100 rounded-md p-2 text-sm">
+                                <option value="">All</option>
+                                {% for cat in categories %}
+                                <option value="{{ cat.slug }}" {% if request.GET.category == cat.slug %}selected{% endif %}>
+                                    {{ cat.name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- 📁 Subcategory -->
+                        <div class="bg-white p-6 rounded-md border shadow-sm">
+                            <h3 class="text-xs font-bold uppercase mb-3">Subcategory</h3>
+
+                            <select name="subcategory" id="subcategory" class="w-full bg-gray-100 rounded-md p-2 text-sm">
+                                <option value="">All</option>
+                            </select>
+                        </div>
+
+                        <div class="flex gap-2">
+
+                            <!-- Apply -->
+                            <button type="submit"
+                                class="w-1/2 bg-black text-white py-2 rounded-md text-xs font-bold uppercase hover:bg-gray-800 transition text-center">
+                                Apply
+                            </button>
+
+                            <!-- Reset -->
+                            <a href="{% url 'search_products' %}?search_keyword={{ search_keyword }}"
+                                class="w-1/2 bg-black text-white py-2 rounded-md text-xs font-bold uppercase hover:bg-gray-800 transition text-center">
+                                Reset
+                            </a>
+
                     </div>
 
+                    </div>
+                </aside>
 
-                </div>
-            </aside>
+                </form>
 
             <main class="flex-1">
                 <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-4 sm:gap-5 lg:gap-6">
@@ -190,4 +235,26 @@
     {% include 'customer/footer.html' %}
 
 </body>
+
+<script>
+    document.getElementById('category').addEventListener("change", function(){
+        let category = this.value;
+
+        fetch(`/load-subcategories/?category=${category}`)
+        .then(response => response.json())
+        .then(data => {
+            let subDropdown = document.getElementById("subcategory");
+            subDropdown.innerHTML = '<option value="">All</option>';
+
+            data.forEach(sub => {
+                let option = `<option value="${sub.slug}">${sub.name}</option>`;
+                subDropdown.innerHTML += option;
+            });
+        });
+    });
+
+    document.addEventListener("DOMContentLoaded", function() {
+    document.getElementById("category").dispatchEvent(new Event("change"));
+        });
+</script>
 </html>

@@ -15,12 +15,19 @@
                 required
                 type="text"
                 name="search_keyword"
+                id="searchBox"
+                autocomplete="off"
+                value="{{search_keyword}}"
                 placeholder="Search for products, brands and more..."
                 class="w-full pl-4 pr-12 py-2.5 rounded-md text-sm text-gray-900 bg-white 
                       border border-gray-200 shadow-sm
                       focus:outline-none focus:ring-2 focus:ring-highlight/80 focus:border-transparent
                       placeholder-gray-400 transition-all"
             >
+            <div id="suggestions" 
+                class="absolute left-0 top-full w-full bg-white border mt-1 rounded shadow z-50 hidden max-h-60 overflow-y-auto">
+            </div>
+
             <button 
                 type="submit"
                 class="absolute right-0 top-0 h-full px-4 text-gray-500 hover:text-primary transition-colors flex items-center justify-center">
@@ -118,3 +125,52 @@
     </div>
   </div>
 </nav>
+
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+
+    let box = document.getElementById("searchBox");
+    let suggestionsBox = document.getElementById("suggestions");
+
+    if (!box) return;
+
+    box.addEventListener("keyup", function() {
+        let query = this.value;
+
+        if (query.length < 1) {
+            suggestionsBox.innerHTML = "";
+            suggestionsBox.classList.add("hidden");
+            return;
+        }
+
+        fetch(`/search-suggestions/?q=${query}`)
+        .then(res => res.json())
+        .then(data => {
+            suggestionsBox.innerHTML = "";
+
+            if (data.length === 0) {
+                suggestionsBox.classList.add("hidden");
+                return;
+            }
+
+            data.forEach(item => {
+                let div = `<div onclick="selectItem('${item.name}')"
+                            class="p-2 hover:bg-gray-100 cursor-pointer text-sm text-black">
+                            ${item.name}
+                          </div>`;
+                suggestionsBox.innerHTML += div;
+            });
+
+            suggestionsBox.classList.remove("hidden");
+        });
+    });
+
+    window.selectItem = function(name){
+        box.value = name;
+        suggestionsBox.innerHTML = "";
+        suggestionsBox.classList.add("hidden");
+         box.form.submit();
+    }
+
+});
+</script>
