@@ -103,7 +103,11 @@ class Order(models.Model):
     @property
     def grand_total(self):
         return round(self.total_price + self.tax, 2)
-
+    
+    def save(self, *args, **kwargs):
+        if self.status == 'delivered':
+            self.payment_status = 'paid'
+        super().save(*args, **kwargs)
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)

@@ -15,7 +15,7 @@
         "order_id": "{{ razorpay_order_id }}",
         "handler": function (response){
             // Success! Redirect to your success view
-            window.location.href = `/customer/payment-success/?order_id={{ order.id }}&payment_id=` + response.razorpay_payment_id;
+            window.location.href = `/payment-success/?order_id={{ order.id }}&payment_id=` + response.razorpay_payment_id;
         },
         "prefill": {
             "email": "{{ user_email }}",

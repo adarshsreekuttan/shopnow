@@ -432,7 +432,22 @@ def place_order(request):
     return redirect('checkout_page')
     
 def view_orders(request):
+    status = request.GET.get('status')
     orders = Order.objects.filter(user=request.user).order_by('-created_at')
+
+    if status == 'all':
+        orders = Order.objects.filter(user=request.user).order_by('-created_at')
+    elif status == 'pending':
+        orders = Order.objects.filter(user=request.user, status="pending").order_by('-created_at')
+    elif status == 'processing':
+        orders = Order.objects.filter(user=request.user, status="processing").order_by('-created_at')
+    elif status == 'shipped':
+        orders = Order.objects.filter(user=request.user, status="shipped").order_by('-created_at')
+    elif status == 'delivered':
+        orders = Order.objects.filter(user=request.user, status="delivered").order_by('-created_at')
+    elif status == 'cancelled':
+        orders = Order.objects.filter(user=request.user, status="cancelled").order_by('-created_at')
+
     return render(request, 'customer/view_orders.html', {
         "orders" : orders
     })

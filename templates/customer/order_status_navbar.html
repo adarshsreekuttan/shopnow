@@ -1,0 +1,42 @@
+<nav class="flex items-center gap-2 overflow-x-auto no-scrollbar">
+
+  {% with status=request.GET.status|default:'all' %}
+
+  <a href="?status=all"
+     class="px-4 py-2 rounded-full text-sm font-medium transition-all
+     {% if status == 'all' %} bg-black text-white {% else %} text-gray-600 hover:bg-gray-100 {% endif %}">
+    All
+  </a>
+
+  <a href="?status=pending"
+     class="px-4 py-2 rounded-full text-sm font-medium transition-all
+     {% if status == 'pending' %} bg-black text-white {% else %} text-gray-600 hover:bg-gray-100 {% endif %}">
+    Pending
+  </a>
+  <a href="?status=processing"
+     class="px-4 py-2 rounded-full text-sm font-medium transition-all
+     {% if status == 'processing' %} bg-black text-white {% else %} text-gray-600 hover:bg-gray-100 {% endif %}">
+    Processing
+  </a>
+
+  <a href="?status=shipped"
+     class="px-4 py-2 rounded-full text-sm font-medium transition-all
+     {% if status == 'shipped' %} bg-black text-white {% else %} text-gray-600 hover:bg-gray-100 {% endif %}">
+    Shipped
+  </a>
+
+  <a href="?status=delivered"
+     class="px-4 py-2 rounded-full text-sm font-medium transition-all
+     {% if status == 'delivered' %} bg-black text-white {% else %} text-gray-600 hover:bg-gray-100 {% endif %}">
+    Delivered
+  </a>
+
+  <a href="?status=cancelled"
+     class="px-4 py-2 rounded-full text-sm font-medium transition-all
+     {% if status == 'cancelled' %} bg-black text-white {% else %} text-gray-600 hover:bg-gray-100 {% endif %}">
+    Cancelled
+  </a>
+
+  {% endwith %}
+
+</nav>
