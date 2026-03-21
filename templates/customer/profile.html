@@ -62,16 +62,9 @@
             <div class="bg-pdark text-white p-6 rounded-md lg:col-span-2 flex items-center justify-between gap-4">
                 <div>
                     <h3 class="text-xl font-semibold mb-1">Track your style.</h3>
-                    <p class="text-white/70 text-sm mb-4">You have 3 items arriving by Friday.</p>
-                    <button
-                        class="bg-highlight text-pdark px-5 py-2 rounded-md text-xs font-semibold uppercase tracking-wide hover:bg-white transition">
-                        Track Package
-                    </button>
-                </div>
-                <div class="opacity-20 hidden sm:block">
-                    <svg class="w-20 h-20" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M20 8l-8 5-8-5V6l8 5 8-5v2z"/>
-                    </svg>
+                    <p class="text-white/70 text-sm mb-4">You have {{active_orders_count}} orders arriving</p>
+                    <a href="{% url 'view_orders' %}" 
+                    class="bg-highlight text-pdark px-5 py-2 rounded-md text-xs font-semibold uppercase tracking-wide hover:bg-white transition">Track orders</a>
                 </div>
             </div>
 

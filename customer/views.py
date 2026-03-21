@@ -235,7 +235,8 @@ def single_product_view(request, slug):
 @customer_required
 @login_required
 def profile_page(request):
-    return render(request, 'customer/profile.html')
+    active_orders_count = Order.objects.filter(user=request.user).exclude(status__in=['delivered', 'cancelled']).count()
+    return render(request, 'customer/profile.html',{"active_orders_count":active_orders_count})
 
 def customer_logout(request):
     logout(request)
