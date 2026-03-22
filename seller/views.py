@@ -2,7 +2,7 @@ from django.shortcuts import render,redirect,get_object_or_404
 from django.contrib.auth import login,authenticate,logout
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth import get_user_model,update_session_auth_hash
-from .models import SellerProfile,SubCategory,Category,ProductImage
+from .models import SellerProfile,SubCategory,Category,ProductImage,ProductVarient,AttributeValues,VariantImage,Attribute
 from django.contrib import messages
 from django.utils.text import slugify
 from core.models import User, Product
@@ -163,8 +163,57 @@ def seller_add_product(request):
                 product=product,
                 image=img
             )
+        names = request.POST.getlist('variant_name[]')    
+        prices = request.POST.getlist('variant_price[]')    
+        stocks = request.POST.getlist('variant_stock[]')  
+        
+        if names:
+            for i in range(len(names)):
+                
+                if not names[i].strip():
+                    continue
+                
+                variant=ProductVarient()
+                variant.product=product
+                variant.price=prices[i]
+                variant.stock=stocks[i]
+                variant.save()
+            
+                values=names[i].split('-')
+            
+                for val in values:
+                    attr_values=AttributeValues.objects.filter(value=val).first()
+                    if attr_values:
+                        variant.attribute_values.add(attr_values)
+                    
+                image=request.FILES.get(f"variant_image_{names[i]}")  
+                if image:
+                    VariantImage.objects.create(
+                        variant=variant,
+                        image=image
+                    )
+                      
         return redirect('seller_approval')        
     return render(request,"seller/seller_add_product.html",{'category':category,'subcategory':subcategory})
+
+
+def get_attributes(request):
+    subcat_id = request.GET.get('subcat_id')
+    
+    subcategory = SubCategory.objects.get(id=subcat_id)
+    attributes = subcategory.attributes.all()
+    
+    data = []
+
+    for attr in attributes:
+        values = AttributeValues.objects.filter(attribute=attr)
+        data.append({
+            'attr_id': attr.id,
+            'attr_name': attr.name,
+            'values': [{'id': v.id, 'value': v.value} for v in values]
+        })
+
+    return JsonResponse({'data': data})
 
 @seller_required
 def seller_approval(request):
@@ -260,6 +309,14 @@ def seller_order_status(request,id):
 def pending_order(request):
     order=Order.objects.filter(status ="pending")
     return render(request,"seller/pending_order.html",{'order':order})
+
+def ongoing_order(request):
+    order=Order.objects.filter(status ="shipped")
+    return render(request,"seller/ongoing_order.html",{'order':order})
+
+def finished_order(request):
+    order=Order.objects.filter(status="delivered")
+    return render(request,'seller/finished_order.html',{'order':order})
 
 @seller_required
 def pending_single(request,slug):

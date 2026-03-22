@@ -80,10 +80,10 @@
                 <a href="{% url 'pending_order' %}" class="py-4 border-b-2 {% if request.GET.status == 'pending' %}border-primary text-primary{% else %}border-transparent hover:text-gray-700 hover:border-gray-300 transition{% endif %} flex items-center gap-2">
                     Pending <span class="bg-yellow-100 text-yellow-700 py-0.5 px-2 rounded-full text-[10px] font-bold">NEW</span>
                 </a>
-                <a href="?status=ongoing" class="py-4 border-b-2 {% if request.GET.status == 'ongoing' %}border-primary text-primary{% else %}border-transparent hover:text-gray-700 hover:border-gray-300 transition{% endif %}">
+                <a href="{% url 'ongoing_order' %}" class="py-4 border-b-2 {% if request.GET.status == 'ongoing' %}border-primary text-primary{% else %}border-transparent hover:text-gray-700 hover:border-gray-300 transition{% endif %}">
                     Ongoing <span class="text-xs ml-1 font-normal">(Processing, Shipped)</span>
                 </a>
-                <a href="?status=finished" class="py-4 border-b-2 {% if request.GET.status == 'finished' %}border-primary text-primary{% else %}border-transparent hover:text-gray-700 hover:border-gray-300 transition{% endif %}">
+                <a href="{% url 'finished_order' %}" class="py-4 border-b-2 {% if request.GET.status == 'finished' %}border-primary text-primary{% else %}border-transparent hover:text-gray-700 hover:border-gray-300 transition{% endif %}">
                     Finished <span class="text-xs ml-1 font-normal">(Delivered, Cancelled)</span>
                 </a>
             </div>
