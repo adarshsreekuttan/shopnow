@@ -18,13 +18,5 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('add_cat/', views.add_category, name='add_cat'),
-    path('cat_list/', views.category_list, name='cat_list'),
-    path('admin_login/', views.admin_login, name='admin_login'),
-    path('delete/<int:id>/', views.delete_cat, name='dlt_cat'),
-    path('update/<int:id>/', views.update_category, name='upd_cat'),
-    path('admindash/', views.admin_dash, name='admin_dash'),
-    path('admin_logout/', views.admin_logout, name='admin_logout'),
-    path('add_subcat/', views.add_subcategory, name='add_subcat'),
-    path('subcat_list/', views.sub_categorylist, name='subcat_list'),
+ 
 ]
