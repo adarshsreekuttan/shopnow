@@ -1,0 +1,227 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlipShop - Inventory</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary_dark: '#362F4F',
+                        primary: '#5B23FF',
+                        accent: '#008BFF',
+                        highlight: '#E4FF30',
+                        bg_light: '#F8F9FA',
+                        text_dark: '#212121',
+                        text_gray: '#878787'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'soft': '0 2px 10px rgba(0, 0, 0, 0.04)',
+                        'hover': '0 12px 25px rgba(0, 0, 0, 0.1)',
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #F8F9FA; }
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body class="text-text_dark flex flex-col min-h-screen">
+
+    <nav class="bg-primary_dark sticky top-0 z-50 shadow-md">
+        <div class="container mx-auto px-4 h-16 flex items-center justify-between gap-4">
+            
+            <a href="{% url 'seller_home' %}" class="flex items-center gap-2 shrink-0">
+                <div class="w-8 h-8 bg-highlight rounded-md flex items-center justify-center text-primary_dark font-bold text-xl italic">F</div>
+                <span class="text-white font-bold text-lg tracking-wide hidden sm:block">FlipShop</span>
+            </a>
+
+            <div class="flex-1 max-w-3xl hidden md:block relative">
+                <input type="text" placeholder="Search your inventory by SKU, Title, or Category..." 
+                       class="w-full h-10 pl-4 pr-10 rounded-sm text-sm focus:outline-none focus:ring-2 focus:ring-accent shadow-sm bg-white text-text_dark">
+                <button class="absolute right-0 top-0 h-10 w-12 text-primary_dark hover:text-primary transition font-bold flex items-center justify-center">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+            </div>
+
+            <div class="flex items-center gap-4 sm:gap-6 text-white font-medium text-sm shrink-0">
+                <a href="#" class="hover:text-highlight transition hidden sm:block">Login</a>
+                <a href="#" class="hover:text-highlight transition hidden sm:block">Orders</a>
+                
+                <a href="#" class="flex items-center gap-2 cursor-pointer relative hover:text-highlight transition">
+                    <i class="fa-solid fa-cart-shopping text-xl"></i>
+                    <span class="hidden sm:block">Cart</span>
+                    <span class="absolute -top-2 -right-2 sm:-right-4 bg-highlight text-primary_dark text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">3</span>
+                </a>
+            </div>
+        </div>
+        
+        <div class="md:hidden px-4 pb-3">
+            <div class="relative w-full">
+                <input type="text" placeholder="Search inventory..." class="w-full h-9 pl-4 pr-10 rounded-sm text-sm focus:outline-none bg-white text-text_dark">
+                <button class="absolute right-0 top-0 h-9 w-10 text-primary_dark flex items-center justify-center"><i class="fa-solid fa-magnifying-glass"></i></button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-1 container mx-auto px-2 sm:px-4 py-6 md:py-8">
+
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+            <div>
+                <h1 class="text-2xl font-bold text-text_dark">Inventory Dashboard</h1>
+                <p class="text-sm text-text_gray mt-1">Manage your active listings.</p>
+            </div>
+            <div class="flex gap-3">
+                <button class="border-2 border-accent text-accent hover:bg-accent hover:text-white px-4 py-2 rounded-md font-semibold text-sm transition">
+                    Export CSV
+                </button>
+                <a href="{% url 'seller_add_product' %}" class="bg-highlight text-primary_dark hover:bg-yellow-400 px-4 py-2 rounded-md font-bold text-sm transition shadow-sm flex items-center">
+                    + Add Product
+                </a>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-4">
+            
+            {% for product in products %}
+            <div class="bg-white rounded-xl shadow-soft hover:shadow-hover hover:-translate-y-1 transition-all duration-300 flex flex-col overflow-hidden relative group">
+                
+                {% if product.stock > 5 %}
+                <span class="absolute top-2 left-2 bg-white/90 text-green-600 text-[10px] font-bold px-2 py-0.5 rounded shadow-sm z-10 border border-gray-100">
+                    Stock: {{ product.stock }}
+                </span>
+                {% else %}
+                <span class="absolute top-2 left-2 bg-red-50 text-red-600 text-[10px] font-bold px-2 py-0.5 rounded shadow-sm z-10 border border-red-100">
+                    Low Stock: {{ product.stock }}
+                </span>
+                {% endif %}
+                
+                {% if product.status == 'pending' %}
+                <span class="absolute top-2 right-2 bg-yellow-100 text-yellow-700 text-[10px] font-bold px-2 py-0.5 rounded shadow-sm z-10">
+                    Pending
+                </span>
+                {% elif product.status == 'rejected' %}
+                <span class="absolute top-2 right-2 bg-red-100 text-red-700 text-[10px] font-bold px-2 py-0.5 rounded shadow-sm z-10">
+                    Rejected
+                </span>
+                {% endif %}
+
+                <div class="aspect-square bg-gray-100 flex items-center justify-center overflow-hidden">
+                    {% if product.productimage_set.first %}
+                        <img src="{{ product.productimage_set.first.image.url }}" alt="{{ product.name }}" class="w-full h-full object-cover mix-blend-multiply group-hover:scale-105 transition duration-500">
+                    {% else %}
+                        <img src="https://placehold.co/400x400/e2e8f0/878787?text=No+Image" alt="No image" class="w-full h-full object-cover mix-blend-multiply group-hover:scale-105 transition duration-500">
+                    {% endif %}
+                </div>
+
+                <div class="p-3 md:p-4 flex flex-col flex-grow">
+                    
+                    {% if product.category %}
+                    <p class="text-[10px] text-gray-400 uppercase font-bold tracking-wider mb-1">{{ product.category.name }}</p>
+                    {% endif %}
+
+                    <h3 class="text-sm font-semibold text-text_dark line-clamp-2 leading-snug mb-2 group-hover:text-primary transition">
+                        {{ product.name }}
+                    </h3>
+                    
+                    <div class="flex items-center gap-1 mb-2">
+                        <div class="text-yellow-400 text-[10px] md:text-xs">
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star-half-stroke"></i>
+                        </div>
+                        <span class="text-[10px] text-text_gray ml-1">(0)</span>
+                    </div>
+
+                    <div class="flex items-end flex-wrap gap-x-2 gap-y-1 mb-4 mt-auto">
+                        <span class="text-base md:text-lg font-bold text-text_dark">₹{{ product.discount_price }}</span>
+                        {% if product.price > product.discount_price %}
+                            <span class="text-xs text-text_gray line-through mb-0.5">₹{{ product.price }}</span>
+                            <span class="text-xs font-bold text-green-600 mb-0.5 ml-auto md:ml-0">Discounted</span>
+                        {% endif %}
+                    </div>
+
+                    <a href="{% url 'seller_product_view' product.slug %}" class="w-full text-center bg-primary text-white py-2 rounded-md text-sm font-semibold hover:bg-opacity-90 transition mt-auto block">
+                        Edit Listing
+                    </a>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-span-full text-center py-10">
+                <i class="fa-solid fa-box-open text-4xl text-gray-300 mb-3"></i>
+                <p class="text-gray-500 font-medium">No products found in your inventory.</p>
+                <a href="{% url 'seller_add_product' %}" class="text-primary hover:underline mt-2 inline-block">Add your first product</a>
+            </div>
+            {% endfor %}   
+            
+        </div>
+    </main>
+
+    <footer class="bg-primary_dark text-white mt-12 py-12">
+        <div class="container mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-8">
+            <div>
+                <h4 class="text-highlight text-sm font-bold uppercase mb-4">About</h4>
+                <ul class="space-y-2 text-sm text-gray-300">
+                    <li><a href="#" class="hover:text-white transition">Contact Us</a></li>
+                    <li><a href="#" class="hover:text-white transition">About Us</a></li>
+                    <li><a href="#" class="hover:text-white transition">Careers</a></li>
+                    <li><a href="#" class="hover:text-white transition">Corporate Information</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-highlight text-sm font-bold uppercase mb-4">Help</h4>
+                <ul class="space-y-2 text-sm text-gray-300">
+                    <li><a href="#" class="hover:text-white transition">Payments</a></li>
+                    <li><a href="#" class="hover:text-white transition">Shipping</a></li>
+                    <li><a href="#" class="hover:text-white transition">Cancellation & Returns</a></li>
+                    <li><a href="#" class="hover:text-white transition">FAQ</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-highlight text-sm font-bold uppercase mb-4">Policy</h4>
+                <ul class="space-y-2 text-sm text-gray-300">
+                    <li><a href="#" class="hover:text-white transition">Return Policy</a></li>
+                    <li><a href="#" class="hover:text-white transition">Terms of Use</a></li>
+                    <li><a href="#" class="hover:text-white transition">Security</a></li>
+                    <li><a href="#" class="hover:text-white transition">Privacy</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-highlight text-sm font-bold uppercase mb-4">Social</h4>
+                <div class="flex gap-4 text-xl text-gray-300">
+                    <a href="#" class="hover:text-white transition"><i class="fa-brands fa-facebook"></i></a>
+                    <a href="#" class="hover:text-white transition"><i class="fa-brands fa-twitter"></i></a>
+                    <a href="#" class="hover:text-white transition"><i class="fa-brands fa-youtube"></i></a>
+                    <a href="#" class="hover:text-white transition"><i class="fa-brands fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="container mx-auto px-4 mt-12 pt-8 border-t border-gray-600 text-center text-sm text-gray-400">
+            &copy; 2024 FlipShop. All rights reserved. Designed with Tailwind CSS.
+        </div>
+    </footer>
+
+</body>
+</html>

@@ -8,7 +8,7 @@ $('#category').change(function(){
             $("#subcategory").html('<option value =""> Select SubCategory </option>');
             data.forEach(function(sub){
                 $("#subcategory").append(
-                    `<option value='${sub.id}'>${sub.name}</option>`
+                    `<option value='${sub.slug}'>${sub.name}</option>`
                 );
 
             });

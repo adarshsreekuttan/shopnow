@@ -20,7 +20,7 @@
                         primary: '#5B23FF',
                         accent: '#008BFF',
                         highlight: '#E4FF30',
-                        bg_light: '#F1F3F6',
+                        bg_light: '#F8F9FA',
                         text_dark: '#212121',
                         text_gray: '#878787'
                     },
@@ -36,7 +36,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #F1F3F6; }
+        body { font-family: 'Inter', sans-serif; background-color: #F8F9FA; }
         .card-shadow { box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
@@ -46,12 +46,12 @@
 
     <nav class="bg-primary_dark sticky top-0 z-50 shadow-md">
         <div class="container mx-auto px-4 h-16 flex items-center justify-between gap-4">
-            <a href="#" class="flex items-center gap-2">
+            <a href="{% url 'seller_home' %}" class="flex items-center gap-2">
                 <div class="w-8 h-8 bg-highlight rounded flex items-center justify-center text-primary_dark font-bold text-xl italic">F</div>
                 <span class="text-white font-bold text-lg tracking-wide hidden sm:block">FlipShop <span class="text-xs font-normal text-highlight ml-1">Seller Hub</span></span>
             </a>
             <div class="flex items-center gap-4 text-white font-medium text-sm ml-auto">
-                <a href="#dashboard" class="flex items-center gap-2 bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-sm transition">
+                <a href="{% url 'seller_home' %}" class="flex items-center gap-2 bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-sm transition">
                     <i class="fa-solid fa-arrow-left"></i>
                     <span class="hidden sm:block">Back to Dashboard</span>
                 </a>
@@ -147,7 +147,7 @@
                                     <select name="sub_category" id="subcategory" required class="w-full border border-gray-300 rounded-md p-3 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors appearance-none bg-white">
                                         <option value="" disabled selected> Select Sub Category</option>
                                         {% for x in subcategory %}
-                                        <option value="{{ x.id }}">{{ x.name }}</option>
+                                        <option value="{{ x.slug }}">{{ x.name }}</option>
                                         {% endfor %}
                                     </select>
                                     <i class="fa-solid fa-angle-down absolute right-4 top-3.5 text-gray-400 pointer-events-none"></i>
@@ -159,64 +159,6 @@
                             <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-1.5">Product Description <span class="text-red-500">*</span></label>
                             <textarea name="description" required rows="4" maxlength="200" class="w-full border border-gray-300 rounded-md p-3 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors resize-none" placeholder="Describe your product..."></textarea>
                             <p class="text-[10px] text-gray-400 mt-1 flex justify-end">0/200 Limit</p>
-                        </div>
-
-                        <div class="border-t border-gray-100 pt-6 mt-2">
-                            <div class="flex items-center justify-between mb-4">
-                                <h3 class="text-sm font-bold text-primary_dark">Product Variants</h3>
-                                <label class="flex items-center gap-2 cursor-pointer select-none">
-                                    <input type="checkbox" id="has-variants" name="has_variants" class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary">
-                                    <span class="text-[11px] font-bold text-gray-500 uppercase tracking-widest">Enable Variants</span>
-                                </label>
-                            </div>
-
-                            <div id="variants-section" class="hidden space-y-4">
-                                <p class="text-xs text-gray-500 mb-2">Build your specific variants based on the selected subcategory:</p>
-
-                                <div id="attributes-container" class="bg-blue-50/50 p-3 rounded-md border border-blue-100 hidden mb-4">
-                                    <p class="text-xs font-semibold text-blue-800"><i class="fa-solid fa-circle-info mr-1"></i> Dynamic options loaded. Configure each row below.</p>
-                                </div>
-
-                                <div id="variant-options-container" class="space-y-3">
-                                    <div class="variant-row relative flex flex-col md:flex-row gap-4 p-4 border border-gray-200 rounded-md bg-gray-50">
-                                        
-                                        <div class="w-full md:w-1/4 variant-name-wrapper">
-                                            <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-1.5">Variant Options</label>
-                                            
-                                            <div class="dynamic-selects flex flex-col gap-2 mb-2">
-                                                <span class="text-xs text-gray-400 italic">Please select a Sub Category first to see options.</span>
-                                            </div>
-                                            
-                                            <div class="generated-name-display text-xs font-bold text-primary bg-primary/10 p-1.5 rounded border border-primary/20 hidden transition-all"></div>
-                                            
-                                            <input type="hidden" name="variant_name[]" class="variant-name-input">
-                                        </div>
-
-                                        <div class="w-full md:w-1/4">
-                                            <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-1.5">Price (₹)</label>
-                                            <div class="relative">
-                                                <span class="absolute left-3 top-2.5 text-gray-500 font-semibold text-sm">₹</span>
-                                                <input type="number" name="variant_price[]" class="w-full border border-gray-300 rounded-md p-2.5 pl-7 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none bg-white" placeholder="0">
-                                            </div>
-                                        </div>
-                                        <div class="w-full md:w-1/4">
-                                            <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-1.5">Stock</label>
-                                            <input type="number" name="variant_stock[]" class="w-full border border-gray-300 rounded-md p-2.5 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none bg-white" placeholder="0">
-                                        </div>
-                                        <div class="w-full md:w-1/4">
-                                            <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-1.5">Image</label>
-                                            <input type="file" name="variant_image_" accept="image/*" class="variant-file-input w-full border border-gray-300 rounded-md p-1.5 text-sm bg-white cursor-pointer">
-                                        </div>
-                                        <button type="button" class="remove-variant-btn absolute -right-2 -top-2 bg-red-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs hidden hover:bg-red-600 shadow-md transition">
-                                            <i class="fa-solid fa-xmark"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                                
-                                <button type="button" id="add-variant-btn" class="mt-2 text-primary text-sm font-semibold flex items-center gap-1.5 hover:text-primary_dark transition">
-                                    <i class="fa-solid fa-plus text-xs"></i> Add Another Variant
-                                </button>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -236,13 +178,47 @@
 
     </main>
 
-    <footer class="bg-primary_dark text-white mt-auto py-6 text-sm">
-        <div class="container mx-auto px-4 flex flex-col md:flex-row items-center justify-between text-gray-400 text-xs gap-4 text-center md:text-left">
-            <p>© 2024 FlipShop Inc. Seller Services.</p>
-            <div class="flex gap-4">
-                <a href="#" class="hover:text-accent transition">Help Center</a>
-                <a href="#" class="hover:text-accent transition">Seller Policies</a>
+    <footer class="bg-primary_dark text-white mt-12 py-12">
+        <div class="container mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-8">
+            <div>
+                <h4 class="text-highlight text-sm font-bold uppercase mb-4">About</h4>
+                <ul class="space-y-2 text-sm text-gray-300">
+                    <li><a href="#" class="hover:text-white transition">Contact Us</a></li>
+                    <li><a href="#" class="hover:text-white transition">About Us</a></li>
+                    <li><a href="#" class="hover:text-white transition">Careers</a></li>
+                    <li><a href="#" class="hover:text-white transition">Corporate Information</a></li>
+                </ul>
             </div>
+            <div>
+                <h4 class="text-highlight text-sm font-bold uppercase mb-4">Help</h4>
+                <ul class="space-y-2 text-sm text-gray-300">
+                    <li><a href="#" class="hover:text-white transition">Payments</a></li>
+                    <li><a href="#" class="hover:text-white transition">Shipping</a></li>
+                    <li><a href="#" class="hover:text-white transition">Cancellation & Returns</a></li>
+                    <li><a href="#" class="hover:text-white transition">FAQ</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-highlight text-sm font-bold uppercase mb-4">Policy</h4>
+                <ul class="space-y-2 text-sm text-gray-300">
+                    <li><a href="#" class="hover:text-white transition">Return Policy</a></li>
+                    <li><a href="#" class="hover:text-white transition">Terms of Use</a></li>
+                    <li><a href="#" class="hover:text-white transition">Security</a></li>
+                    <li><a href="#" class="hover:text-white transition">Privacy</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-highlight text-sm font-bold uppercase mb-4">Social</h4>
+                <div class="flex gap-4 text-xl text-gray-300">
+                    <a href="#" class="hover:text-white transition"><i class="fa-brands fa-facebook"></i></a>
+                    <a href="#" class="hover:text-white transition"><i class="fa-brands fa-twitter"></i></a>
+                    <a href="#" class="hover:text-white transition"><i class="fa-brands fa-youtube"></i></a>
+                    <a href="#" class="hover:text-white transition"><i class="fa-brands fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="container mx-auto px-4 mt-12 pt-8 border-t border-gray-600 text-center text-sm text-gray-400">
+            &copy; 2024 FlipShop. All rights reserved. Designed with Tailwind CSS.
         </div>
     </footer>
 
@@ -375,137 +351,5 @@
         });
     </script>
 
-    <script>
-        $(document).ready(function() {
-            let globalAttributes = [];
-
-            // 1. Fetch attributes when Subcategory changes
-            $('#subcategory').change(function() {
-                var subcategoryId = $(this).val();
-                
-                $.ajax({
-                    // Ensure this path matches your urls.py exactly!
-                    url: "/ajax/load_attributes/", 
-                    data: {'subcategory_id': subcategoryId},
-                    success: function(data) {
-                        globalAttributes = data;
-                        
-                        // Show/Hide the info container
-                        if(data.length > 0) {
-                            $('#attributes-container').removeClass('hidden');
-                        } else {
-                            $('#attributes-container').addClass('hidden');
-                        }
-                        
-                        updateAllVariantRows();
-                    }
-                });
-            });
-
-            // 2. Rebuild dropdowns in every variant row
-            function updateAllVariantRows() {
-                $('.variant-row').each(function() {
-                    buildDynamicSelects(this);
-                });
-            }
-
-            // 3. Inject the <select> menus into a specific row
-            function buildDynamicSelects(row) {
-                const container = $(row).find('.dynamic-selects');
-                container.empty();
-
-                if (globalAttributes.length === 0) {
-                    container.html('<span class="text-xs text-gray-400 italic">No predefined attributes. Enter custom:</span>');
-                    container.append('<input type="text" class="variant-attr-fallback w-full border border-gray-300 rounded-md p-2.5 text-sm outline-none" placeholder="e.g. XL">');
-                    container.find('.variant-attr-fallback').on('input', function() {
-                        updateHiddenVariantName(row);
-                    });
-                    return;
-                }
-
-                let selectsHtml = '';
-                globalAttributes.forEach((attr) => {
-                    selectsHtml += `
-                        <select class="variant-attr-select w-full border border-gray-300 rounded-md p-2 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none bg-white">
-                            <option value="" disabled selected>Select ${attr.attribute}</option>`;
-                    attr.values.forEach(val => {
-                        selectsHtml += `<option value="${val}">${val}</option>`;
-                    });
-                    selectsHtml += `</select>`;
-                });
-
-                container.html(selectsHtml);
-
-                // Update hidden input when dropdown changes
-                container.find('.variant-attr-select').change(function() {
-                    updateHiddenVariantName(row);
-                });
-            }
-
-            // 4. Combine choices and update hidden input & visual badge
-            function updateHiddenVariantName(row) {
-                let combinedName = [];
-                
-                // Get values from dynamic selects
-                $(row).find('.variant-attr-select').each(function() {
-                    if($(this).val()) {
-                        combinedName.push($(this).val());
-                    }
-                });
-
-                // Get value from fallback input (if used)
-                const fallback = $(row).find('.variant-attr-fallback').val();
-                if (fallback) combinedName.push(fallback);
-
-                const finalName = combinedName.join('-');
-                
-                // Update hidden input for backend
-                $(row).find('.variant-name-input').val(finalName);
-                
-                // Update file input name for image handling
-                $(row).find('.variant-file-input').attr('name', `variant_image_${finalName}`);
-                
-                // Update visual badge so seller sees the result!
-                const displayBadge = $(row).find('.generated-name-display');
-                if (finalName) {
-                    displayBadge.text("Name: " + finalName).removeClass('hidden');
-                } else {
-                    displayBadge.addClass('hidden');
-                }
-            }
-
-            // --- Toggle Variants UI ---
-            $('#has-variants').change(function() {
-                if (this.checked) $('#variants-section').removeClass('hidden');
-                else $('#variants-section').addClass('hidden');
-            });
-
-            // --- Add Variant Row ---
-            $('#add-variant-btn').click(function() {
-                const rows = $('.variant-row');
-                if (rows.length >= 10) { alert('Maximum 10 variant options.'); return; }
-                
-                const newRow = rows[0].cloneNode(true);
-                
-                // Clear existing inputs in cloned row
-                $(newRow).find('input[type="number"], input[type="file"], input[type="hidden"]').val('');
-                $(newRow).find('input[type="file"]').attr('name', 'variant_image_');
-                $(newRow).find('.generated-name-display').addClass('hidden').text('');
-                
-                // Reset dynamic selects
-                $(newRow).find('.variant-attr-select').prop('selectedIndex', 0);
-                
-                // Show remove button
-                $(newRow).find('.remove-variant-btn').removeClass('hidden');
-                $(newRow).find('.remove-variant-btn').click(function() { $(newRow).remove(); });
-
-                // Bind events to new row
-                $(newRow).find('.variant-attr-select').change(function() { updateHiddenVariantName(newRow); });
-                $(newRow).find('.variant-attr-fallback').on('input', function() { updateHiddenVariantName(newRow); });
-
-                $('#variant-options-container').append(newRow);
-            });
-        });
-    </script>
 </body>
 </html>

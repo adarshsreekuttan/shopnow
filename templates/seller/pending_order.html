@@ -196,10 +196,10 @@
                                 
                                 <td class="px-4 py-4 align-top text-right">
                                     <div class="flex flex-col items-end gap-2 w-full">
-                                        <form action="#" method="POST" class="w-full sm:w-auto">
+                                        <form action="{% url 'seller_single_order' order.id %}" method="POST" class="w-full sm:w-auto">
                                             {% csrf_token %}
                                             <button type="submit" class="px-5 py-2 bg-primary text-white hover:bg-opacity-90 rounded text-xs font-semibold transition-colors w-full sm:w-28 text-center shadow-sm flex justify-center items-center gap-1">
-                                                <i class="fa-solid fa-check"></i> Accept
+                                                <i class="fa-solid fa-check"></i> view
                                             </button>
                                         </form>
                                         <button class="text-xs text-gray-400 hover:text-red-500 transition-colors font-medium">

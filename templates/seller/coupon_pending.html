@@ -1,0 +1,190 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlipShop - Pending Coupons</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary_dark: '#362F4F',
+                        primary: '#5B23FF',
+                        accent: '#008BFF',
+                        highlight: '#E4FF30',
+                        bg_light: '#F1F3F6',
+                        text_dark: '#212121',
+                        text_gray: '#878787'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #F1F3F6; }
+        .card-shadow { box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
+        .coupon-dashed { background-image: repeating-linear-gradient(to right, #e5e7eb 0, #e5e7eb 5px, transparent 5px, transparent 10px); background-position: bottom; background-size: 100% 2px; background-repeat: no-repeat; }
+    </style>
+</head>
+<body class="text-text_dark flex flex-col min-h-screen">
+
+    <nav class="bg-primary_dark sticky top-0 z-50 shadow-md">
+        <div class="container mx-auto px-4 h-16 flex items-center justify-between gap-4">
+            <a href="#" class="flex items-center gap-2">
+                <div class="w-8 h-8 bg-highlight rounded flex items-center justify-center text-primary_dark font-bold text-xl italic">F</div>
+                <span class="text-white font-bold text-lg tracking-wide hidden sm:block">FlipShop <span class="text-xs font-normal text-highlight ml-1">Seller Hub</span></span>
+            </a>
+            <div class="flex items-center gap-4 text-white font-medium text-sm ml-auto">
+                <a href="#dashboard" class="flex items-center gap-2 bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-sm transition">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    <span class="hidden sm:block">Back to Dashboard</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow container mx-auto px-4 py-8 max-w-6xl">
+
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+            <div>
+                <div class="flex items-center gap-3 mb-1">
+                    <h1 class="text-2xl font-bold text-primary_dark">Pending Coupons</h1>
+                    <span class="bg-yellow-100 text-yellow-700 text-[10px] font-bold px-2 py-0.5 rounded-full"><i class="fa-solid fa-clock mr-1"></i> Awaiting Approval</span>
+                </div>
+                <p class="text-gray-500 text-sm">Track discount codes that are currently under review by the admin team.</p>
+            </div>
+            
+            <div class="flex items-center gap-3 w-full sm:w-auto">
+                <div class="relative w-full sm:w-64">
+                    <i class="fa-solid fa-search absolute left-3 top-3 text-gray-400"></i>
+                    <input type="text" placeholder="Search pending codes..." class="w-full border border-gray-300 rounded-md py-2 pl-9 pr-4 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition">
+                </div>
+                <a href="{% url 'add_coupon' %}" class="bg-white border border-gray-300 text-gray-700 px-5 py-2.5 rounded-md text-sm font-bold shadow-sm hover:bg-gray-50 transition flex items-center justify-center gap-2 whitespace-nowrap shrink-0">
+                    <i class="fa-solid fa-plus text-primary"></i> New Coupon
+                </a>
+            </div>
+        </div>
+
+        <div class="flex border-b border-gray-200 mb-6">
+            <a href="{% url 'coupon_active' %}" class="px-4 py-2 border-b-2 border-transparent text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300 transition">
+                Active Coupons
+            </a>
+            <a href="{% url 'coupon_pending' %}" class="px-4 py-2 border-b-2 border-primary text-sm font-bold text-primary transition">
+                Pending Approval <span class="ml-1 bg-primary text-white rounded-full px-1.5 py-0.5 text-[9px]">{{ pending_coupons.count|default:"0" }}</span>
+            </a>
+        </div>
+
+        <div class="bg-white rounded-xl card-shadow overflow-hidden border border-gray-100">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-gray-50 text-gray-500 text-[11px] uppercase tracking-wider border-b border-gray-200">
+                            <th class="p-4 font-bold">Coupon Code</th>
+                            <th class="p-4 font-bold">Discount</th>
+                            <th class="p-4 font-bold">Rules & Limits</th>
+                            <th class="p-4 font-bold">Validity Period</th>
+                            <th class="p-4 font-bold">Status</th>
+                            <th class="p-4 font-bold text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-sm divide-y divide-gray-100">
+                        
+                        {% for coupon in coupons %}
+                        <tr class="hover:bg-gray-50/50 transition">
+                            
+                            <td class="p-4">
+                                <div class="inline-block bg-gray-50 text-gray-600 border border-gray-200 rounded px-3 py-1.5 font-bold tracking-wide uppercase relative mb-1">
+                                    {{ coupon.code }}
+                                </div>
+                                <div class="text-[10px] text-gray-400 font-medium mt-1">Requested on: {{ coupon.created_at|date:"M d"|default:"Recently" }}</div>
+                            </td>
+                            
+                            <td class="p-4">
+                                <div class="font-bold text-gray-800 text-lg">
+                                    {% if coupon.discount_type == 'percentage' %}
+                                        {{ coupon.discount_value|floatformat:0 }}% <span class="text-xs font-normal text-gray-500">OFF</span>
+                                    {% else %}
+                                        <span class="text-sm">₹</span>{{ coupon.discount_value|floatformat:0 }} <span class="text-xs font-normal text-gray-500">OFF</span>
+                                    {% endif %}
+                                </div>
+                            </td>
+                            
+                            <td class="p-4">
+                                <div class="text-xs text-gray-600 mb-1">
+                                    <span class="font-semibold">Min. Cart:</span> 
+                                    {% if coupon.min_purchase > 0 %}₹{{ coupon.min_purchase }}{% else %}None{% endif %}
+                                </div>
+                                <div class="text-xs text-gray-600">
+                                    <span class="font-semibold">Max Usage:</span> {{ coupon.usage_limit }} times
+                                </div>
+                            </td>
+                            
+                            <td class="p-4">
+                                <div class="text-xs text-gray-600 mb-1"><i class="fa-regular fa-calendar-check text-gray-400 mr-1.5 w-3"></i> {{ coupon.valid_from|date:"M d, Y" }}</div>
+                                <div class="text-xs text-gray-600"><i class="fa-regular fa-calendar-xmark text-gray-400 mr-1.5 w-3"></i> {{ coupon.valid_to|date:"M d, Y" }}</div>
+                            </td>
+                            
+                            <td class="p-4">
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold bg-yellow-50 text-yellow-700 border border-yellow-200">
+                                    <i class="fa-solid fa-hourglass-half mr-1.5 text-yellow-500 animate-pulse"></i> In Review
+                                </span>
+                            </td>
+                            
+                            <td class="p-4">
+                                <div class="flex items-center justify-center gap-2">
+                                    <a href="#" class="w-8 h-8 rounded-full bg-gray-100 text-gray-500 hover:bg-accent hover:text-white flex items-center justify-center transition shadow-sm" title="Edit Request">
+                                        <i class="fa-solid fa-pen text-xs"></i>
+                                    </a>
+                                    <a href="{% url 'coupon_delete' coupon.id %}" onclick="return confirm('Are you sure you want to cancel the approval request for this coupon? This will delete the pending coupon.');" class="w-8 h-8 rounded-full bg-gray-100 text-gray-500 hover:bg-red-500 hover:text-white flex items-center justify-center transition shadow-sm" title="Cancel Request">
+                                        <i class="fa-solid fa-xmark text-xs"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="p-12 text-center">
+                                <div class="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-4 text-green-500 text-3xl">
+                                    <i class="fa-solid fa-check-double"></i>
+                                </div>
+                                <h3 class="text-lg font-bold text-gray-900 mb-1">All Caught Up!</h3>
+                                <p class="text-sm text-gray-500 mb-4">You don't have any coupons waiting for admin approval right now.</p>
+                                <a href="{% url 'coupon_active' %}" class="inline-block bg-white border border-gray-300 text-gray-700 px-6 py-2 rounded-md text-sm font-bold shadow-sm hover:bg-gray-50 transition">
+                                    View Active Coupons
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="bg-primary_dark text-white mt-auto py-6 text-sm">
+        <div class="container mx-auto px-4 flex flex-col md:flex-row items-center justify-between text-gray-400 text-xs gap-4 text-center md:text-left">
+            <p>© 2024 FlipShop Inc. Seller Services.</p>
+            <div class="flex gap-4">
+                <a href="#" class="hover:text-accent transition">Help Center</a>
+                <a href="#" class="hover:text-accent transition">Seller Policies</a>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

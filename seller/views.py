@@ -81,7 +81,7 @@ def seller_logout(request):
 def seller_home(request):
     seller=request.user
     sellerprofile=seller.seller_profile
-    product=Product.objects.filter(seller=sellerprofile,approved=True)
+    product=Product.objects.filter(seller=sellerprofile,status='approved')
     return render(request, "seller/seller_home.html",{'sellerprofile':sellerprofile,'product':product})  
 
 @seller_required
@@ -129,6 +129,14 @@ def password_reset(request):
         return redirect('seller_profile')                                 
     return render(request,'seller/password_reset.html',{'seller':sellerprofile})
 
+def product_control(request):
+    return render(request,'seller/product_control.html')
+
+def inventory(request):
+    seller=SellerProfile.objects.get(user=request.user)
+    products=Product.objects.filter(seller=seller,status='approved')
+    return render(request,'seller/inventory.html',{'products':products})
+
 @seller_required
 def seller_add_product(request):
     seller=SellerProfile.objects.get(user=request.user)
@@ -143,10 +151,9 @@ def seller_add_product(request):
         product.description=request.POST.get('description')
         product.stock=request.POST.get('stock')
         sub_category_slug=request.POST.get('sub_category')        
-        product.sub_category=SubCategory.objects.filter(slug=sub_category_slug).first()       
+        product.sub_category=get_object_or_404(SubCategory, slug=sub_category_slug)      
         category_slug=request.POST.get('category') 
-        print(request.POST)     
-        product.category=Category.objects.filter(slug=category_slug).first()       
+        product.category=get_object_or_404(Category, slug=category_slug)      
         base_slug=slugify(product.name)
     
         slug=base_slug
@@ -164,58 +171,10 @@ def seller_add_product(request):
             ProductImage.objects.create(
                 product=product,
                 image=img
-            )
-        names = request.POST.getlist('variant_name[]')    
-        prices = request.POST.getlist('variant_price[]')    
-        stocks = request.POST.getlist('variant_stock[]')  
-        
-        if names:
-            for i in range(len(names)):
-                
-                if not names[i].strip():
-                    continue
-                
-                variant=ProductVarient()
-                variant.product=product
-                variant.price=prices[i]
-                variant.stock=stocks[i]
-                variant.save()
-            
-                values=names[i].split('-')
-            
-                for val in values:
-                    attr_values=AttributeValues.objects.filter(value=val).first()
-                    if attr_values:
-                        variant.attribute_values.add(attr_values)
-                    
-                image=request.FILES.get(f"variant_image_{names[i]}")  
-                if image:
-                    VariantImage.objects.create(
-                        variant=variant,
-                        image=image
-                    )
-                      
+            )              
         return redirect('seller_approval')        
     return render(request,"seller/seller_add_product.html",{'category':category,'subcategory':subcategory})
 
-
-def get_attributes(request):
-    subcat_id = request.GET.get('subcat_id')
-    
-    subcategory = SubCategory.objects.get(id=subcat_id)
-    attributes = subcategory.attributes.all()
-    
-    data = []
-
-    for attr in attributes:
-        values = AttributeValues.objects.filter(attribute=attr)
-        data.append({
-            'attr_id': attr.id,
-            'attr_name': attr.name,
-            'values': [{'id': v.id, 'value': v.value} for v in values]
-        })
-
-    return JsonResponse({'data': data})
 
 @seller_required
 def seller_approval(request):
@@ -228,20 +187,20 @@ def seller_pending_approval(request):
 
 def pending_product_delete(request,id):
     seller=SellerProfile.objects.get(user=request.user)
-    product=get_object_or_404(Product,approved=False,id=id,seller=seller)
+    product=get_object_or_404(Product,status="pending",id=id,seller=seller)
     product.delete()
     return redirect('seller_pending_approval')
 
 @seller_required
 def seller_product_view(request,slug):
-    product=Product.objects.get(slug=slug,approved=True)
-    if product.approved==False:
+    product=Product.objects.get(slug=slug,status='approved')
+    if product.status=="pending":
         return redirect('seller_pending_approval')
     return render(request,"seller/seller_product_view.html",{'product':product})
 
 @seller_required
 def seller_product_edit(request,slug):
-    product=Product.objects.get(slug=slug,approved=True)
+    product=Product.objects.get(slug=slug,status='approved')
     subcategory=SubCategory.objects.all()
     if request.method=="POST":
         name=request.POST.get('product_name')
@@ -250,8 +209,11 @@ def seller_product_edit(request,slug):
         product.discount_price=request.POST.get('discount_price')
         product.description=request.POST.get('description')
         product.stock=request.POST.get('stock')
-        product.sub_category=SubCategory.objects.get(id=request.POST.get('sub_category'))        
-        
+        sub_category_slug=request.POST.get('sub_category')        
+        product.sub_category=get_object_or_404(SubCategory, slug=sub_category_slug)      
+        category_slug=request.POST.get('category') 
+        product.category=get_object_or_404(Category, slug=category_slug) 
+               
         base_slug=slugify(name)
         new_slug=base_slug
         count=1  
@@ -274,7 +236,7 @@ def seller_product_edit(request,slug):
 
 @seller_required
 def product_delete(request,id):
-    product=Product.objects.get(id=id,approved=True)
+    product=Product.objects.get(id=id,status='approved')
     product.delete()
     return redirect('seller_home')
 
@@ -285,7 +247,7 @@ def seller_password(request):
 @seller_required
 def load_subcategory(request):
     category_slug=request.GET.get('category_slug')
-    subcategories=SubCategory.objects.filter(category__slug=category_slug).values('id','name')
+    subcategories=SubCategory.objects.filter(category__slug=category_slug).values('slug','name')
     return JsonResponse(list(subcategories),safe=False)
 
 @seller_required
@@ -327,7 +289,7 @@ def pending_single(request,slug):
 
 @seller_required
 def pending_edit(request,slug):
-    product=Product.objects.get(slug=slug,approved=False)
+    product=Product.objects.get(slug=slug,status="pending")
     subcategory=SubCategory.objects.all()
     if request.method=="POST":
         name=request.POST.get('product_name')
@@ -361,10 +323,43 @@ def pending_edit(request,slug):
 def message(request):
     return render(request,'seller/message.html')
 
+def coupon(request):
+    return render(request,'seller/coupon.html')
+
 def add_coupon(request):
     seller=SellerProfile.objects.get(user=request.user)
     if request.method=='POST':
-        coupon=Coupon.objects.get(seller=seller)
-        coupon.code=request.POST.get('code')
+        coupon=Coupon()
+        code=request.POST.get('code')
+        if Coupon.objects.filter(code=code).exists():
+            messages.error(request,'Coupon code already exists')
+            return redirect('add_coupon')
+        coupon.seller=seller
+        coupon.code=code
+        coupon.discount_type=request.POST.get('discount_type')
+        coupon.discount_value=request.POST.get('discount_value')
+        coupon.min_purchase=request.POST.get('min_purchase')
+        coupon.valid_from=request.POST.get('valid_from')
+        coupon.valid_to=request.POST.get('valid_to')
+        coupon.usage_limit=request.POST.get('usage_limit')
+        coupon.save()
+        messages.success(request,'successfully created coupon')
+        return redirect('coupon_pending')
     return render(request,'seller/add_coupon.html')
+
+def coupon_active(request):
+    seller=SellerProfile.objects.get(user=request.user)
+    coupon=Coupon.objects.filter(seller=seller,approved=True)
+    return render(request,'seller/coupon_active.html',{'coupons':coupon})
+
+def coupon_pending(request):
+    seller=SellerProfile.objects.get(user=request.user)
+    coupon=Coupon.objects.filter(seller=seller,approved=False)
+    return render(request,'seller/coupon_pending.html',{'coupons':coupon})
+
+def coupon_delete(request,id):
+    seller=SellerProfile.objects.get(user=request.user)
+    coupon=Coupon.objects.filter(seller=seller,id=id)
+    coupon.delete()
+    return redirect('coupon')
     

@@ -10,8 +10,9 @@ urlpatterns = [
     path('seller_profile',views.seller_profile,name="seller_profile"),
     path('seller_profile_edit',views.seller_profile_edit,name="seller_profile_edit"),
     path('password_reset',views.password_reset,name="password_reset"),
+    path('product_control',views.product_control,name='product_control'),
+    path('inventory',views.inventory,name='inventory'),
     path('seller_add_product',views.seller_add_product,name="seller_add_product"),
-    path('get-attributes/', views.get_attributes, name='get_attributes'),
     path('seller_approval',views.seller_approval,name="seller_approval"),
     path('seller_pending_approval',views.seller_pending_approval,name='seller_pending_approval'),
     path('pending_product_delete/<int:id>',views.pending_product_delete,name='pending_product_delete'),
@@ -28,7 +29,11 @@ urlpatterns = [
     path('pending_single/<str:slug>',views.pending_single,name='pending_single'),
     path('pending_edit/<str:slug>',views.pending_edit,name='pending_edit'),
     path('message',views.message,name='message'),
-    
+    path('coupon',views.coupon,name='coupon'),
+    path('add_coupon',views.add_coupon,name='add_coupon'),
+    path('coupon_active',views.coupon_active,name='coupon_active'),
+    path('coupon_pending',views.coupon_pending,name='coupon_pending'),
+    path('coupon_delete/<int:id>',views.coupon_delete,name='coupon_delete'),
 
 ]
 

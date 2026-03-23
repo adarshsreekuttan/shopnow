@@ -35,6 +35,7 @@ class Coupon(models.Model):
     is_active = models.BooleanField(default=True)
     valid_from = models.DateTimeField(null=True)
     valid_to =  models.DateTimeField(null=True)
+    approved=models.BooleanField(default=False)
     
     def __str__(self):
         return f"{self.code}- {self.seller.shop_name}"
