@@ -29,10 +29,10 @@
             <div class="relative">
                 <div class="w-28 h-28 rounded-full bg-gradient-to-tr from-primary to-accent p-1">
                     <div class="w-full h-full rounded-full bg-white flex items-center justify-center overflow-hidden">
-                        <span class="text-3xl font-bold text-pdark">{{ user.first_name|first }}</span>
+                        <span class="text-6xl font-bold text-pdark">{{ user.first_name|first|upper }}</span>
                     </div>
                 </div>
-                <button
+                <!-- <button
                     class="absolute bottom-0 right-0 bg-pdark text-white p-1.5 rounded-full border-2 border-lightbg hover:bg-primary transition">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path
@@ -40,18 +40,18 @@
                         <path
                             d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
                     </svg>
-                </button>
+                </button> -->
             </div>
 
             <div class="text-center md:text-left">
-                <h1 class="text-3xl font-semibold text-pdark">Hey, {{ user.first_name }}!</h1>
+                <h1 class="text-3xl font-semibold text-pdark">Hey, {{ user.first_name}} {{user.last_name}}!</h1>
                 <p class="text-gray-500 text-sm mt-1">Manage your settings, orders, and addresses.</p>
                 <div class="flex gap-2 mt-4 justify-center md:justify-start flex-wrap">
                     <span class="bg-primary/10 text-primary px-3 py-1 rounded-md text-xs font-semibold uppercase tracking-wide">
-                        Premium Member
+                        Verified Profile
                     </span>
                     <span class="bg-highlight text-pdark px-3 py-1 rounded-md text-xs font-semibold uppercase tracking-wide">
-                        ₹142.50 Wallet
+                        0 credits
                     </span>
                 </div>
             </div>

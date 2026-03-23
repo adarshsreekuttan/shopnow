@@ -105,15 +105,23 @@
     </div>
 
     <!-- Mobile search -->
+     <form method="GET" action="{% url 'search_products' %}">
     <div class="pb-3 md:hidden">
       <div class="relative">
         <input
+          id="searchBoxMobile"
           type="text"
+          name="search_keyword"
+          autocomplete="off"
+          value="{{search_keyword}}" 
           placeholder="Search for products, brands and more..."
           class="w-full pl-4 pr-10 py-2 rounded-md text-sm text-gray-900 bg-white
                  focus:outline-none focus:ring-2 focus:ring-highlight/80 focus:border-transparent
                  placeholder-gray-400"
         >
+        <div id="suggestionsMobile"
+            class="absolute left-0 top-full w-full bg-white border mt-1 rounded shadow z-50 hidden max-h-60 overflow-y-auto">
+        </div>
         <button
           class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-primary transition-colors">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -123,54 +131,65 @@
         </button>
       </div>
     </div>
+    </form>
   </div>
 </nav>
 
 <script>
 document.addEventListener("DOMContentLoaded", function(){
 
-    let box = document.getElementById("searchBox");
-    let suggestionsBox = document.getElementById("suggestions");
+    function setupSearch(boxId, suggestionId){
+        let box = document.getElementById(boxId);
+        let suggestionsBox = document.getElementById(suggestionId);
 
-    if (!box) return;
+        if (!box) return;
 
-    box.addEventListener("keyup", function() {
-        let query = this.value;
+        box.addEventListener("keyup", function() {
+            let query = this.value;
 
-        if (query.length < 1) {
-            suggestionsBox.innerHTML = "";
-            suggestionsBox.classList.add("hidden");
-            return;
-        }
-
-        fetch(`/search-suggestions/?q=${query}`)
-        .then(res => res.json())
-        .then(data => {
-            suggestionsBox.innerHTML = "";
-
-            if (data.length === 0) {
+            if (query.length < 1) {
+                suggestionsBox.innerHTML = "";
                 suggestionsBox.classList.add("hidden");
                 return;
             }
 
-            data.forEach(item => {
-                let div = `<div onclick="selectItem('${item.name}')"
-                            class="p-2 hover:bg-gray-100 cursor-pointer text-sm text-black">
-                            ${item.name}
-                          </div>`;
-                suggestionsBox.innerHTML += div;
+            fetch(`/search-suggestions/?q=${query}`)
+            .then(res => res.json())
+            .then(data => {
+                suggestionsBox.innerHTML = "";
+
+                if (data.length === 0) {
+                    suggestionsBox.classList.add("hidden");
+                    return;
+                }
+
+                data.forEach(item => {
+                    let div = `<div onclick="selectItem('${item.name}','${boxId}','${suggestionId}')"
+                                class="p-2 hover:bg-gray-100 cursor-pointer text-sm text-black">
+                                ${item.name}
+                              </div>`;
+                    suggestionsBox.innerHTML += div;
+                });
+
+                suggestionsBox.classList.remove("hidden");
             });
-
-            suggestionsBox.classList.remove("hidden");
         });
-    });
+    }
 
-    window.selectItem = function(name){
+    window.selectItem = function(name, boxId, suggestionId){
+        let box = document.getElementById(boxId);
+        let suggestionsBox = document.getElementById(suggestionId);
+
         box.value = name;
         suggestionsBox.innerHTML = "";
         suggestionsBox.classList.add("hidden");
-         box.form.submit();
+
+        if (box.form) box.form.submit();
     }
+
+    // initialize both
+    setupSearch("searchBox", "suggestions");
+    setupSearch("searchBoxMobile", "suggestionsMobile");
 
 });
 </script>

@@ -119,12 +119,12 @@ def home_view(request):
 
         avg_rating = Reviews.objects.filter(product=product)\
         .aggregate(Avg('rating'))['rating__avg'] or 0
-        product.avg_rating = avg_rating
+        product.avg_rating = int(round(avg_rating))
 
         number_of_reviews = Reviews.objects.filter(product=product).count()
-        product.number_of_reviews = number_of_reviews
+        product.number_of_reviews = number_of_reviews   
         
-    return render(request, 'customer/home.html', {"products":products, "categories":category, "avg_rating":avg_rating, "number_of_reviews":number_of_reviews})
+    return render(request, 'customer/home.html', {"products":products, "categories":category})
     
 def load_subcategories(request):
     category_slug = request.GET.get('category')
@@ -180,6 +180,13 @@ def search_products(request):
             primary = product.productimage_set.first()
         product.primary_image = primary
 
+        avg_rating = Reviews.objects.filter(product=product)\
+        .aggregate(Avg('rating'))['rating__avg'] or 0
+        product.avg_rating = int(round(avg_rating))
+
+        number_of_reviews = Reviews.objects.filter(product=product).count()
+        product.number_of_reviews = number_of_reviews  
+
     return render(request, 'customer/search_results.html', 
                   {"products":result_products, 
                    "search_keyword":search_keyword,
@@ -202,6 +209,20 @@ def category_filter(request, slug):
     page_number = request.GET.get('page')
     products = paginator.get_page(page_number)
 
+    for product in products:
+
+        primary = product.productimage_set.filter(is_primary=True).first()
+        if not primary:
+            primary = product.productimage_set.first()
+        product.primary_image = primary
+
+        avg_rating = Reviews.objects.filter(product=product)\
+        .aggregate(Avg('rating'))['rating__avg'] or 0
+        product.avg_rating = int(round(avg_rating))
+
+        number_of_reviews = Reviews.objects.filter(product=product).count()
+        product.number_of_reviews = number_of_reviews
+
     return render(request, 'customer/product_category_filter.html', {
         "products":products,
         "subcategories":subcategories,
@@ -218,7 +239,21 @@ def subcategory_filter(request, slug, sub_slug):
 
     paginator = Paginator(all_products, 15)
     page_number = request.GET.get('page')
-    products = paginator.get_page(page_number)  
+    products = paginator.get_page(page_number)
+
+    for product in products:
+
+        primary = product.productimage_set.filter(is_primary=True).first()
+        if not primary:
+            primary = product.productimage_set.first()
+        product.primary_image = primary
+        
+        avg_rating = Reviews.objects.filter(product=product)\
+        .aggregate(Avg('rating'))['rating__avg'] or 0
+        product.avg_rating = int(round(avg_rating))
+
+        number_of_reviews = Reviews.objects.filter(product=product).count()
+        product.number_of_reviews = number_of_reviews  
 
     return render(request, 'customer/product_category_filter.html', {
         "category":category,
