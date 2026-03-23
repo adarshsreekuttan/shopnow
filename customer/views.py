@@ -18,6 +18,8 @@ from django.conf import settings
 import razorpay
 from django.db import transaction
 
+from django.db.models import Avg
+
 def customer_login(request):
     if request.method == 'POST':
         email = request.POST.get('email')
@@ -114,8 +116,15 @@ def home_view(request):
             primary = product.productimage_set.first()
 
         product.primary_image = primary
+
+        avg_rating = Reviews.objects.filter(product=product)\
+        .aggregate(Avg('rating'))['rating__avg'] or 0
+        product.avg_rating = avg_rating
+
+        number_of_reviews = Reviews.objects.filter(product=product).count()
+        product.number_of_reviews = number_of_reviews
         
-    return render(request, 'customer/home.html', {"products":products, "categories":category})
+    return render(request, 'customer/home.html', {"products":products, "categories":category, "avg_rating":avg_rating, "number_of_reviews":number_of_reviews})
     
 def load_subcategories(request):
     category_slug = request.GET.get('category')
@@ -226,6 +235,12 @@ def single_product_view(request, slug):
 
     reviews = Reviews.objects.filter(product=product).order_by('-created_at')
 
+    avg_rating = Reviews.objects.filter(product=product)\
+        .aggregate(Avg('rating'))['rating__avg'] or 0
+    avg_rating = round(avg_rating, 1)
+    
+    number_of_ratings = Reviews.objects.filter(product=product).count()
+
     if request.user.is_authenticated:
         is_in_wishlist = WishList.objects.filter(user=request.user, product=product).exists()
 
@@ -235,7 +250,9 @@ def single_product_view(request, slug):
                   {"product" : product, 
                    "is_in_wishlist" : is_in_wishlist, 
                    "reviews" : reviews, 
-                   "related_products" : related_products})
+                   "related_products" : related_products,
+                   "avg_rating": avg_rating,
+                   "number_of_ratings": number_of_ratings})
 
 @customer_required
 @login_required

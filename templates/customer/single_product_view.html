@@ -95,25 +95,26 @@
                             {{ product.sub_category.name }}
                         </span>
                         <div class="flex items-center gap-1">
+
+                                <!-- Stars -->
                             <div class="flex text-yellow-400">
-                                <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path
-                                        d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2
-                                           9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-                                <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path
-                                        d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2
-                                           9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-                                <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path
-                                        d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2
-                                           9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-                                <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path
-                                        d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2
-                                           9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-                                <svg class="w-4 h-4 fill-current text-gray-200" viewBox="0 0 24 24"><path
-                                        d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2
-                                           9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                                {% for i in "12345" %}
+                                    {% if forloop.counter <= avg_rating %}
+                                        <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                                            <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2
+                                                    9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+                                        </svg>
+                                    {% else %}
+                                        <svg class="w-4 h-4 fill-current text-gray-200" viewBox="0 0 24 24">
+                                            <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2
+                                                    9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+                                        </svg>
+                                    {% endif %}
+                                {% endfor %}
                             </div>
+
                             <span class="text-[11px] font-semibold text-gray-500 uppercase tracking-widest">
-                                4.0 · 124 Reviews
+                                {{avg_rating}} ·  {{number_of_ratings}} reviews
                             </span>
                         </div>
                     </div>
@@ -307,6 +308,30 @@
                                       placeholder="What did you like or dislike?"
                                       required></textarea>
                         </div>
+                          <!-- Star Rating -->
+                        <div class="flex flex-row-reverse justify-end gap-1 text-3xl">
+                            <style>
+                                input:checked ~ label {
+                                    color: #facc15; /* yellow-400 */
+                                }
+                                </style>
+                            
+                            <input type="radio" name="rating" value="5" id="star5" class="hidden peer/star5" required>
+                            <label for="star5" class="cursor-pointer text-gray-300 peer-checked/star5:text-yellow-400 hover:text-yellow-400">★</label>
+
+                            <input type="radio" name="rating" value="4" id="star4" class="hidden peer/star4">
+                            <label for="star4" class="cursor-pointer text-gray-300 peer-checked/star4:text-yellow-400 hover:text-yellow-400">★</label>
+
+                            <input type="radio" name="rating" value="3" id="star3" class="hidden peer/star3">
+                            <label for="star3" class="cursor-pointer text-gray-300 peer-checked/star3:text-yellow-400 hover:text-yellow-400">★</label>
+
+                            <input type="radio" name="rating" value="2" id="star2" class="hidden peer/star2">
+                            <label for="star2" class="cursor-pointer text-gray-300 peer-checked/star2:text-yellow-400 hover:text-yellow-400">★</label>
+
+                            <input type="radio" name="rating" value="1" id="star1" class="hidden peer/star1">
+                            <label for="star1" class="cursor-pointer text-gray-300 peer-checked/star1:text-yellow-400 hover:text-yellow-400">★</label>
+                        </div>
+
                         <button type="submit"
                                 class="w-full bg-primary text-white font-semibold py-2.5 rounded-md hover:bg-primary/90 transition text-sm">
                             Post Review
@@ -341,6 +366,15 @@
                         <p class="text-gray-600 text-sm">
                             {{ review.comment }}
                         </p>
+                        <div class="flex text-yellow-400 text-lg mb-2">
+                            {% for i in "12345" %}
+                                {% if forloop.counter <= review.rating %}
+                                <span>★</span>
+                                {% else %}
+                                <span class="text-gray-300">★</span>
+                                {% endif %}
+                            {% endfor %}
+                            </div>
                     </div>
                     {% empty %}
                     <div class="text-center py-14 bg-gray-50 rounded-md border border-dashed border-gray-200">

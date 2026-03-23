@@ -54,7 +54,7 @@ class WishList(models.Model):
 class Reviews(models.Model):
     user = models.ForeignKey('core.User', on_delete=models.CASCADE)
     product = models.ForeignKey('core.Product', on_delete=models.CASCADE)
-    rating = models.IntegerField(null=True)
+    rating = models.IntegerField(default=0)
     comment = models.CharField(max_length=200, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
