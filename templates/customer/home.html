@@ -200,7 +200,7 @@
                 class="wishlist-button absolute top-3 right-3 z-10 p-2 bg-white rounded-md shadow border border-gray-100 hover:text-red-500 transition-colors"
                 data-product-id="{{ product.id }}">
                   <svg
-                    class="wishlist-icon w-5 h-5 {% if is_in_wishlist %}text-red-500 fill-red-500{% else %}text-gray-400 fill-none{% endif %}"
+                    class="wishlist-icon w-5 h-5 {% if product.is_in_wishlist %}text-red-500 fill-red-500{% else %}text-gray-400 fill-none{% endif %}"
                     stroke="currentColor"
                     viewBox="0 0 24 24">
                     <path stroke-linecap="round"
@@ -223,7 +223,7 @@
 
         <div class="p-3 sm:p-4 flex-grow flex flex-col justify-between">
           <div>
-            <h3 class="text-gray-800 text-xs sm:text-sm font-medium leading-snug line-clamp-2" title="{{ product.name }}">
+            <h3 class="text-gray-800 text-xs sm:text-sm font-medium leading-snug line-clamp-2 min-h-[2.5rem] sm:min-h-[2.8rem]" title="{{ product.name }}">
               {{ product.name }}
             </h3>
 
@@ -236,8 +236,13 @@
               </span>
             </div>
 
-            <div class="mt-1 text-[11px] sm:text-xs text-green-600 font-medium">
-              Limited stock
+            <div class="mt-1 text-[11px] sm:text-xs {% if product.stock < 10 %} text-red-600 {% else %} text-green-600 {% endif %} font-medium">
+              {% if product.stock < 10 %}
+                  Limited stock
+              {% else %}
+                  Best deal
+              {% endif %}
+
             </div>
           </div>
 
@@ -313,6 +318,7 @@
   {% include 'customer/footer.html' %}
 
   <script>
+
             function getCookie(name) {
             let cookieValue = null;
             if (document.cookie && document.cookie !== "") {
@@ -334,6 +340,9 @@
 
             const button = e.target.closest(".wishlist-button")
             if(!button) return
+
+            e.preventDefault()
+            e.stopPropagation()
 
             const productId = button.dataset.productId
             const icon = button.querySelector(".wishlist-icon")
@@ -360,6 +369,7 @@
             })
 
         })
+
   </script>
 </body>
 </html>

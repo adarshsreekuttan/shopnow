@@ -104,7 +104,7 @@ def customer_register(request):
 def home_view(request):
     
     all_products = Product.objects.filter(status = "approved")
-    category = Category.objects.filter()
+    category = Category.objects.all()
 
     paginator = Paginator(all_products, 15)
     page_number = request.GET.get('page')
@@ -117,9 +117,12 @@ def home_view(request):
 
         product.primary_image = primary
 
-        is_in_wishlist = False
+        product.is_in_wishlist = False
 
-        wishlist = WishList.objects.filter(user=request.user)
+        wishlist = WishList.objects.filter(user=request.user, product=product)
+        if wishlist:
+            product.is_in_wishlist = True
+            
 
         avg_rating = Reviews.objects.filter(product=product)\
         .aggregate(Avg('rating'))['rating__avg'] or 0
