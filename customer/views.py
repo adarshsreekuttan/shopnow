@@ -110,6 +110,7 @@ def home_view(request):
     page_number = request.GET.get('page')
     products = paginator.get_page(page_number)
 
+
     for product in products:
         primary = product.productimage_set.filter(is_primary=True).first()
         if not primary:
@@ -124,7 +125,7 @@ def home_view(request):
         number_of_reviews = Reviews.objects.filter(product=product).count()
         product.number_of_reviews = number_of_reviews
         
-    return render(request, 'customer/home.html', {"products":products, "categories":category, "avg_rating":avg_rating, "number_of_reviews":number_of_reviews})
+    return render(request, 'customer/home.html', {"products":products, "categories":category})
     
 def load_subcategories(request):
     category_slug = request.GET.get('category')

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>Admin Dashboard</title>
+</head>
+<body class="bg-gray-50 font-sans">
+
+    <div class="flex h-screen overflow-hidden">
+        <aside class="w-64 bg-slate-900 text-white flex-shrink-0 hidden md:flex flex-col">
+            <div class="p-6 text-2xl font-bold border-b border-slate-800">
+                <span class="text-indigo-400">Shop</span>Now
+            </div>
+            <nav class="flex-1 p-4 space-y-2">
+                <a href="#" class="flex items-center space-x-3 p-3 bg-indigo-600 rounded-lg transition">
+                    <i class="fas fa-th-large w-5 text-center"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="{% url 'product_view' %}" class="flex items-center space-x-3 p-3 text-slate-400 hover:bg-slate-800 hover:text-white rounded-lg transition">
+                    <i class="fas fa-box w-5 text-center"></i>
+                    <span>Products</span>
+                </a>
+                <a href="{% url 'order_view' %}" class="flex items-center space-x-3 p-3 text-slate-400 hover:bg-slate-800 hover:text-white rounded-lg transition">
+                    <i class="fas fa-shopping-cart w-5 text-center"></i>
+                    <span>Orders</span>
+                </a>
+                <a href="{% url 'user_view' %}" class="flex items-center space-x-3 p-3 text-slate-400 hover:bg-slate-800 hover:text-white rounded-lg transition">
+                    <i class="fas fa-users w-5 text-center"></i>
+                    <span>Users</span>
+                </a>
+                <a href="{% url 'seller_view' %}" class="flex items-center space-x-3 p-3 text-slate-400 hover:bg-slate-800 hover:text-white rounded-lg transition">
+                    <i class="fas fa-store w-5 text-center"></i>
+                    <span>Sellers</span>
+                </a>
+                 <a href="{% url 'pending_products' %}" class="flex items-center space-x-3 p-3 text-slate-400 hover:bg-slate-800 hover:text-white rounded-lg transition">
+                    <i class="fas fa-store w-5 text-center"></i>
+                    <span>Product Approval</span>
+                </a>
+            </nav>
+            <div class="p-4 border-t border-slate-800">
+                <button class="flex items-center space-x-3 p-3 text-red-400 hover:bg-red-900/20 w-full rounded-lg transition">
+                    <i class="fas fa-sign-out-alt w-5 text-center"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <main class="flex-1 overflow-y-auto">
+            <header class="bg-white shadow-sm px-8 py-4 flex justify-between items-center">
+                <h1 class="text-xl font-semibold text-gray-800">Overview</h1>
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <span class="absolute top-0 right-0 h-2 w-2 bg-red-500 rounded-full"></span>
+                        <i class="fas fa-bell text-gray-400 text-lg"></i>
+                    </div>
+                    <img src="https://ui-avatars.com/api/?name=Admin&background=6366f1&color=fff" alt="Profile" class="h-8 w-8 rounded-full border border-gray-200">
+                </div>
+            </header>
+
+            <div class="p-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-500 font-medium">Total Users</p>
+                            <h3 class="text-2xl font-bold text-gray-800 mt-1">{{ total_users }}</h3>
+                        </div>
+                        <div class="bg-blue-50 p-3 rounded-lg text-blue-600">
+                            <i class="fas fa-user-group text-xl"></i>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-500 font-medium">Products</p>
+                            <h3 class="text-2xl font-bold text-gray-800 mt-1">{{ total_products }}</h3>
+                        </div>
+                        <div class="bg-emerald-50 p-3 rounded-lg text-emerald-600">
+                            <i class="fas fa-tags text-xl"></i>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-500 font-medium">Sellers</p>
+                            <h3 class="text-2xl font-bold text-gray-800 mt-1">{{ total_sellers }}</h3>
+                        </div>
+                        <div class="bg-amber-50 p-3 rounded-lg text-amber-600">
+                            <i class="fas fa-store text-xl"></i>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-500 font-medium">Total Orders</p>
+                            <h3 class="text-2xl font-bold text-gray-800 mt-1">{{ total_orders }}</h3>
+                        </div>
+                        <div class="bg-purple-50 p-3 rounded-lg text-purple-600">
+                            <i class="fas fa-truck text-xl"></i>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100">
+                        <div class="p-6 border-b border-gray-100 flex justify-between items-center">
+                            <h2 class="font-bold text-gray-800">Recent Orders</h2>
+                            <a href="#" class="text-indigo-600 text-sm font-medium hover:underline">View All</a>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left">
+                                <thead class="bg-gray-50 text-gray-400 text-xs uppercase font-semibold">
+                                    <tr>
+                                        <th class="px-6 py-4">Order ID</th>
+                                        <th class="px-6 py-4">Customer</th>
+                                        <th class="px-6 py-4">Status</th>
+                                        <th class="px-6 py-4 text-right">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-100">
+                                    <tr class="hover:bg-gray-50/50">
+                                        <td class="px-6 py-4 text-sm font-medium">#12903</td>
+                                        <td class="px-6 py-4 text-sm text-gray-600">John Doe</td>
+                                        <td class="px-6 py-4">
+                                            <span class="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs">Delivered</span>
+                                        </td>
+                                        <td class="px-6 py-4 text-right">
+                                            <button class="text-gray-400 hover:text-indigo-600"><i class="fas fa-eye"></i></button>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    
+                </div>
+            </div>
+        </main>
+    </div>
+
+</body>
+</html>

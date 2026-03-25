@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin | User Management</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style type="text/tailwindcss">
+        @layer components {
+            .table-head {
+                @apply px-6 py-4 text-left text-[11px] font-bold text-slate-400 uppercase tracking-[0.15em] bg-slate-50/50 border-b border-slate-100;
+            }
+            .role-badge {
+                @apply px-2.5 py-0.5 rounded-md text-[10px] font-bold border uppercase;
+            }
+            .role-admin { @apply bg-purple-50 text-purple-700 border-purple-100; }
+            .role-staff { @apply bg-blue-50 text-blue-700 border-blue-100; }
+            .role-customer { @apply bg-slate-50 text-slate-600 border-slate-200; }
+        }
+    </style>
+</head>
+<body class="bg-[#f8fafc] text-slate-900 antialiased font-sans">
+
+    <div class="max-w-7xl mx-auto px-4 py-10">
+        
+        <div class="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-6">
+            <div>
+                <h1 class="text-3xl font-black tracking-tight text-slate-900 flex items-center">
+                    User Accounts
+                    <span class="ml-4 px-2 py-1 bg-indigo-100 text-indigo-700 text-xs rounded-lg font-bold">
+                        {{ users|length }} Total
+                    </span>
+                </h1>
+                <p class="text-slate-500 mt-1 font-medium">Manage permissions, staff access, and customer data.</p>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <div class="relative group">
+                    <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs transition-colors group-focus-within:text-indigo-500"></i>
+                    <input type="text" placeholder="Search by name or email..." 
+                           class="pl-9 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none w-64 shadow-sm transition-all">
+                </div>
+                <button class="p-2 bg-white border border-slate-200 rounded-xl text-slate-500 hover:text-indigo-600 hover:border-indigo-200 transition-all shadow-sm">
+                    <i class="fas fa-filter text-sm"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-[2rem] shadow-sm border border-slate-200 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-slate-100">
+                    <thead>
+                        <tr>
+                            <th class="table-head">Identity</th>
+                            <th class="table-head text-center">Role</th>
+                            <th class="table-head">Contact</th>
+                            <th class="table-head">Last Active</th>
+                            <th class="table-head text-right">Settings</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-50">
+                        {% for user in users %}
+                        <tr class="group hover:bg-slate-50/50 transition-colors">
+                            <td class="px-6 py-5 whitespace-nowrap">
+                                <div class="flex items-center">
+                                    <div class="h-11 w-11 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm shadow-indigo-100 shadow-lg">
+                                        {{ user.username|slice:":1"|upper }}
+                                    </div>
+                                    <div class="ml-4">
+                                        <div class="text-sm font-bold text-slate-900 leading-tight">
+                                            {{ user.get_full_name|default:user.username }}
+                                        </div>
+                                        <div class="text-[11px] text-slate-400 font-medium">@{{ user.username }}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-5 whitespace-nowrap text-center">
+                                {% if user.is_superuser %}
+                                    <span class="role-badge role-admin"><i class="fas fa-shield-halved mr-1"></i> Admin</span>
+                                {% elif user.is_staff %}
+                                    <span class="role-badge role-staff"><i class="fas fa-user-tie mr-1"></i> Staff</span>
+                                {% else %}
+                                    <span class="role-badge role-customer">Customer</span>
+                                {% endif %}
+                            </td>
+                            <td class="px-6 py-5 whitespace-nowrap">
+                                <span class="text-sm text-slate-600 font-medium">{{ user.email }}</span>
+                            </td>
+                            <td class="px-6 py-5 whitespace-nowrap">
+                                <div class="text-xs text-slate-500 font-semibold">
+                                    {{ user.last_login|date:"M d, H:i"|default:"Never" }}
+                                </div>
+                            </td>
+                            <td class="px-6 py-5 whitespace-nowrap text-right">
+                                <div class="flex justify-end items-center gap-2">
+                                    <button class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all" title="Edit Permissions">
+                                        <i class="fas fa-user-gear text-xs"></i>
+                                    </button>
+                                    <button class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-all" title="Deactivate User">
+                                        <i class="fas fa-ban text-xs"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="px-6 py-20 text-center">
+                                <div class="inline-flex items-center justify-center w-16 h-16 bg-slate-50 rounded-full text-slate-200 mb-4 border border-slate-100 shadow-inner">
+                                    <i class="fas fa-users text-2xl"></i>
+                                </div>
+                                <h3 class="text-slate-900 font-bold">The user list is empty</h3>
+                                <p class="text-slate-500 text-sm mt-1">Check back later or invite new members.</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
