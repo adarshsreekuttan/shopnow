@@ -209,11 +209,11 @@
                     d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
                   </svg>
                 </button>
-          {% if product.primary_image %}
-          <img src="{{ product.primary_image.image.url }}" alt="{{ product.name }}" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-300">
-          {% else %}
-          <div class="text-gray-300 text-xs">No Image Available</div>
-          {% endif %}
+            {% if product.primary_image %}
+            <img src="{{ product.primary_image.image.url }}" alt="{{ product.name }}" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-300">
+            {% else %}
+            <div class="text-gray-300 text-xs">No Image Available</div>
+            {% endif %}
           <div class="absolute top-2 left-2">
             <span class="inline-flex items-center rounded-sm bg-primary/10 text-primary text-[10px] font-semibold px-2 py-0.5 uppercase tracking-wide">
               New

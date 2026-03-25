@@ -82,8 +82,14 @@ def seller_logout(request):
 def seller_home(request):
     seller=request.user
     sellerprofile=seller.seller_profile
-    product=Product.objects.filter(seller=sellerprofile,status='approved')
-    return render(request, "seller/seller_home.html",{'sellerprofile':sellerprofile,'product':product})  
+    products=Product.objects.filter(seller=sellerprofile,status='approved')
+    
+    for product in products:
+        primary=product.productimage_set.filter(is_primary=True).first()
+        if not primary:
+            primary=product.productimage_set.first()
+        product.primary_image=primary    
+    return render(request, "seller/seller_home.html",{'sellerprofile':sellerprofile,'product':products})  
 
 @seller_required
 def seller_profile(request):
@@ -205,7 +211,7 @@ def inventory(request):
     products=paginator.get_page(page_no)
     
     for product in products:
-        primary=product.productimages_set.filter(is_primary=True).first()
+        primary=product.productimage_set.filter(is_primary=True).first()
         if not primary:
             primary=product.productimage_set.first()
         product.primary_image=primary 
