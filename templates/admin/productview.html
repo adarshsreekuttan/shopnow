@@ -16,7 +16,6 @@
             .btn-icon {
                 @apply w-9 h-9 flex items-center justify-center rounded-lg border transition-all duration-200;
             }
-            /* Status Badge Logic */
             .badge {
                 @apply px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide border;
             }
@@ -26,113 +25,119 @@
         }
     </style>
 </head>
+
 <body class="bg-[#f8fafc] text-slate-900 antialiased font-sans">
 
-    <div class="max-w-7xl mx-auto px-4 py-10">
-        
-        <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
-            <div>
-                <h1 class="text-3xl font-black tracking-tight text-slate-900">Product Inventory</h1>
-                <p class="text-slate-500">Manage your entire catalog, prices, and stock status.</p>
+<!-- ✅ FLEX LAYOUT WRAPPER -->
+<div class="flex min-h-screen">
+
+    <!-- ✅ SIDEBAR -->
+    {% include 'admin/admin_navbar.html' %}
+
+    <!-- ✅ MAIN CONTENT -->
+    <main class="flex-1 p-6">
+
+        <div class="max-w-7xl mx-auto">
+
+            <!-- HEADER -->
+            <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+                <div>
+                    <h1 class="text-3xl font-black tracking-tight text-slate-900">Product Inventory</h1>
+                    <p class="text-slate-500">Manage your entire catalog, prices, and stock status.</p>
+                </div>
+                
+                <div class="flex items-center gap-3">
+                    <a href="{% url 'admin_dash' %}" class="px-4 py-2 text-sm font-semibold text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition">
+                        <i class="fas fa-chart-line mr-2"></i>Dashboard
+                    </a>
+                    <button class="px-4 py-2 text-sm font-semibold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 shadow-md shadow-indigo-200 transition">
+                        <i class="fas fa-plus mr-2"></i>Add Product
+                    </button>
+                </div>
             </div>
-            
-            <div class="flex items-center gap-3">
-                <a href="{% url 'admin_dash' %}" class="px-4 py-2 text-sm font-semibold text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition">
-                    <i class="fas fa-chart-line mr-2"></i>Dashboard
-                </a>
-                <button class="px-4 py-2 text-sm font-semibold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 shadow-md shadow-indigo-200 transition">
-                    <i class="fas fa-plus mr-2"></i>Add Product
-                </button>
+
+            <!-- STATS -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                    <p class="text-slate-500 text-xs font-bold uppercase tracking-wider mb-1">Total Products</p>
+                    <p class="text-2xl font-black text-slate-900">{{ products|length }}</p>
+                </div>
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                    <p class="text-slate-500 text-xs font-bold uppercase tracking-wider mb-1">Active (Approved)</p>
+                    <p class="text-2xl font-black text-emerald-600">
+                        {% if products %}{{ products.count }}{% else %}0{% endif %}
+                    </p>
+                </div>
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                    <p class="text-slate-500 text-xs font-bold uppercase tracking-wider mb-1">Stock Value</p>
+                    <p class="text-2xl font-black text-indigo-600">Inventory Management</p>
+                </div>
             </div>
+
+            <!-- TABLE -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-slate-200">
+                        <thead>
+                            <tr>
+                                <th class="table-head">Product</th>
+                                <th class="table-head">Category</th>
+                                <th class="table-head">Pricing</th>
+                                <th class="table-head">Status</th>
+                                <th class="table-head text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100 bg-white">
+                            {% for product in products %}
+                            <tr class="group hover:bg-slate-50/50 transition-colors">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <div class="h-12 w-12 flex-shrink-0 rounded-lg overflow-hidden border border-slate-100 shadow-sm">
+                                            <img class="h-full w-full object-cover group-hover:scale-110 transition-transform duration-300" 
+                                                 src="{{ product.image.url|default:'https://via.placeholder.com/150' }}" 
+                                                 alt="{{ product.name }}">
+                                        </div>
+                                        <div class="ml-4">
+                                            <div class="text-sm font-bold text-slate-900 mb-1">{{ product.name }}</div>
+                                            <div class="text-[11px] text-slate-400">SKU: PROD-{{ product.id }}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4">{{ product.category }}</td>
+                                <td class="px-6 py-4 font-bold">${{ product.price }}</td>
+                                <td class="px-6 py-4">
+                                    {% if product.status == 'approved' %}
+                                        <span class="badge badge-approved">Approved</span>
+                                    {% elif product.status == 'pending' %}
+                                        <span class="badge badge-pending">Pending</span>
+                                    {% else %}
+                                        <span class="badge badge-rejected">Rejected</span>
+                                    {% endif %}
+                                </td>
+                                <td class="px-6 py-4 text-right">
+                                    <div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition">
+                                        <button class="btn-icon hover:text-indigo-600"><i class="fas fa-pen"></i></button>
+                                        <button class="btn-icon hover:text-rose-600"><i class="fas fa-trash"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" class="text-center py-20">
+                                    No products found
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-                <p class="text-slate-500 text-xs font-bold uppercase tracking-wider mb-1">Total Products</p>
-                <p class="text-2xl font-black text-slate-900">{{ products|length }}</p>
-            </div>
-            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-                <p class="text-slate-500 text-xs font-bold uppercase tracking-wider mb-1">Active (Approved)</p>
-                <p class="text-2xl font-black text-emerald-600">
-                    {% if products %}{{ products.count }}{% else %}0{% endif %}
-                </p>
-            </div>
-            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-                <p class="text-slate-500 text-xs font-bold uppercase tracking-wider mb-1">Stock Value</p>
-                <p class="text-2xl font-black text-indigo-600">Inventory Management</p>
-            </div>
-        </div>
+    </main>
 
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-            <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-slate-200">
-                    <thead>
-                        <tr>
-                            <th class="table-head">Product</th>
-                            <th class="table-head">Category</th>
-                            <th class="table-head">Pricing</th>
-                            <th class="table-head">Status</th>
-                            <th class="table-head text-right">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-slate-100 bg-white">
-                        {% for product in products %}
-                        <tr class="group hover:bg-slate-50/50 transition-colors">
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="flex items-center">
-                                    <div class="h-12 w-12 flex-shrink-0 rounded-lg overflow-hidden border border-slate-100 shadow-sm">
-                                        <img class="h-full w-full object-cover group-hover:scale-110 transition-transform duration-300" 
-                                             src="{{ product.image.url|default:'https://via.placeholder.com/150' }}" 
-                                             alt="{{ product.name }}">
-                                    </div>
-                                    <div class="ml-4">
-                                        <div class="text-sm font-bold text-slate-900 leading-none mb-1">{{ product.name }}</div>
-                                        <div class="text-[11px] text-slate-400 font-medium">SKU: PROD-{{ product.id }}</div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <span class="text-sm text-slate-600 font-medium">{{ product.category }}</span>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm font-black text-slate-900">${{ product.price }}</div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                {% if product.status == 'approved' %}
-                                    <span class="badge badge-approved"><i class="fas fa-circle text-[6px] mr-1.5 align-middle"></i>Approved</span>
-                                {% elif product.status == 'pending' %}
-                                    <span class="badge badge-pending"><i class="fas fa-clock mr-1.5"></i>Pending</span>
-                                {% else %}
-                                    <span class="badge badge-rejected"><i class="fas fa-ban mr-1.5"></i>Rejected</span>
-                                {% endif %}
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-right">
-                                <div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <button title="Edit" class="btn-icon bg-white border-slate-200 text-slate-400 hover:text-indigo-600 hover:border-indigo-200">
-                                        <i class="fas fa-pen text-xs"></i>
-                                    </button>
-                                    <button title="Delete" class="btn-icon bg-white border-slate-200 text-slate-400 hover:text-rose-600 hover:border-rose-200">
-                                        <i class="fas fa-trash text-xs"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        {% empty %}
-                        <tr>
-                            <td colspan="5" class="px-6 py-20 text-center">
-                                <div class="bg-slate-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-300">
-                                    <i class="fas fa-box-open text-2xl"></i>
-                                </div>
-                                <h3 class="text-slate-900 font-bold">No products found</h3>
-                                <p class="text-slate-500 text-sm mt-1">Start by adding your first product to the catalog.</p>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
+</div>
 
 </body>
 </html>
