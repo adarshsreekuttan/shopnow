@@ -112,6 +112,8 @@ def home_view(request):
     page_number = request.GET.get('page')
     products = paginator.get_page(page_number)
 
+    is_authenticated = request.user.is_authenticated
+
 
     for product in products:
         primary = product.productimage_set.filter(is_primary=True).first()
@@ -121,8 +123,10 @@ def home_view(request):
         product.primary_image = primary
 
         product.is_in_wishlist = False
-
-        wishlist = WishList.objects.filter(user=request.user, product=product)
+        if is_authenticated :
+            wishlist = WishList.objects.filter(user=request.user, product=product)
+        else:
+            wishlist = None
         if wishlist:
             product.is_in_wishlist = True
             
@@ -134,7 +138,7 @@ def home_view(request):
         number_of_reviews = Reviews.objects.filter(product=product).count()
         product.number_of_reviews = number_of_reviews   
         
-    return render(request, 'customer/home.html', {"products":products, "categories":category})
+    return render(request, 'customer/home.html', {"products":products, "categories":category, "is_authenticated":is_authenticated})
     
 def load_subcategories(request):
     category_slug = request.GET.get('category')
@@ -319,6 +323,8 @@ def profile_page(request):
     active_orders_count = Order.objects.filter(user=request.user).exclude(status__in=['delivered', 'cancelled']).count()
     return render(request, 'customer/profile.html',{"active_orders_count":active_orders_count})
 
+@customer_required
+@login_required
 def customer_logout(request):
     logout(request)
     return redirect('home')
