@@ -421,14 +421,14 @@ def delete_address(request,id):
     address.delete()
     return redirect('view_addresses')
 
-@customer_required
 @login_required
+@customer_required
 def view_cart(request):
     cart = Cart.objects.filter(user=request.user).first()
     return render(request, 'customer/view_cart.html', {"cart":cart})
 
-@customer_required
 @login_required
+@customer_required
 def add_to_cart(request, id):
     user = request.user
     product = get_object_or_404(Product, id=id)
@@ -471,6 +471,7 @@ def clear_all_cart(request):
         cart.cartitem_set.all().delete()
     return redirect('view_cart')
 
+@login_required
 @customer_required
 def increment_decrement_cartquantity(request, id, action):
     user = request.user
@@ -553,7 +554,8 @@ def post_review(request, slug):
         comment = request.POST.get('comment')
         Reviews.objects.create(rating=rating, comment=comment, user=user, product=product)
         return redirect('single_product', slug=product.slug)
-    
+  
+@login_required
 @customer_required
 def checkout_page(request):
     user = request.user
@@ -582,6 +584,8 @@ def checkout_page(request):
         "cart": cart,
     })
 
+@login_required
+@customer_required
 def place_order(request):
     if request.method == "POST":
         user = request.user
@@ -648,7 +652,9 @@ def place_order(request):
             return redirect('payment_gateway', order_id=order.id)
 
     return redirect('checkout_page')
-    
+
+@login_required
+@customer_required
 def view_orders(request):
     status = request.GET.get('status')
     orders = Order.objects.filter(user=request.user).order_by('-created_at')
@@ -690,6 +696,8 @@ def apply_filter(request, queryset):
 
     return queryset
 
+@login_required
+@customer_required
 def buy_now(request, id):
     user = request.user
     product = get_object_or_404(Product, id=id)
@@ -707,7 +715,8 @@ def buy_now(request, id):
         "mode":"buy-now"
     })
 
-    
+@login_required
+@customer_required
 def payment_gateway(request, order_id):
     order = get_object_or_404(Order, id=order_id)
     
@@ -740,6 +749,8 @@ def payment_gateway(request, order_id):
         "user_phone": order.address.phone,
     })
 
+@login_required
+@customer_required
 def payment_success(request):
     order_id = request.GET.get('order_id')
     payment_id = request.GET.get('payment_id')
@@ -753,5 +764,7 @@ def payment_success(request):
     
     return redirect('order_success', id=order.id)
 
+@login_required
+@customer_required
 def password_reset(request):
     return render(request, 'customer/password_reset_customer.html')
