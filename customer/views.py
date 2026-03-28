@@ -314,13 +314,16 @@ def single_product_view(request, slug):
         number_of_reviews = Reviews.objects.filter(product=product).count()
         related_product.number_of_reviews = number_of_reviews
 
+    product_attributes = product.productattribute_set.all()
+
     return render(request, 'customer/single_product_view.html', 
                   {"product" : product, 
                    "is_in_wishlist" : is_in_wishlist, 
                    "reviews" : reviews, 
                    "related_products" : related_products,
                    "avg_rating": avg_rating,
-                   "number_of_ratings": number_of_ratings})
+                   "number_of_ratings": number_of_ratings,
+                   "product_attributes":product_attributes})
 
 @customer_required
 @login_required

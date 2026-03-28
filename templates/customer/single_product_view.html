@@ -157,6 +157,20 @@
                         {{ product.description }}
                     </p>
 
+                    {% if product_attributes %}
+                        <div class="mt-4">
+                            <h4 class="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-3">Specifications</h4>
+                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                                {% for attr in product_attributes %}
+                                <div class="bg-gray-50 border border-gray-100 rounded-md p-2.5 flex flex-col gap-0.5 hover:border-primary/20 transition-colors">
+                                    <span class="text-[10px] font-medium text-gray-500 uppercase">{{ attr.name }}</span>
+                                    <span class="text-sm font-semibold text-pdark truncate" title="{{ attr.value }}">{{ attr.value }}</span>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+
                     <hr class="border-gray-100 my-3">
 
                     <!-- Actions -->
