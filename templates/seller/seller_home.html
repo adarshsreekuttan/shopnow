@@ -190,14 +190,12 @@
                 
                     <div class="space-y-1 flex-grow">
                         <h4 class="text-xs md:text-sm font-medium text-gray-800 line-clamp-2 leading-tight">{{ x.name }}</h4>
-                        
                         <div class="flex items-center gap-1 md:gap-2">
                             <span class="bg-green-600 text-white text-[9px] md:text-[10px] font-bold px-1 py-0.5 rounded flex items-center gap-1">
-                                {{product.reviews.rating}} <i class="fa-solid fa-star text-[7px] md:text-[8px]"></i>
+                                {{ x.avg_rating }} <i class="fa-solid fa-star text-[7px] md:text-[8px]"></i>
                             </span>
-                            <span class="text-gray-400 text-[10px] md:text-xs">(12)</span>
+                            <span class="text-gray-400 text-[10px] md:text-xs">( {{x.review_count}} )</span>
                         </div>
-
                         <div class="flex items-baseline flex-wrap gap-1.5 md:gap-2 mt-1">
                             <span class="text-sm md:text-base font-bold text-text_dark">₹{{ x.discount_price }}</span>
                             

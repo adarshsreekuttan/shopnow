@@ -6,7 +6,7 @@ from .models import SellerProfile,SubCategory,Category,ProductImage
 from django.contrib import messages
 from django.utils.text import slugify
 from core.models import User, Product
-from customer.models import Order
+from customer.models import Order,Reviews
 from .decorators import seller_required
 from django.http import JsonResponse
 from custom_admin.models import Coupon
@@ -86,7 +86,7 @@ def seller_logout(request):
 def seller_home(request):
     seller=request.user
     sellerprofile=seller.seller_profile
-    products=Product.objects.filter(seller=sellerprofile,status='approved')    
+    products=Product.objects.filter(seller=sellerprofile,status='approved') 
     return render(request, "seller/seller_home.html",{'sellerprofile':sellerprofile,'product':products})  
 
 @seller_required
@@ -176,7 +176,13 @@ def seller_add_product(request):
         if first:
             first.is_primary=True
             first.save()
-        
+        # attribute_names=request.POST.getlist("attribute_names")
+        # attribute_values=request.POST.getlist("attribute_values")
+        # for name, value in  zip(attribute_names,attribute_values):
+        #     if name and value:
+        #         product
+            
+            
                          
         return redirect('seller_approval')        
     return render(request,"seller/seller_add_product.html",{'category':category,'subcategory':subcategory})

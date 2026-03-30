@@ -38,6 +38,13 @@
         .card-shadow { box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        /* Smooth fade in for dynamic attribute rows */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in { animation: fadeIn 0.3s ease-out forwards; }
     </style>
 </head>
 <body class="text-text_dark flex flex-col min-h-screen">
@@ -156,7 +163,31 @@
                             <textarea name="description" required rows="4" maxlength="200" class="w-full border border-gray-300 rounded-md p-3 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors resize-none" placeholder="Describe your product..."></textarea>
                             <p class="text-[10px] text-gray-400 mt-1 flex justify-end">0/200 Limit</p>
                         </div>
-                    </div>
+
+                        <div class="pt-2">
+                            <div class="flex items-center justify-between mb-2">
+                                <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-widest">Product Attributes (Max 5)</label>
+                                <button type="button" id="add-attribute-btn" class="text-[11px] font-bold text-primary bg-primary/10 hover:bg-primary/20 px-3 py-1.5 rounded-md transition flex items-center gap-1.5">
+                                    <i class="fa-solid fa-plus"></i> Add Attribute
+                                </button>
+                            </div>
+                            <p class="text-xs text-gray-400 mb-4">Add specifications like RAM, ROM, Battery Capacity, Color, Size, etc.</p>
+                            
+                            <div id="attributes-container" class="space-y-3">
+                                <div class="flex items-center gap-3 attribute-row">
+                                    <div class="w-1/2">
+                                        <input type="text" name="attribute_names" placeholder="Name (e.g., RAM)" class="w-full border border-gray-300 rounded-md p-2.5 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors">
+                                    </div>
+                                    <div class="w-1/2">
+                                        <input type="text" name="attribute_values" placeholder="Value (e.g., 8GB)" class="w-full border border-gray-300 rounded-md p-2.5 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors">
+                                    </div>
+                                    <button type="button" class="remove-attribute-btn w-8 h-8 flex-shrink-0 flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-md transition-colors" title="Remove Attribute">
+                                        <i class="fa-solid fa-trash-can"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        </div>
                 </div>
 
             </div>
@@ -236,6 +267,73 @@
                     $subcategorySelect.append(filteredOptions);
                 }
             });
+        });
+
+        // --- DYNAMIC ATTRIBUTES LOGIC ---
+        document.addEventListener('DOMContentLoaded', function() {
+            const addAttributeBtn = document.getElementById('add-attribute-btn');
+            const attributesContainer = document.getElementById('attributes-container');
+            const MAX_ATTRIBUTES = 5;
+
+            // Function to toggle button state based on count
+            function updateAddButtonState() {
+                const currentCount = attributesContainer.querySelectorAll('.attribute-row').length;
+                if (currentCount >= MAX_ATTRIBUTES) {
+                    addAttributeBtn.disabled = true;
+                    addAttributeBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                    addAttributeBtn.innerHTML = '<i class="fa-solid fa-lock"></i> Max 5 Reached';
+                } else {
+                    addAttributeBtn.disabled = false;
+                    addAttributeBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                    addAttributeBtn.innerHTML = '<i class="fa-solid fa-plus"></i> Add Attribute';
+                }
+            }
+
+            // Add new attribute row
+            addAttributeBtn.addEventListener('click', function() {
+                const currentCount = attributesContainer.querySelectorAll('.attribute-row').length;
+                
+                // Double check just in case the button wasn't disabled properly
+                if (currentCount >= MAX_ATTRIBUTES) {
+                    alert('You can only add a maximum of 5 attributes.');
+                    return;
+                }
+
+                const newRow = document.createElement('div');
+                newRow.className = 'flex items-center gap-3 attribute-row animate-fade-in';
+                newRow.innerHTML = `
+                    <div class="w-1/2">
+                        <input type="text" name="attribute_names[]" required placeholder="Name (e.g., RAM)" class="w-full border border-gray-300 rounded-md p-2.5 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors">
+                    </div>
+                    <div class="w-1/2">
+                        <input type="text" name="attribute_values[]" required placeholder="Value (e.g., 8GB)" class="w-full border border-gray-300 rounded-md p-2.5 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors">
+                    </div>
+                    <button type="button" class="remove-attribute-btn w-8 h-8 flex-shrink-0 flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-md transition-colors" title="Remove Attribute">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                `;
+                attributesContainer.appendChild(newRow);
+                updateAddButtonState();
+            });
+
+            // Remove attribute row (using event delegation)
+            attributesContainer.addEventListener('click', function(e) {
+                const removeBtn = e.target.closest('.remove-attribute-btn');
+                if (removeBtn) {
+                    const row = removeBtn.closest('.attribute-row');
+                    // Ensure there's always at least one row, or just clear its contents if it's the last one
+                    if (attributesContainer.querySelectorAll('.attribute-row').length > 1) {
+                        row.remove();
+                    } else {
+                        const inputs = row.querySelectorAll('input');
+                        inputs.forEach(input => input.value = '');
+                    }
+                    updateAddButtonState();
+                }
+            });
+
+            // Initialize button state on page load
+            updateAddButtonState();
         });
 
         // --- IMAGE UPLOAD LOGIC ---
