@@ -20,7 +20,9 @@ from django.conf import settings
 import razorpay
 from django.db import transaction
 
-from django.db.models import Avg
+from django.db.models import Avg, Count
+
+import random
 
 def customer_login(request):
     if request.method == 'POST':
@@ -105,7 +107,15 @@ def customer_register(request):
 
 def home_view(request):
     
-    all_products = Product.objects.filter(status = "approved").order_by("-created_at")
+    all_products = Product.objects.filter(status = "approved") \
+        .select_related('category') \
+        .prefetch_related('productimage_set') \
+        .annotate(
+            avg_rating = Avg('reviews__rating'),
+            number_of_reviews = Count('reviews')
+        ) \
+        .order_by("-created_at")
+    
     category = Category.objects.all()
 
     paginator = Paginator(all_products, 15)
@@ -114,31 +124,24 @@ def home_view(request):
 
     is_authenticated = request.user.is_authenticated
 
-    trending_products = Product.objects.order_by('?').annotate(avg_rating=Avg('reviews__rating'))[:3]
+    trending_products = Product.objects.all()
+    trending_products = list(trending_products)
+    random.shuffle(trending_products)
+    trending_products = trending_products[:3    ]
 
+    if is_authenticated:
+        wishlist_products = set(WishList.objects.filter(user=request.user).values_list('product_id', flat=True))
+    else:
+        wishlist_products = set()
 
     for product in products:
-        primary = product.productimage_set.filter(is_primary=True).first()
-        if not primary:
-            primary = product.productimage_set.first()
-
+        primary = next(
+            (img for img in product.productimage_set.all() if img.is_primary),
+            None
+        ) or product.productimage_set.all().first()
         product.primary_image = primary
 
-        product.is_in_wishlist = False
-        if is_authenticated :
-            wishlist = WishList.objects.filter(user=request.user, product=product)
-        else:
-            wishlist = None
-        if wishlist:
-            product.is_in_wishlist = True
-            
-
-        avg_rating = Reviews.objects.filter(product=product)\
-        .aggregate(Avg('rating'))['rating__avg'] or 0
-        product.avg_rating = int(round(avg_rating))
-
-        number_of_reviews = Reviews.objects.filter(product=product).count()
-        product.number_of_reviews = number_of_reviews   
+        product.is_in_wishlist = product.id in wishlist_products
         
     return render(request, 'customer/home.html', {"products":products, 
                                                   "categories":category, 
