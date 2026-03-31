@@ -85,8 +85,8 @@
                 <div class="md:col-span-5 p-6 border-b md:border-b-0 md:border-r border-gray-100 flex flex-col">
                     
                     <div class="w-full h-[350px] md:h-[450px] bg-gray-50 rounded-lg flex items-center justify-center p-4 relative mb-4">
-                        {% if product.productimage_set.exists %}
-                            <img id="main-product-image" src="{{ product.productimage_set.first.image.url }}" alt="{{ product.name }}" class="max-w-[85%] max-h-[85%] object-contain mix-blend-darken transition-all duration-300">
+                        {% if product.get_primary_image %}
+                            <img id="main-product-image" src="{{ product.get_primary_image.image.url }}" alt="{{ product.name }}" class="max-w-[85%] max-h-[85%] object-contain mix-blend-darken transition-all duration-300">
                         {% else %}
                             <img id="main-product-image" src="{% static 'images/no-image.jpg' %}" alt="No image available" class="max-w-[85%] max-h-[85%] object-contain mix-blend-darken opacity-50">
                         {% endif %}

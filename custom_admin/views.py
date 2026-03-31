@@ -5,6 +5,7 @@ from customer.models import *
 from core.models import *
 from seller.models import *
 from custom_admin.models import *
+from django.contrib import messages
 
 
 # Create your views here.
@@ -48,6 +49,32 @@ def reject_products(request,id):
 def products_view(request):
     products = Product.objects.all()
     return render(request,'admin/productview.html',{'products':products})
+
+
+def edit_product(request,id):
+    products = Product.objects.get(id=id)
+    category = Category.objects.all()
+    subcategory = SubCategory.objects.all()
+    seller = SellerProfile.objects.all()
+    product_status = products.status
+
+    if request.method  == 'POST':
+
+        products.seller_id = request.POST.get('seller')
+        products.name = request.POST.get('name')
+        products.price = request.POST.get('price')
+        products.discount_price = request.POST.get('discount_price')
+        products.status = product_status
+        products.description = request.POST.get('description')
+        products.stock = request.POST.get('stock')
+        products.category_id = request.POST.get('category')
+        products.sub_category_id = request.POST.get('subcategory')
+        products.save()
+
+        return redirect('product_view')
+
+    return render(request,'admin/edit_product.html',{'products':products, 'category':category, 'subcategory':subcategory, 'seller':seller})   
+
 
 
 def seller_view(request):
@@ -164,31 +191,6 @@ def delete_subcategory(request,id):
     return redirect('subcategory_list')
 
 
-def edit_product(request,id):
-    products = Product.objects.get(id=id)
-    category = Category.objects.all()
-    subcategory = SubCategory.objects.all()
-    seller = SellerProfile.objects.all()
-    product_status = products.status
-
-    if request.method  == 'POST':
-
-        products.seller_id = request.POST.get('seller')
-        products.name = request.POST.get('name')
-        products.price = request.POST.get('price')
-        products.discount_price = request.POST.get('discount_price')
-        products.status = product_status
-        products.description = request.POST.get('description')
-        products.stock = request.POST.get('stock')
-        products.category_id = request.POST.get('category')
-        products.sub_category_id = request.POST.get('subcategory')
-        products.save()
-
-        return redirect('product_view')
-
-    return render(request,'admin/edit_product.html',{'products':products, 'category':category, 'subcategory':subcategory, 'seller':seller})   
-
-
 def delete_product(request,id):
     products = Product.objects.get(id=id)
     products.delete()
@@ -221,4 +223,19 @@ def seller_details(request,id):
 def deactivate_seller(request,id):
     sellers = SellerProfile.objects.get(id=id)
     sellers.is_active = False
+    sellers.save()
     return redirect('seller_view')
+
+
+def pending_seller(request):
+    sellers  = SellerProfile.objects.filter(approved=False, is_active=True)
+    count = SellerProfile.objects.count()
+    messages.success(request,'Seller approved successfully')
+    return render(request,'admin/pending_seller.html',{'sellers':sellers, 'count':count})
+
+
+def approve_seller(request,id):
+    sellers = SellerProfile.objects.get(id=id)
+    sellers.approved = True
+    sellers.save()
+    return redirect('pending_seller')

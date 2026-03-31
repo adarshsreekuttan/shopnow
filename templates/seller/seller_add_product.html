@@ -7,8 +7,6 @@
     <title>FlipShop - Add New Product</title>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="{% static 'js/category_subcategory.js' %}"></script>
-    
     <script src="https://cdn.tailwindcss.com"></script>
     
     <script>
@@ -40,6 +38,13 @@
         .card-shadow { box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        /* Smooth fade in for dynamic attribute rows */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in { animation: fadeIn 0.3s ease-out forwards; }
     </style>
 </head>
 <body class="text-text_dark flex flex-col min-h-screen">
@@ -68,10 +73,8 @@
             </div>
         </div>
 
-        <form action="#" method="POST" enctype="multipart/form-data" class="bg-white rounded-xl card-shadow overflow-hidden" onsubmit="this.querySelector('button[type=submit]').disabled = true;">
+        <form action="" method="POST" enctype="multipart/form-data" class="bg-white rounded-xl card-shadow overflow-hidden" onsubmit="this.querySelector('button[type=submit]').disabled = true;">
             {% csrf_token %}
-            
-            <input type="hidden" name="main_image_index" id="main-image-index" value="0">
 
             <div class="p-6 md:p-8 flex flex-col lg:flex-row gap-8">
                 
@@ -79,7 +82,7 @@
                     <h3 class="text-sm font-bold text-primary_dark border-b border-gray-100 pb-2 mb-4">Product Images</h3>
                     
                     <div id="drop-zone" class="border-2 border-dashed border-gray-300 rounded-xl p-6 flex flex-col items-center justify-center text-center bg-gray-50 hover:bg-gray-100 transition cursor-pointer min-h-[250px] group relative overflow-hidden">
-                        <input type="file" id="image-upload" name="product_image" multiple accept="image/png, image/jpeg" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                        <input type="file" id="image-upload" name="product_images" multiple accept="image/png, image/jpeg" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
                         
                         <div class="w-16 h-16 bg-white rounded-full shadow flex items-center justify-center text-primary text-2xl mb-4 group-hover:scale-110 transition pointer-events-none">
                             <i class="fa-solid fa-cloud-arrow-up"></i>
@@ -147,7 +150,7 @@
                                     <select name="sub_category" id="subcategory" required class="w-full border border-gray-300 rounded-md p-3 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors appearance-none bg-white">
                                         <option value="" disabled selected> Select Sub Category</option>
                                         {% for x in subcategory %}
-                                        <option value="{{ x.slug }}">{{ x.name }}</option>
+                                        <option value="{{ x.slug }}" data-category="{{ x.category.slug }}">{{ x.name }}</option>
                                         {% endfor %}
                                     </select>
                                     <i class="fa-solid fa-angle-down absolute right-4 top-3.5 text-gray-400 pointer-events-none"></i>
@@ -160,7 +163,31 @@
                             <textarea name="description" required rows="4" maxlength="200" class="w-full border border-gray-300 rounded-md p-3 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors resize-none" placeholder="Describe your product..."></textarea>
                             <p class="text-[10px] text-gray-400 mt-1 flex justify-end">0/200 Limit</p>
                         </div>
-                    </div>
+
+                        <div class="pt-2">
+                            <div class="flex items-center justify-between mb-2">
+                                <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-widest">Product Attributes (Max 5)</label>
+                                <button type="button" id="add-attribute-btn" class="text-[11px] font-bold text-primary bg-primary/10 hover:bg-primary/20 px-3 py-1.5 rounded-md transition flex items-center gap-1.5">
+                                    <i class="fa-solid fa-plus"></i> Add Attribute
+                                </button>
+                            </div>
+                            <p class="text-xs text-gray-400 mb-4">Add specifications like RAM, ROM, Battery Capacity, Color, Size, etc.</p>
+                            
+                            <div id="attributes-container" class="space-y-3">
+                                <div class="flex items-center gap-3 attribute-row">
+                                    <div class="w-1/2">
+                                        <input type="text" name="attribute_names" placeholder="Name (e.g., RAM)" class="w-full border border-gray-300 rounded-md p-2.5 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors">
+                                    </div>
+                                    <div class="w-1/2">
+                                        <input type="text" name="attribute_values" placeholder="Value (e.g., 8GB)" class="w-full border border-gray-300 rounded-md p-2.5 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors">
+                                    </div>
+                                    <button type="button" class="remove-attribute-btn w-8 h-8 flex-shrink-0 flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-md transition-colors" title="Remove Attribute">
+                                        <i class="fa-solid fa-trash-can"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        </div>
                 </div>
 
             </div>
@@ -223,14 +250,99 @@
     </footer>
 
     <script>
+        // --- CATEGORY & SUBCATEGORY FILTERING LOGIC ---
+        $(document).ready(function() {
+            var allSubcategories = $('#subcategory option:not(:first)').clone();
+            
+            $('#subcategory').empty().append('<option value="" disabled selected> Select Sub Category</option>');
+
+            $('#category').change(function() {
+                var selectedCategory = $(this).val();
+                var $subcategorySelect = $('#subcategory');
+                
+                $subcategorySelect.empty().append('<option value="" disabled selected> Select Sub Category</option>');
+                
+                if (selectedCategory) {
+                    var filteredOptions = allSubcategories.filter('[data-category="' + selectedCategory + '"]');
+                    $subcategorySelect.append(filteredOptions);
+                }
+            });
+        });
+
+        // --- DYNAMIC ATTRIBUTES LOGIC ---
+        document.addEventListener('DOMContentLoaded', function() {
+            const addAttributeBtn = document.getElementById('add-attribute-btn');
+            const attributesContainer = document.getElementById('attributes-container');
+            const MAX_ATTRIBUTES = 5;
+
+            // Function to toggle button state based on count
+            function updateAddButtonState() {
+                const currentCount = attributesContainer.querySelectorAll('.attribute-row').length;
+                if (currentCount >= MAX_ATTRIBUTES) {
+                    addAttributeBtn.disabled = true;
+                    addAttributeBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                    addAttributeBtn.innerHTML = '<i class="fa-solid fa-lock"></i> Max 5 Reached';
+                } else {
+                    addAttributeBtn.disabled = false;
+                    addAttributeBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                    addAttributeBtn.innerHTML = '<i class="fa-solid fa-plus"></i> Add Attribute';
+                }
+            }
+
+            // Add new attribute row
+            addAttributeBtn.addEventListener('click', function() {
+                const currentCount = attributesContainer.querySelectorAll('.attribute-row').length;
+                
+                // Double check just in case the button wasn't disabled properly
+                if (currentCount >= MAX_ATTRIBUTES) {
+                    alert('You can only add a maximum of 5 attributes.');
+                    return;
+                }
+
+                const newRow = document.createElement('div');
+                newRow.className = 'flex items-center gap-3 attribute-row animate-fade-in';
+                newRow.innerHTML = `
+                    <div class="w-1/2">
+                        <input type="text" name="attribute_names[]" required placeholder="Name (e.g., RAM)" class="w-full border border-gray-300 rounded-md p-2.5 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors">
+                    </div>
+                    <div class="w-1/2">
+                        <input type="text" name="attribute_values[]" required placeholder="Value (e.g., 8GB)" class="w-full border border-gray-300 rounded-md p-2.5 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors">
+                    </div>
+                    <button type="button" class="remove-attribute-btn w-8 h-8 flex-shrink-0 flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-md transition-colors" title="Remove Attribute">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                `;
+                attributesContainer.appendChild(newRow);
+                updateAddButtonState();
+            });
+
+            // Remove attribute row (using event delegation)
+            attributesContainer.addEventListener('click', function(e) {
+                const removeBtn = e.target.closest('.remove-attribute-btn');
+                if (removeBtn) {
+                    const row = removeBtn.closest('.attribute-row');
+                    // Ensure there's always at least one row, or just clear its contents if it's the last one
+                    if (attributesContainer.querySelectorAll('.attribute-row').length > 1) {
+                        row.remove();
+                    } else {
+                        const inputs = row.querySelectorAll('input');
+                        inputs.forEach(input => input.value = '');
+                    }
+                    updateAddButtonState();
+                }
+            });
+
+            // Initialize button state on page load
+            updateAddButtonState();
+        });
+
+        // --- IMAGE UPLOAD LOGIC ---
         document.addEventListener('DOMContentLoaded', function() {
             const imageUpload = document.getElementById('image-upload');
             const dropZone = document.getElementById('drop-zone');
             const previewContainer = document.getElementById('image-preview-container');
-            const mainImageInput = document.getElementById('main-image-index');
             
             let selectedFiles = [];
-            let mainImageIndex = 0; 
 
             imageUpload.addEventListener('change', handleFiles);
 
@@ -262,10 +374,6 @@
                     selectedFiles = selectedFiles.slice(0, 5); 
                 }
 
-                if (selectedFiles.length > 0 && mainImageIndex === -1) {
-                    mainImageIndex = 0;
-                }
-
                 updateFileInput();
                 renderPreviews();
             }
@@ -274,7 +382,6 @@
                 const dataTransfer = new DataTransfer();
                 selectedFiles.forEach(file => dataTransfer.items.add(file));
                 imageUpload.files = dataTransfer.files;
-                mainImageInput.value = mainImageIndex;
             }
 
             function renderPreviews() {
@@ -285,10 +392,8 @@
                         const reader = new FileReader();
                         
                         reader.onload = function(e) {
-                            const isMain = index === mainImageIndex;
-                            
                             const imgDiv = document.createElement('div');
-                            imgDiv.className = `w-20 h-20 rounded-md border-2 bg-gray-50 flex items-center justify-center shrink-0 overflow-hidden relative shadow-sm group ${isMain ? 'border-primary' : 'border-gray-200'}`;
+                            imgDiv.className = `w-20 h-20 rounded-md border-2 border-gray-200 bg-gray-50 flex items-center justify-center shrink-0 overflow-hidden relative shadow-sm group`;
                             
                             const img = document.createElement('img');
                             img.src = e.target.result;
@@ -307,25 +412,6 @@
 
                             imgDiv.appendChild(img);
                             imgDiv.appendChild(removeBtn);
-
-                            if (isMain) {
-                                const mainBadge = document.createElement('div');
-                                mainBadge.className = 'absolute bottom-0 left-0 right-0 bg-primary text-white text-[9px] font-bold text-center py-0.5 z-10';
-                                mainBadge.innerText = 'MAIN';
-                                imgDiv.appendChild(mainBadge);
-                            } else {
-                                const setMainBtn = document.createElement('button');
-                                setMainBtn.type = 'button';
-                                setMainBtn.className = 'absolute inset-0 bg-black/50 text-white text-[10px] font-bold flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-200 z-10 backdrop-blur-[1px]';
-                                setMainBtn.innerText = 'Set Main';
-                                
-                                setMainBtn.onclick = function(event) {
-                                    event.preventDefault();
-                                    event.stopPropagation();
-                                    setMainImage(index);
-                                }
-                                imgDiv.appendChild(setMainBtn);
-                            }
                             
                             previewContainer.appendChild(imgDiv);
                         };
@@ -335,21 +421,12 @@
                 });
             }
 
-            function setMainImage(index) {
-                mainImageIndex = index;
-                updateFileInput();
-                renderPreviews();
-            }
-
             function removeImage(index) {
                 selectedFiles.splice(index, 1); 
-                if (selectedFiles.length === 0) mainImageIndex = -1; 
-                else if (index === mainImageIndex) mainImageIndex = 0; 
-                else if (index < mainImageIndex) mainImageIndex--; 
-                updateFileInput(); renderPreviews(); 
+                updateFileInput(); 
+                renderPreviews(); 
             }
         });
     </script>
-
 </body>
 </html>

@@ -5,7 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FlipShop - Edit Product</title>
-    
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     
     <script>
@@ -17,7 +18,7 @@
                         primary: '#5B23FF',
                         accent: '#008BFF',
                         highlight: '#E4FF30',
-                        bg_light: '#F1F3F6',
+                        bg_light: '#F8F9FA',
                         text_dark: '#212121',
                         text_gray: '#878787'
                     },
@@ -33,22 +34,24 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #F1F3F6; }
+        body { font-family: 'Inter', sans-serif; background-color: #F8F9FA; }
         .card-shadow { box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        /* Style for hidden checkbox label acting as delete button */
+        .delete-img-cb:checked + label { background-color: #ef4444; border-color: #ef4444; color: white; }
     </style>
 </head>
 <body class="text-text_dark flex flex-col min-h-screen">
 
     <nav class="bg-primary_dark sticky top-0 z-50 shadow-md">
         <div class="container mx-auto px-4 h-16 flex items-center justify-between gap-4">
-            <a href="#" class="flex items-center gap-2">
+            <a href="{% url 'seller_home' %}" class="flex items-center gap-2">
                 <div class="w-8 h-8 bg-highlight rounded flex items-center justify-center text-primary_dark font-bold text-xl italic">F</div>
                 <span class="text-white font-bold text-lg tracking-wide hidden sm:block">FlipShop <span class="text-xs font-normal text-highlight ml-1">Seller Hub</span></span>
             </a>
             <div class="flex items-center gap-4 text-white font-medium text-sm ml-auto">
-                <a href="#dashboard" class="flex items-center gap-2 bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-sm transition">
+                <a href="{% url 'seller_home' %}" class="flex items-center gap-2 bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-sm transition">
                     <i class="fa-solid fa-arrow-left"></i>
                     <span class="hidden sm:block">Back to Dashboard</span>
                 </a>
@@ -61,59 +64,65 @@
         <div class="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
                 <h1 class="text-2xl font-bold text-primary_dark">Edit Product</h1>
-                <p class="text-gray-500 text-sm mt-1">Update the details of your existing product.</p>
+                <p class="text-gray-500 text-sm mt-1">Update the details for {{ product.name }}.</p>
             </div>
         </div>
 
-        <form action="#" method="POST" enctype="multipart/form-data" class="bg-white rounded-xl card-shadow overflow-hidden">
+        <form action="" method="POST" enctype="multipart/form-data" class="bg-white rounded-xl card-shadow overflow-hidden" onsubmit="this.querySelector('button[type=submit]').disabled = true;">
             {% csrf_token %}
-            <input type="hidden" name="primary_image_index" id="primaryImageIndex" value="0">
             
+            <input type="hidden" name="main_image_index" id="main-image-index" value="-1">
+
             <div class="p-6 md:p-8 flex flex-col lg:flex-row gap-8">
                 
                 <div class="w-full lg:w-1/3">
                     <h3 class="text-sm font-bold text-primary_dark border-b border-gray-100 pb-2 mb-4">Product Images</h3>
                     
-                    <div class="flex items-center justify-between mb-3">
-                        <h4 class="text-sm font-bold text-gray-700">Image Preview</h4>
-                        <span id="slideCounter" class="text-[11px] font-bold text-white bg-gray-800 px-2 py-0.5 rounded-full hidden">1 / 1</span>
+                    {% if product.productimage_set.all %}
+                    <div class="mb-6">
+                        <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-2">Current Images</label>
+                        <div class="flex flex-wrap gap-3">
+                            {% for img in product.productimage_set.all %}
+                                <div class="relative w-20 h-20 rounded-md border-2 border-gray-200 bg-gray-50 flex items-center justify-center shrink-0 overflow-hidden shadow-sm group hover:border-primary transition-colors">
+                                    
+                                    <img src="{{ img.image.url }}" class="w-full h-full object-cover" alt="Product Image">
+
+                                    {% if img.is_primary %}
+                                    <div class="absolute bottom-0 left-0 right-0 bg-green-500 text-white text-[9px] font-bold text-center py-0.5 z-10 pointer-events-none">
+                                        CURRENT MAIN
+                                    </div>
+                                    {% endif %}
+
+                                    <button type="submit" 
+                                            formaction="{% url 'set_primary_img' img.id %}" 
+                                            formnovalidate
+                                            class="absolute inset-0 m-0 p-0 w-full h-full bg-black/60 text-white text-[10px] font-bold flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-200 backdrop-blur-[2px] cursor-pointer hover:bg-black/70 z-20">
+                                        <span class="flex flex-col items-center gap-1">
+                                            <i class="fa-solid fa-star text-highlight"></i>
+                                            Set Main
+                                        </span>
+                                    </button>
+                                    
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <p class="text-[10px] text-gray-400 mt-2">Hover over an image and click "Set Main" to update the primary image.</p>
+                    </div>
+                    {% endif %}
+
+                    <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-2">Add New Images</label>
+                    <div id="drop-zone" class="border-2 border-dashed border-gray-300 rounded-xl p-6 flex flex-col items-center justify-center text-center bg-gray-50 hover:bg-gray-100 transition cursor-pointer min-h-[200px] group relative overflow-hidden">
+                        <input type="file" id="image-upload" name="new_product_images" multiple accept="image/png, image/jpeg" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                        
+                        <div class="w-12 h-12 bg-white rounded-full shadow flex items-center justify-center text-primary text-xl mb-3 group-hover:scale-110 transition pointer-events-none">
+                            <i class="fa-solid fa-cloud-arrow-up"></i>
+                        </div>
+                        <h4 class="text-sm font-bold text-gray-700 pointer-events-none">Click or drag images</h4>
+                        <p class="text-[10px] text-gray-400 mt-2 pointer-events-none">JPEG, PNG (Max 5MB)</p>
                     </div>
 
-                    <div class="relative w-full aspect-square rounded-xl overflow-hidden border border-gray-200 bg-gray-100 group shadow-sm flex items-center justify-center mb-6">
-                        
-                        <div id="primaryBadge" class="absolute top-2 left-2 bg-highlight text-primary_dark text-[10px] font-bold px-2 py-1 rounded shadow-sm z-30 hidden">
-                            <i class="fa-solid fa-star mr-1"></i> Main
-                        </div>
-
-                        <img id="imagePreview" src="https://placehold.co/400x400?text=Loading..." alt="Product Image" class="w-full h-full object-cover transition-opacity duration-300">
-
-                        <button type="button" onclick="prevSlide(event)" id="prevBtn" class="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center text-gray-800 hover:text-primary hover:scale-110 transition shadow-md z-30 hidden">
-                            <i class="fa-solid fa-chevron-left text-sm"></i>
-                        </button>
-                        
-                        <button type="button" onclick="nextSlide(event)" id="nextBtn" class="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center text-gray-800 hover:text-primary hover:scale-110 transition shadow-md z-30 hidden">
-                            <i class="fa-solid fa-chevron-right text-sm"></i>
-                        </button>
-
-                        <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3 z-20 pointer-events-none">
-                            
-                            <button type="button" onclick="setPrimaryImage(event)" id="starBtn" class="w-10 h-10 bg-gray-400 rounded-full flex items-center justify-center text-white hover:bg-yellow-400 hover:scale-110 transition shadow-lg pointer-events-auto" title="Set as Main Image">
-                                <i class="fa-solid fa-star text-sm"></i>
-                            </button>
-
-                            <label for="imageUpload" class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-gray-800 hover:text-primary hover:scale-110 transition cursor-pointer shadow-lg pointer-events-auto" title="Add to slider">
-                                <i class="fa-solid fa-plus"></i>
-                            </label>
-                            
-                            <button type="button" onclick="removeImage(event)" class="w-10 h-10 bg-red-500 rounded-full flex items-center justify-center text-white hover:bg-red-600 hover:scale-110 transition shadow-lg pointer-events-auto" title="Remove this image">
-                                <i class="fa-solid fa-trash text-sm"></i>
-                            </button>
-
-                        </div>
+                    <div id="image-preview-container" class="flex flex-wrap gap-3 mt-4 pb-2">
                     </div>
-
-                    <input type="file" id="imageUpload" name="product_images" multiple class="hidden" accept="image/*" onchange="previewImages(event)">
-                    
                 </div>
 
                 <div class="w-full lg:w-2/3">
@@ -124,16 +133,16 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                                 <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-1.5">Product Name <span class="text-red-500">*</span></label>
-                                <input type="text" name="product_name" required maxlength="200" value="{{ product.name }}" class="w-full border border-gray-300 rounded-md p-3 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors" placeholder="e.g. Sony Headphones">
+                                <input type="text" name="product_name" value="{{ product.name }}" required maxlength="200" class="w-full border border-gray-300 rounded-md p-3 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors" placeholder="e.g. Sony Headphones">
                             </div>
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-1.5">Price (₹) <span class="text-red-500">*</span></label>
+                                <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-1.5">Base Price (₹) <span class="text-red-500">*</span></label>
                                 <div class="relative">
                                     <span class="absolute left-4 top-3 text-gray-500 font-semibold">₹</span>
-                                    <input type="number" name="product_price" required min="0" value="{{ product.price }}" class="w-full border border-gray-300 rounded-md p-3 pl-8 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors" placeholder="0">
+                                    <input type="number" name="product_price" value="{{ product.price }}" required min="0" class="w-full border border-gray-300 rounded-md p-3 pl-8 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors" placeholder="0">
                                 </div>
                             </div>
                             
@@ -141,7 +150,7 @@
                                 <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-1.5">Discount Price (₹) <span class="text-red-500">*</span></label>
                                 <div class="relative">
                                     <span class="absolute left-4 top-3 text-gray-500 font-semibold">₹</span>
-                                    <input type="number" name="discount_price" required min="0" value="{{ product.discount_price }}" class="w-full border border-gray-300 rounded-md p-3 pl-8 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors" placeholder="0">
+                                    <input type="number" name="discount_price" value="{{ product.discount_price }}" required min="0" class="w-full border border-gray-300 rounded-md p-3 pl-8 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors" placeholder="0">
                                 </div>
                             </div>
                         </div>
@@ -149,16 +158,16 @@
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <div>
                                 <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-1.5">Stock <span class="text-red-500">*</span></label>
-                                <input type="number" name="stock" required min="0" value="{{ product.stock }}" class="w-full border border-gray-300 rounded-md p-3 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors">
+                                <input type="number" name="stock" value="{{ product.stock }}" required min="0" class="w-full border border-gray-300 rounded-md p-3 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors">
                             </div>
 
                             <div>
                                 <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-1.5">Category <span class="text-red-500">*</span></label>
                                 <div class="relative">
-                                    <select name="category" required class="w-full border border-gray-300 rounded-md p-3 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors appearance-none bg-white">
+                                    <select name="category" id="category" required class="w-full border border-gray-300 rounded-md p-3 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors appearance-none bg-white">
                                         <option value="" disabled>Select Category</option>
-                                        {% for c in categories %}
-                                        <option value="{{ c.id }}" {% if c.id == product.category.id %} selected {% endif %}>{{ c.name }}</option>
+                                        {% for c in category %}
+                                            <option value="{{ c.slug }}" {% if product.category.slug == c.slug %}selected{% endif %}>{{ c.name }}</option>
                                         {% endfor %}
                                     </select>
                                     <i class="fa-solid fa-angle-down absolute right-4 top-3.5 text-gray-400 pointer-events-none"></i>
@@ -168,10 +177,10 @@
                             <div>
                                 <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-1.5">Sub Category <span class="text-red-500">*</span></label>
                                 <div class="relative">
-                                    <select name="sub_category" required class="w-full border border-gray-300 rounded-md p-3 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors appearance-none bg-white">
-                                        <option value="" disabled>Select Sub Category</option>
+                                    <select name="sub_category" id="subcategory" required class="w-full border border-gray-300 rounded-md p-3 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors appearance-none bg-white">
+                                        <option value="" disabled> Select Sub Category</option>
                                         {% for x in subcategory %}
-                                        <option value="{{ x.id }}" {% if x.id == product.sub_category.id %} selected {% endif %}>{{ x.name }}</option>
+                                            <option value="{{ x.slug }}" data-category="{{ x.category.slug }}" {% if product.sub_category.slug == x.slug %}selected{% endif %}>{{ x.name }}</option>
                                         {% endfor %}
                                     </select>
                                     <i class="fa-solid fa-angle-down absolute right-4 top-3.5 text-gray-400 pointer-events-none"></i>
@@ -184,15 +193,14 @@
                             <textarea name="description" required rows="4" maxlength="200" class="w-full border border-gray-300 rounded-md p-3 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors resize-none" placeholder="Describe your product...">{{ product.description }}</textarea>
                             <p class="text-[10px] text-gray-400 mt-1 flex justify-end">0/200 Limit</p>
                         </div>
-
                     </div>
                 </div>
 
             </div>
 
             <div class="bg-gray-50 p-6 border-t border-gray-200 flex flex-col-reverse sm:flex-row items-center justify-end gap-3">
-                <a href="#cancel" class="w-full sm:w-auto px-6 py-2.5 text-sm font-semibold text-gray-600 bg-white border border-gray-300 rounded-md hover:bg-gray-100 transition text-center">
-                    Cancel
+                <a href="javascript:history.back()" class="w-full sm:w-auto px-6 py-2.5 text-sm font-semibold text-gray-600 bg-white border border-gray-300 rounded-md hover:bg-gray-100 transition text-center">
+                    Discard Changes
                 </a>
                 <button type="submit" class="w-full sm:w-auto px-8 py-2.5 text-sm font-bold text-white bg-primary rounded-md shadow hover:bg-opacity-90 transition active:scale-[0.98] flex items-center justify-center gap-2">
                     <i class="fa-solid fa-floppy-disk"></i> Save Changes
@@ -203,166 +211,165 @@
 
     </main>
 
-    <footer class="bg-primary_dark text-white mt-auto py-6 text-sm">
-        <div class="container mx-auto px-4 flex flex-col md:flex-row items-center justify-between text-gray-400 text-xs gap-4 text-center md:text-left">
-            <p>© 2026 FlipShop Inc. Seller Services.</p>
-            <div class="flex gap-4">
-                <a href="#" class="hover:text-accent transition">Help Center</a>
-                <a href="#" class="hover:text-accent transition">Seller Policies</a>
-            </div>
-        </div>
-    </footer>
-
     <script>
-        // Store all images
-        let slideImages = [
-            // FIX 2: Added |escapejs to ensure quotes in URLs don't break the JS array
-            {% for img in product.productimage_set.all %}
-                "{{ img.image.url|escapejs }}",
-            {% endfor %}
-        ];
-        
-        let currentSlide = 0;
-        
-        // Find existing primary image from DB
-        let primarySlideIndex = 0;
-        {% for img in product.productimage_set.all %}
-            {% if img.is_primary %}
-                primarySlideIndex = {{ forloop.counter0 }};
-            {% endif %}
-        {% endfor %}
-
-        // Sync hidden input on load
-        document.getElementById('primaryImageIndex').value = primarySlideIndex;
-
-        const placeholderImg = "https://placehold.co/400x400?text=No+Image";
-
-        if (slideImages.length === 0) {
-            slideImages.push(placeholderImg);
-        }
-
-        window.onload = function() {
-            updateSlider();
-        };
-
-        function updateSlider() {
-            const preview = document.getElementById('imagePreview');
-            const prevBtn = document.getElementById('prevBtn');
-            const nextBtn = document.getElementById('nextBtn');
-            const counter = document.getElementById('slideCounter');
+        // --- CATEGORY & SUBCATEGORY FILTERING LOGIC ---
+        $(document).ready(function() {
+            var allSubcategories = $('#subcategory option:not(:first)').clone();
             
-            const primaryBadge = document.getElementById('primaryBadge');
-            const starBtn = document.getElementById('starBtn');
-
-            // Apply current image
-            if (slideImages.length > 0) {
-                preview.src = slideImages[currentSlide];
-            }
-
-            // Update Primary UI
-            if (slideImages[0] !== placeholderImg) {
-                if (currentSlide === primarySlideIndex) {
-                    primaryBadge.classList.remove('hidden');
-                    starBtn.classList.replace('bg-gray-400', 'bg-yellow-400');
-                    starBtn.title = "Current Main Image";
-                } else {
-                    primaryBadge.classList.add('hidden');
-                    starBtn.classList.replace('bg-yellow-400', 'bg-gray-400');
-                    starBtn.title = "Set as Main Image";
-                }
-            } else {
-                primaryBadge.classList.add('hidden');
-            }
-
-            // UI controls logic
-            if (slideImages.length > 1) {
-                prevBtn.classList.remove('hidden');
-                nextBtn.classList.remove('hidden');
-                counter.classList.remove('hidden');
-                counter.innerText = `${currentSlide + 1} / ${slideImages.length}`;
-            } else {
-                prevBtn.classList.add('hidden');
-                nextBtn.classList.add('hidden');
-                counter.classList.add('hidden');
-            }
-        }
-
-        function setPrimaryImage(e) {
-            if (e) e.stopPropagation();
-            
-            // Ignore if it's just the placeholder
-            if (slideImages.length === 1 && slideImages[0] === placeholderImg) return;
-
-            // Update primary index & hidden form field
-            primarySlideIndex = currentSlide;
-            document.getElementById('primaryImageIndex').value = primarySlideIndex;
-            
-            updateSlider();
-        }
-
-        function nextSlide(e) {
-            if (e) e.stopPropagation(); 
-            currentSlide = (currentSlide + 1) % slideImages.length;
-            updateSlider();
-        }
-
-        function prevSlide(e) {
-            if (e) e.stopPropagation();
-            currentSlide = (currentSlide - 1 + slideImages.length) % slideImages.length;
-            updateSlider();
-        }
-
-        function previewImages(event) {
-            const input = event.target;
-            
-            if (input.files && input.files.length > 0) {
-                if (slideImages.length === 1 && slideImages[0] === placeholderImg) {
-                    slideImages = [];
-                    primarySlideIndex = 0; // The first newly uploaded image will be primary
-                    document.getElementById('primaryImageIndex').value = 0;
-                }
-
-                for (let i = 0; i < input.files.length; i++) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        slideImages.push(e.target.result);
-                        currentSlide = slideImages.length - 1; 
-                        updateSlider();
+            function filterSubcategories() {
+                var selectedCategory = $('#category').val();
+                var $subcategorySelect = $('#subcategory');
+                var currentSubVal = $subcategorySelect.val(); 
+                
+                $subcategorySelect.empty().append('<option value="" disabled> Select Sub Category</option>');
+                
+                if (selectedCategory) {
+                    var filteredOptions = allSubcategories.filter('[data-category="' + selectedCategory + '"]');
+                    $subcategorySelect.append(filteredOptions);
+                    
+                    if (currentSubVal && $subcategorySelect.find(`option[value="${currentSubVal}"]`).length > 0) {
+                        $subcategorySelect.val(currentSubVal);
                     }
-                    reader.readAsDataURL(input.files[i]);
-                }
-            }
-        }
-
-        function removeImage(e) {
-            if (e) e.stopPropagation();
-
-            if (slideImages.length === 1 && slideImages[0] === placeholderImg) return;
-
-            slideImages.splice(currentSlide, 1);
-
-            // Re-adjust primary index if needed
-            if (primarySlideIndex === currentSlide) {
-                primarySlideIndex = 0; // Default back to the first image if primary is deleted
-                document.getElementById('primaryImageIndex').value = 0;
-            } else if (primarySlideIndex > currentSlide) {
-                primarySlideIndex--; // Shift index down
-                document.getElementById('primaryImageIndex').value = primarySlideIndex;
-            }
-
-            if (slideImages.length === 0) {
-                slideImages.push(placeholderImg);
-                document.getElementById('imageUpload').value = ''; 
-                currentSlide = 0;
-            } else {
-                if (currentSlide >= slideImages.length) {
-                    currentSlide = slideImages.length - 1;
                 }
             }
 
-            updateSlider();
-        }
+            filterSubcategories();
+
+            $('#category').change(function() {
+                filterSubcategories();
+            });
+        });
+
+        // --- IMAGE UPLOAD LOGIC ---
+        document.addEventListener('DOMContentLoaded', function() {
+            const imageUpload = document.getElementById('image-upload');
+            const dropZone = document.getElementById('drop-zone');
+            const previewContainer = document.getElementById('image-preview-container');
+            const mainImageInput = document.getElementById('main-image-index');
+            
+            let selectedFiles = [];
+            let mainImageIndex = -1; 
+
+            // Safely pass the Django variable to JavaScript
+            const existingImageCount = parseInt("{{ product.productimage_set.count|default:'0' }}", 10);
+
+            imageUpload.addEventListener('change', handleFiles);
+
+            dropZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropZone.classList.add('border-primary', 'bg-blue-50');
+            });
+
+            dropZone.addEventListener('dragleave', (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('border-primary', 'bg-blue-50');
+            });
+
+            dropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('border-primary', 'bg-blue-50');
+                
+                if (e.dataTransfer.files.length) {
+                    handleFiles({ target: { files: e.dataTransfer.files } });
+                }
+            });
+
+            function handleFiles(event) {
+                const newFiles = Array.from(event.target.files);
+                selectedFiles = selectedFiles.concat(newFiles);
+
+                if (selectedFiles.length > 5) {
+                    alert('You can only add a maximum of 5 new images at a time.');
+                    selectedFiles = selectedFiles.slice(0, 5); 
+                }
+
+                if (selectedFiles.length > 0 && mainImageIndex === -1 && existingImageCount === 0) {
+                    mainImageIndex = 0;
+                }
+
+                updateFileInput();
+                renderPreviews();
+            }
+
+            function updateFileInput() {
+                const dataTransfer = new DataTransfer();
+                selectedFiles.forEach(file => dataTransfer.items.add(file));
+                imageUpload.files = dataTransfer.files;
+                mainImageInput.value = mainImageIndex;
+            }
+
+            function renderPreviews() {
+                previewContainer.innerHTML = ''; 
+
+                selectedFiles.forEach((file, index) => {
+                    if (file.type.match('image.*')) {
+                        const reader = new FileReader();
+                        
+                        reader.onload = function(e) {
+                            const isMain = index === mainImageIndex;
+                            
+                            const imgDiv = document.createElement('div');
+                            imgDiv.className = `w-20 h-20 rounded-md border-2 bg-gray-50 flex items-center justify-center shrink-0 overflow-hidden relative shadow-sm group ${isMain ? 'border-primary' : 'border-gray-200'}`;
+                            
+                            const img = document.createElement('img');
+                            img.src = e.target.result;
+                            img.className = 'w-full h-full object-cover';
+                            
+                            const removeBtn = document.createElement('button');
+                            removeBtn.type = 'button';
+                            removeBtn.className = 'absolute top-0 right-0 bg-red-500/90 text-white w-5 h-5 flex items-center justify-center text-[10px] opacity-0 group-hover:opacity-100 transition duration-200 hover:bg-red-600 rounded-bl-md z-30';
+                            removeBtn.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+                            
+                            removeBtn.onclick = function(event) {
+                                event.preventDefault(); 
+                                event.stopPropagation();
+                                removeImage(index);
+                            };
+
+                            imgDiv.appendChild(img);
+                            imgDiv.appendChild(removeBtn);
+
+                            if (isMain) {
+                                const mainBadge = document.createElement('div');
+                                mainBadge.className = 'absolute bottom-0 left-0 right-0 bg-primary text-white text-[9px] font-bold text-center py-0.5 z-10 pointer-events-none';
+                                mainBadge.innerText = 'NEW MAIN';
+                                imgDiv.appendChild(mainBadge);
+                            } else {
+                                const setMainBtn = document.createElement('button');
+                                setMainBtn.type = 'button';
+                                setMainBtn.className = 'absolute inset-0 bg-black/50 text-white text-[10px] font-bold flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-200 z-20 backdrop-blur-[1px]';
+                                setMainBtn.innerText = 'Set Main';
+                                
+                                setMainBtn.onclick = function(event) {
+                                    event.preventDefault();
+                                    event.stopPropagation();
+                                    setMainImage(index);
+                                }
+                                imgDiv.appendChild(setMainBtn);
+                            }
+                            
+                            previewContainer.appendChild(imgDiv);
+                        };
+                        
+                        reader.readAsDataURL(file);
+                    }
+                });
+            }
+
+            function setMainImage(index) {
+                mainImageIndex = index;
+                updateFileInput();
+                renderPreviews();
+            }
+
+            function removeImage(index) {
+                selectedFiles.splice(index, 1); 
+                if (selectedFiles.length === 0) mainImageIndex = -1; 
+                else if (index === mainImageIndex) mainImageIndex = 0; 
+                else if (index < mainImageIndex) mainImageIndex--; 
+                updateFileInput(); renderPreviews(); 
+            }
+        });
     </script>
-
 </body>
 </html>

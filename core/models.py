@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils.text import slugify
+from django.db.models import Avg
 
 
 class User(AbstractUser):
@@ -66,6 +67,16 @@ class Product(models.Model):
     def __str__(self):
         return self.name
     
+    def get_primary_image(self):
+        primary=self.productimage_set.filter(is_primary=True).first()        
+        return primary or self.productimage_set.first()
+    
+    def avg_rating(self):
+        return round(self.reviews_set.aggregate(Avg('rating'))['rating__avg'] or 0, 1)
+
+    def review_count(self):
+        return self.reviews_set.count()
+
 class ProductAttribute(models.Model):
     product = models.ForeignKey(Product,on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
