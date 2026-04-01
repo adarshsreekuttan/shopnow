@@ -3,7 +3,7 @@ from core.models import User
 from django.contrib.auth import login, authenticate, logout, update_session_auth_hash
 from django.http import HttpResponse
 from core.models import Product
-from seller.models import Category, SubCategory
+from seller.models import Category, SubCategory, ProductImage
 from django.contrib.auth.decorators import login_required
 from .models import Address, Cart, CartItem, WishList, Reviews, Order, OrderItem
 from .decorators import customer_required
@@ -108,15 +108,11 @@ def customer_register(request):
 def home_view(request):
     
     all_products = Product.objects.filter(status = "approved") \
-        .select_related('category') \
         .prefetch_related('productimage_set') \
-        .annotate(
-            avg_rating = Avg('reviews__rating'),
-            number_of_reviews = Count('reviews')
-        ) \
+        .annotate(number_of_reviews=Count('reviews')) \
         .order_by("-created_at")
     
-    category = Category.objects.all()
+    categories = Category.objects.all()
 
     paginator = Paginator(all_products, 15)
     page_number = request.GET.get('page')
@@ -124,10 +120,10 @@ def home_view(request):
 
     is_authenticated = request.user.is_authenticated
 
-    trending_products = Product.objects.all()
+    trending_products = Product.objects.order_by('-created_at')[:20]
     trending_products = list(trending_products)
     random.shuffle(trending_products)
-    trending_products = trending_products[:3    ]
+    trending_products = trending_products[:3]
 
     if is_authenticated:
         wishlist_products = set(WishList.objects.filter(user=request.user).values_list('product_id', flat=True))
@@ -135,16 +131,17 @@ def home_view(request):
         wishlist_products = set()
 
     for product in products:
+        images = product.productimage_set.all()
         primary = next(
-            (img for img in product.productimage_set.all() if img.is_primary),
+            (img for img in images if img.is_primary),
             None
-        ) or product.productimage_set.all().first()
+        ) or images.first()
         product.primary_image = primary
 
         product.is_in_wishlist = product.id in wishlist_products
         
     return render(request, 'customer/home.html', {"products":products, 
-                                                  "categories":category, 
+                                                  "categories":categories, 
                                                   "is_authenticated":is_authenticated,
                                                   "trending_products":trending_products})
     
@@ -165,55 +162,56 @@ def load_subcategories(request):
 
     return JsonResponse(data, safe=False)
 
-def search_products(request):
-    search_keyword = request.GET.get("search_keyword", "")
-    all_result_products = Product.objects.filter(name__icontains=search_keyword)
+from django.db.models import Count, Prefetch
 
-    categories = Category.objects.all()
-    subcategories = SubCategory.objects.all()
+def search_products(request):
+    
+    search_keyword = request.GET.get("search_keyword", "")
 
     min_price = request.GET.get('min_price')
     max_price = request.GET.get('max_price')
-    category = request.GET.get('category')
-    subcategory = request.GET.get('subcategory')
+    category_slug = request.GET.get('category')
+    subcategory_slug = request.GET.get('subcategory')
+
+    filters = {
+        "name__icontains": search_keyword
+    }
 
     if min_price:
-        all_result_products = all_result_products.filter(discount_price__gte=min_price)
-
+        filters["discount_price__gte"] = min_price
     if max_price:
-        all_result_products = all_result_products.filter(discount_price__lte=max_price)
-    
-    if category:
-        category = get_object_or_404(Category, slug=category)
-        all_result_products = all_result_products.filter(category = category)
-    
-    if subcategory:
-        subcategory = get_object_or_404(SubCategory, slug=subcategory)
-        all_result_products = all_result_products.filter(sub_category = subcategory)
+        filters["discount_price__lte"] = max_price
+    if category_slug:
+        filters["category__slug"] = category_slug
+    if subcategory_slug:
+        filters["sub_category__slug"] = subcategory_slug
 
-    
+    all_result_products = Product.objects.filter(**filters) \
+        .select_related("category", "sub_category") \
+        .prefetch_related(
+            Prefetch(
+                "productimage_set",
+                queryset=ProductImage.objects.order_by("-is_primary"),
+                to_attr="all_images"
+            )
+        ) \
+        .annotate(number_of_reviews=Count("reviews")) \
+        .order_by("-created_at")
+
     paginator = Paginator(all_result_products, 12)
     page_number = request.GET.get('page')
     result_products = paginator.get_page(page_number)
 
     for product in result_products:
-        primary = product.productimage_set.filter(is_primary=True).first()
-        if not primary:
-            primary = product.productimage_set.first()
-        product.primary_image = primary
+        product.primary_image = product.all_images[0] if product.all_images else None
 
-        avg_rating = Reviews.objects.filter(product=product)\
-        .aggregate(Avg('rating'))['rating__avg'] or 0
-        product.avg_rating = int(round(avg_rating))
+    return render(request, 'customer/search_results.html', {
+        "products": result_products,
+        "search_keyword": search_keyword,
+        "categories": Category.objects.all(),
+        "subcategories": SubCategory.objects.all()
+    })
 
-        number_of_reviews = Reviews.objects.filter(product=product).count()
-        product.number_of_reviews = number_of_reviews  
-
-    return render(request, 'customer/search_results.html', 
-                  {"products":result_products, 
-                   "search_keyword":search_keyword,
-                   "categories" : categories,
-                   "subcategories" :subcategories})
 
 def search_suggestions(request):
     query = request.GET.get('q','')
