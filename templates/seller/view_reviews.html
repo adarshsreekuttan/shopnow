@@ -1,0 +1,98 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reviews: {{ product.name }} | ShopNow</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        pdark: '#362F4F',
+                        primary: '#5B23FF',
+                        accent: '#008BFF',
+                        highlight: '#E4FF30',
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .custom-scrollbar::-webkit-scrollbar { width: 3px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #e5e7eb; border-radius: 20px; }
+        .review-card:hover { border-color: #5B23FF; }
+    </style>
+</head>
+<body class="bg-white text-pdark antialiased flex flex-col min-h-screen">
+    {% include "seller/navbar.html" %}
+
+    <main class="flex-grow max-w-4xl mx-auto px-6 py-16 w-full">
+        <div class="mb-16 text-center">
+            <h1 class="text-3xl font-light tracking-tight text-pdark mb-2">
+                Customer Reviews - {{reviews.count}} reviews      
+            </h1>
+        </div>
+        <div class="space-y-4 h-[650px] overflow-y-auto pr-4 custom-scrollbar">
+    {% for review in reviews %}
+        <div class="review-card bg-white border border-gray-100 p-6 rounded-sm transition-all duration-300 hover:shadow-xl hover:shadow-gray-100/50">
+            <div class="flex items-start justify-between">
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 bg-gray-50 border border-gray-100 rounded-full flex items-center justify-center text-pdark text-[10px] font-black italic">
+                        {{ review.user.first_name|slice:":1" }}{{ review.user.last_name|slice:":1" }}
+                    </div>
+                    <div>
+                        <h4 class="text-[11px] font-black text-pdark uppercase tracking-widest">{{ review.user.first_name }} {{ review.user.last_name }}</h4>
+                        <div class="flex items-center gap-2">
+                            <div class="flex text-primary text-[8px] gap-0.5">
+                                {% for i in "12345" %}
+                                    <i class="fa-solid fa-star {% if forloop.counter > review.rating %}opacity-20{% endif %}"></i>
+                                {% endfor %}
+                            </div>
+                            <span class="text-[9px] text-gray-300 font-medium tracking-tighter">{{ review.created_at|date:"M d, Y" }}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <span class="text-[8px] font-black text-green-500 border border-green-100 px-2 py-1 rounded-full uppercase tracking-widest bg-green-50/30">Verified</span>
+            </div>
+
+            <div class="mt-4 pl-14">
+                <p class="text-sm text-gray-600 font-medium leading-relaxed italic mb-4">
+                    "{{ review.comment }}"
+                </p>
+                
+                <div class="pt-3 border-t border-gray-50 flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <span class="text-[8px] font-black text-gray-300 uppercase tracking-widest">Product slug : </span>
+                        <span class="text-[10px] font-bold text-pdark truncate max-w-[200px]">{{ review.product.slug }}</span>
+                    </div>
+                    <a href="{% url 'seller_product_view' review.product.slug %}" class="text-[9px] font-black text-primary uppercase tracking-widest hover:underline decoration-highlight decoration-2 underline-offset-4">
+                        View Product <i class="fa-solid fa-arrow-up-right-from-square ml-1 text-[7px]"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="py-20 text-center border border-dashed border-gray-100 rounded-sm">
+            <p class="text-[10px] font-black text-gray-300 uppercase tracking-widest">No verified feedback available</p>
+        </div>
+        {% endfor %}
+    </div>
+
+        <div class="mt-12 flex justify-center items-center gap-8">
+            <button class="text-gray-300 hover:text-pdark transition-colors"><i class="fa-solid fa-arrow-left-long"></i></button>
+            <span class="text-[10px] font-black text-pdark tracking-[0.3em] uppercase">Page 01 / 04</span>
+            <button class="text-gray-300 hover:text-pdark transition-colors"><i class="fa-solid fa-arrow-right-long"></i></button>
+        </div>
+    </main>
+
+    {% include 'seller/footer.html' %}
+</body>
+</html>

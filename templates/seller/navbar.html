@@ -1,0 +1,32 @@
+<nav class="bg-pdark sticky top-0 z-50 shadow-lg border-b border-white/5">
+        <div class="container mx-auto px-4 lg:px-10 h-16 flex items-center justify-between">
+            
+            <a href="{% url 'seller_home' %}" class="flex items-center gap-2">
+                <div class="w-8 h-8 bg-highlight rounded-sm flex items-center justify-center text-pdark font-black text-xl italic">S</div>
+                <span class="text-white font-bold text-lg tracking-tight">ShopNow</span>
+            </a>
+
+            <div class="hidden md:flex items-center flex-1 max-w-md mx-10">
+                <div class="relative w-full group">
+                    <input type="text" placeholder="Search orders or products..." 
+                           class="w-full h-9 bg-white/5 border border-white/10 px-4 pr-10 rounded-md text-sm text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-primary transition-all">
+                    <button class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-highlight">
+                        <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-6">
+                <a href="{% url 'message' %}" class="relative text-white/80 hover:text-highlight transition-colors">
+                    <i class="fa-solid fa-bell text-lg"></i>
+                    <span class="absolute -top-1.5 -right-1.5 bg-primary text-white text-[9px] font-black w-4 h-4 flex items-center justify-center rounded-full border-2 border-pdark">5</span>
+                </a>
+                <div class="h-6 w-[1px] bg-white/10"></div>
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center text-primary font-bold text-xs italic">
+                        {{ sellerprofile.shop_name|slice:":1" }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>

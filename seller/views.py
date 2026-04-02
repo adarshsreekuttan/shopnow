@@ -11,6 +11,7 @@ from .decorators import seller_required
 from django.http import JsonResponse
 from custom_admin.models import Coupon
 from django.core.paginator import Paginator
+from customer.models import Reviews 
 
 
 
@@ -176,8 +177,8 @@ def seller_add_product(request):
         if first:
             first.is_primary=True
             first.save()
-        attribute_names=request.POST.getlist("attribute_names")
-        attribute_values=request.POST.getlist("attribute_values")
+        attribute_names=request.POST.getlist("attribute_names[]")
+        attribute_values=request.POST.getlist("attribute_values[]")
         for name, value in  zip(attribute_names,attribute_values):
             if name and value:
                 ProductAttribute.objects.create(
@@ -281,9 +282,11 @@ def pending_product_delete(request,id):
 @seller_required
 def seller_product_view(request,slug):
     product=Product.objects.get(slug=slug,status='approved')
+    product_attributes = ProductAttribute.objects.filter(product=product)
+    reviews = Reviews.objects.filter(product=product)
     if product.status=="pending":
         return redirect('seller_pending_approval')
-    return render(request,"seller/seller_product_view.html",{'product':product})
+    return render(request,"seller/seller_product_view.html",{'product':product, "reviews":reviews, "product_attributes":product_attributes})
 
 @seller_required
 def seller_product_edit(request,slug):
@@ -446,4 +449,8 @@ def coupon_delete(request,id):
     coupon=Coupon.objects.filter(seller=seller,id=id)
     coupon.delete()
     return redirect('coupon')
-    
+
+def view_reviews(request):
+    seller = get_object_or_404(SellerProfile, user=request.user)
+    reviews = Reviews.objects.filter(product__seller=seller)
+    return render(request, 'seller/view_reviews.html', {'reviews': reviews})
