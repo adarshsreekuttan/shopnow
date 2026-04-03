@@ -12,18 +12,16 @@
         tailwind.config = {
             theme: {
                 extend: {
-                    colors: {
-                        primary_dark: '#362F4F',
-                        primary: '#5B23FF',
-                        accent: '#008BFF',
-                        highlight: '#E4FF30',
-                        bg_light: '#F1F3F6',
-                        text_dark: '#212121',
-                        text_gray: '#878787'
+                    colors: { 
+                        pdark: '#362F4F', 
+                        primary: '#5B23FF', 
+                        accent: '#008BFF', 
+                        highlight: '#E4FF30', 
+                        lightbg: '#F8F9FA',
+                        status_pending: '#FFF4E5',
+                        status_pending_text: '#FF9800',
                     },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    }
+                    fontFamily: { sans: ['Inter', 'sans-serif'] }
                 }
             }
         }
@@ -33,220 +31,100 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #F1F3F6; }
-        .card-shadow { box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
-        .hide-scrollbar::-webkit-scrollbar { display: none; }
-        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        body { font-family: 'Inter', sans-serif; background-color: #F8F9FB; }
+        .order-card { transition: all 0.2s ease; border: 1px solid #EDF2F7; }
+        .order-card:hover { border-color: #5B23FF; box-shadow: 0 4px 20px rgba(91, 35, 255, 0.08); }
     </style>
 </head>
-<body class="text-text_dark flex flex-col min-h-screen">
+<body class="text-slate-800 flex flex-col min-h-screen">
 
-    <nav class="bg-primary_dark sticky top-0 z-50 shadow-md">
-        <div class="container mx-auto px-4 h-16 flex items-center justify-between gap-4">
-            <a href="{% url 'seller_home' %}" class="flex items-center gap-2">
-                <div class="w-8 h-8 bg-highlight rounded flex items-center justify-center text-primary_dark font-bold text-xl italic">F</div>
-                <span class="text-white font-bold text-lg tracking-wide hidden sm:block">FlipShop <span class="text-xs font-normal text-highlight ml-1">Seller Hub</span></span>
-            </a>
-            <div class="flex items-center gap-4 text-white font-medium text-sm ml-auto">
-                <a href="{% url 'seller_home' %}" class="flex items-center gap-2 bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-sm transition">
-                    <i class="fa-solid fa-chart-line"></i>
-                    <span class="hidden sm:block">Dashboard</span>
-                </a>
-            </div>
-        </div>
-    </nav>
+    {% include 'seller/navbar.html' %}
 
-    <main class="flex-grow container mx-auto px-4 py-8 max-w-[1400px]">
+    <main class="flex-grow container mx-auto px-4 py-8 max-w-[1200px] min-h-[100vh]">
 
-        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
-            <div>
-                <h1 class="text-2xl font-bold text-primary_dark">Action Required: Pending Orders</h1>
-                <p class="text-gray-500 text-sm mt-1">Accept these orders promptly to generate shipping labels and avoid cancellation.</p>
-            </div>
-            
-            <div class="flex items-center gap-3">
-                <button class="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 transition shadow-sm flex items-center gap-2">
-                    <i class="fa-solid fa-download"></i> Export Pending
-                </button>
-            </div>
+        <div class="mb-8">
+            <h1 class="text-2xl font-bold text-pdark">Pending Orders</h1>
+            <p class="text-gray-500 text-sm mt-1">New orders requiring your immediate attention</p>
         </div>
 
-        <div class="bg-white rounded-t-xl card-shadow border-b border-gray-200 px-2 sm:px-6 overflow-x-auto hide-scrollbar">
-            <div class="flex space-x-8 text-sm font-medium text-gray-500 whitespace-nowrap">
-                <a href="{% url 'seller_orders' %}" class="py-4 border-b-2 border-transparent hover:text-gray-700 hover:border-gray-300 transition">
-                    All Orders
-                </a>
-                <a href="{% url 'pending_order' %}" class="py-4 border-b-2 border-primary text-primary flex items-center gap-2">
-                    Pending <span class="bg-yellow-100 text-yellow-700 py-0.5 px-2 rounded-full text-[10px] font-bold">{{ pending_count|default:"3" }} NEW</span>
-                </a>
-                <a href="{% url 'ongoing_order' %}" class="py-4 border-b-2 border-transparent hover:text-gray-700 hover:border-gray-300 transition">
-                    Ongoing <span class="text-xs ml-1 font-normal">(Processing, Shipped)</span>
-                </a>
-                <a href="{% url 'finished_order' %}" class="py-4 border-b-2 border-transparent hover:text-gray-700 hover:border-gray-300 transition">
-                    Finished <span class="text-xs ml-1 font-normal">(Delivered, Cancelled)</span>
-                </a>
-            </div>
+        <div class="flex space-x-1 mb-6 bg-gray-100 p-1 rounded-xl w-fit">
+            <a href="{% url 'seller_orders' %}" class="px-6 py-2 rounded-lg text-sm font-medium text-gray-500 hover:text-gray-700 transition">All Orders</a>
+            <a href="{% url 'pending_order' %}" class="px-6 py-2 rounded-lg text-sm font-semibold bg-white text-primary shadow-sm">Pending</a>
+            <a href="{% url 'ongoing_order' %}" class="px-6 py-2 rounded-lg text-sm font-medium text-gray-500 hover:text-gray-700 transition">Ongoing</a>
+            <a href="{% url 'finished_order' %}" class="px-6 py-2 rounded-lg text-sm font-medium text-gray-500 hover:text-gray-700 transition">Delivered</a>
         </div>
 
-        <div class="bg-white border-b border-gray-100 p-4 flex flex-col lg:flex-row justify-between items-center gap-4 card-shadow">
-            <div class="flex items-center gap-3 w-full lg:w-auto">
-                <input type="checkbox" id="selectAll" class="w-4 h-4 text-primary rounded border-gray-300 focus:ring-primary">
-                <label for="selectAll" class="text-sm font-medium text-gray-700">Select All</label>
-                <div class="h-4 w-px bg-gray-300 mx-2"></div>
-                <button class="text-sm font-medium text-primary bg-primary/10 px-3 py-1.5 rounded hover:bg-primary/20 transition flex items-center gap-2">
-                    <i class="fa-solid fa-check-double"></i> Accept Selected
-                </button>
-            </div>
-            
-            <div class="flex items-center gap-2 w-full lg:w-auto">
-                <div class="relative w-full lg:w-72">
-                    <input type="text" placeholder="Search Order ID, SKU..." class="pl-9 pr-4 py-2 border border-gray-300 rounded-md text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition w-full">
-                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-gray-400"></i>
+        <div class="space-y-4">
+            {% for order in order %}
+            {% with first_item=order.orderitem_set.first %}
+            <div class="bg-white rounded-xl order-card overflow-hidden">
+                <div class="bg-gray-50/50 px-6 py-3 border-b border-gray-100 flex justify-between items-center">
+                    <div class="flex items-center gap-4">
+                        <span class="text-xs font-medium text-gray-500">Customer: <b class="text-gray-800">{{ order.address.full_name }}</b></span>
+                        <span class="text-xs text-gray-400">|</span>
+                        <span class="text-xs font-medium text-gray-500">Received: <b class="text-gray-800">{{ order.created_at|date:"d M, g:i A" }}</b></span>
+                    </div>
+                    <span class="text-xs font-bold text-pdark">Order ID #{{ order.id }}</span>
                 </div>
-                <button class="border border-gray-300 px-3 py-2 rounded-md hover:bg-gray-50 text-gray-600 transition">
-                    <i class="fa-solid fa-filter"></i>
-                </button>
-            </div>
-        </div>
 
-        <div class="bg-white rounded-b-xl card-shadow overflow-hidden">
-            <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse min-w-[1000px]">
-                    <thead>
-                        <tr class="bg-gray-50/80 border-b border-gray-200 text-[11px] uppercase tracking-wider text-gray-500 font-bold">
-                            <th class="px-4 py-3 w-10 text-center"></th>
-                            <th class="px-4 py-3">Order Details</th>
-                            <th class="px-4 py-3">Product & SKU</th>
-                            <th class="px-4 py-3">Customer & Location</th>
-                            <th class="px-4 py-3">Action Required By</th>
-                            <th class="px-4 py-3">Value</th>
-                            <th class="px-4 py-3 text-right">Operations</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-100">
-                        
-                        {% for order in order %}
-                            {% with first_item=order.orderitem_set.first %}
-                            <tr class="hover:bg-blue-50/30 transition-colors group">
-                                
-                                <td class="px-4 py-4 text-center">
-                                    <input type="checkbox" class="w-4 h-4 text-primary rounded border-gray-300 focus:ring-primary mt-1">
-                                </td>
-                                
-                                <td class="px-4 py-4 align-top">
-                                    <span class="text-sm font-bold text-primary_dark">#ORD{{ order.id }}</span>
-                                    <p class="text-[11px] text-gray-500 mt-1">{{ order.created_at|date:"M d, g:i A" }}</p>
-                                    <span class="mt-2 inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-yellow-100 text-yellow-700">
-                                        Pending
-                                    </span>
-                                </td>
-                                
-                                <td class="px-4 py-4 align-top">
-                                    <div class="flex items-start gap-3">
-                                        <div class="w-12 h-12 rounded bg-gray-100 border border-gray-200 overflow-hidden flex-shrink-0 flex items-center justify-center">
-                                            {% if first_item.product.get_primary_image %}
-                                            <img src="{{ first_item.product.get_primary_image.image.url }}" 
-                                                alt="{{ first_item.product.name }}" 
-                                                class="w-full h-full object-cover">
-                                            {% else %}
-                                            <i class="fa-regular fa-image text-gray-400"></i>
-                                            {% endif %}
-                                        </div>
-                                        <div>
-                                            <p class="text-sm font-semibold text-gray-800 line-clamp-2 leading-tight">
-                                                {{ first_item.product.name }}
-                                            </p>
-                                            <p class="text-[11px] text-gray-500 mt-1 font-mono">SKU: {{ first_item.product.sku|default:"N/A" }}</p>
-                                            <div class="mt-1 flex items-center gap-2">
-                                                <span class="text-xs font-medium text-gray-700">Qty: <span class="font-bold">{{ first_item.quantity }}</span></span>
-                                                {% if order.orderitem_set.count > 1 %}
-                                                    <span class="text-highlight bg-primary_dark px-1.5 py-0.5 rounded text-[10px]">
-                                                        +{{ order.orderitem_set.count|add:"-1" }} items
-                                                    </span>
-                                                {% endif %}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </td>
-                                
-                                <td class="px-4 py-4 align-top">
-                                    <p class="text-sm text-gray-800 font-medium">{{ order.address.full_name }}</p>
-                                    <p class="text-xs text-gray-500 mt-1">{{ order.address.city|default:"City" }}, {{ order.address.state|default:"State" }}</p>
-                                    <p class="text-[11px] font-bold text-gray-400 mt-0.5">{{ order.address.pincode|default:"000000" }}</p>
-                                </td>
+                <div class="p-6 grid grid-cols-1 md:grid-cols-12 items-center gap-6">
+                    <div class="col-span-1 md:col-span-5 flex items-center gap-4">
+                        <div class="w-16 h-16 rounded-lg bg-gray-100 border border-gray-200 flex-shrink-0 overflow-hidden flex items-center justify-center">
+                            {% if first_item.product.get_primary_image %}
+                                <img src="{{ first_item.product.get_primary_image.image.url }}" class="w-full h-full object-cover">
+                            {% else %}
+                                <i class="fa-regular fa-image text-gray-300 text-xl"></i>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-bold text-gray-900 line-clamp-1">{{ first_item.product.name }}</h3>
+                            <div class="flex items-center gap-2 mt-1">
+                                <span class="text-xs font-bold text-pdark">Qty: {{ first_item.quantity }}</span>
+                                {% if order.orderitem_set.count > 1 %}
+                                <span class="text-[10px] bg-pdark text-highlight px-1.5 py-0.5 rounded-md font-bold">+{{ order.orderitem_set.count|add:"-1" }} more</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
 
-                                <td class="px-4 py-4 align-top">
-                                    <div class="flex items-center gap-1.5 text-sm font-medium text-red-600">
-                                        <i class="fa-solid fa-triangle-exclamation"></i>
-                                        <span>Action Needed</span>
-                                    </div>
-                                    <p class="text-[11px] text-gray-500 mt-1">Auto-cancels in 12 hrs</p>
-                                </td>
+                    <div class="col-span-1 md:col-span-2 text-center">
+                        <p class="text-sm font-bold text-pdark">₹{{ order.grand_total }}</p>
+                        <div class="flex items-center justify-center gap-1 mt-1">
+                            <span class="w-1.5 h-1.5 rounded-full {% if order.payment_method|lower == 'cod' %}bg-orange-400{% else %}bg-green-500{% endif %}"></span>
+                            <span class="text-[10px] text-gray-400 uppercase font-bold">{{ order.payment_method|default:"Prepaid" }}</span>
+                        </div>
+                    </div>
+                    <div class="col-span-1 md:col-span-2 flex flex-col items-center">
+                        <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide
+                            {% if order.status == 'pending' %} bg-status_pending text-status_pending_text
+                            {% elif order.status == 'delivered' %} bg-status_delivered text-status_delivered_text
+                            {% else %} bg-status_shipped text-status_shipped_text {% endif %}">
+                            {{ order.status }}
+                        </span>
+                    </div>
 
-                                <td class="px-4 py-4 align-top whitespace-nowrap">
-                                    <p class="text-sm font-bold text-primary_dark">₹{{ order.grand_total }}</p>
-                                    <p class="text-[10px] text-gray-500 uppercase mt-1 font-semibold flex items-center gap-1">
-                                        {% if order.payment_method == 'COD' or order.payment_method == 'cod' %}
-                                            <span class="w-1.5 h-1.5 rounded-full bg-orange-400"></span> COD
-                                        {% else %}
-                                            <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span> Prepaid
-                                        {% endif %}
-                                    </p>
-                                </td>
-                                
-                                <td class="px-4 py-4 align-top text-right">
-                                    <div class="flex flex-col items-end gap-2 w-full">
-                                        <form action="{% url 'seller_single_order' order.id %}" method="POST" class="w-full sm:w-auto">
-                                            {% csrf_token %}
-                                            <button type="submit" class="px-5 py-2 bg-primary text-white hover:bg-opacity-90 rounded text-xs font-semibold transition-colors w-full sm:w-28 text-center shadow-sm flex justify-center items-center gap-1">
-                                                <i class="fa-solid fa-check"></i> view
-                                            </button>
-                                        </form>
-                                        <button class="text-xs text-gray-400 hover:text-red-500 transition-colors font-medium">
-                                            Decline Order
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                            {% endwith %}
-                        
-                        {% empty %}
-                        <tr>
-                            <td colspan="7" class="px-6 py-16 text-center">
-                                <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gray-50 mb-4 border border-dashed border-gray-300">
-                                    <i class="fa-solid fa-mug-hot text-3xl text-gray-300"></i>
-                                </div>
-                                <h3 class="text-lg font-bold text-gray-700">No Pending Orders</h3>
-                                <p class="text-sm text-gray-500 mt-1 max-w-sm mx-auto">You're all caught up! Take a break, new orders waiting for your approval will appear here.</p>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                        
-                    </tbody>
-                </table>
-            </div>
-            
-            <div class="bg-gray-50/50 border-t border-gray-100 p-4 flex items-center justify-between text-sm">
-                <span class="text-gray-500">Showing pending entries</span>
-                <div class="flex gap-1">
-                    <button class="px-3 py-1 border border-gray-300 bg-white rounded text-gray-500 hover:bg-gray-50 disabled:opacity-50" disabled>Prev</button>
-                    <button class="px-3 py-1 bg-primary text-white rounded">1</button>
-                    <button class="px-3 py-1 border border-gray-300 bg-white rounded text-gray-500 hover:bg-gray-50 disabled:opacity-50" disabled>Next</button>
+                    <div class="col-span-1 md:col-span-3 flex flex-col sm:flex-row md:flex-col lg:flex-row justify-end gap-2">
+                        <a href="{% url 'seller_single_order' order.id %}" class="px-4 py-2 bg-primary text-white text-xs font-bold rounded-lg text-center hover:bg-opacity-90 transition">
+                            <i class="fa-solid fa-eye mr-1"></i> View Order
+                        </a>
+                    </div>
+
                 </div>
             </div>
+            {% endwith %}
+            {% empty %}
+            <div class="bg-white rounded-2xl border-2 border-dashed border-gray-100 py-20 text-center">
+                <div class="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fa-solid fa-mug-hot text-gray-300 text-3xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-pdark">No Pending Orders</h3>
+                <p class="text-gray-400 text-sm mt-2 max-w-xs mx-auto">You're all caught up! New orders waiting for your approval will appear here.</p>
+            </div>
+            {% endfor %}
         </div>
-
     </main>
 
-    <footer class="bg-primary_dark text-white mt-auto py-6 text-sm">
-        <div class="container mx-auto px-4 flex flex-col md:flex-row items-center justify-between text-gray-400 text-xs gap-4 text-center md:text-left">
-            <p>© 2024 FlipShop Inc. Seller Services.</p>
-            <div class="flex gap-4">
-                <a href="#" class="hover:text-highlight transition">Help Center</a>
-                <a href="#" class="hover:text-highlight transition">Seller Policies</a>
-            </div>
-        </div>
-    </footer>
+    {% include 'seller/footer.html' %}
 
 </body>
 </html>

@@ -6,14 +6,14 @@ from .models import SellerProfile,SubCategory,Category,ProductImage
 from django.contrib import messages
 from django.utils.text import slugify
 from core.models import User, Product,ProductAttribute
-from customer.models import Order,Reviews
+from customer.models import Order,Reviews, OrderItem
 from .decorators import seller_required
 from django.http import JsonResponse
 from custom_admin.models import Coupon
 from django.core.paginator import Paginator
 from customer.models import Reviews 
 
-
+from django.db.models import Avg, Sum, F
 
 # Create your views here.
 User = get_user_model()
@@ -87,8 +87,32 @@ def seller_logout(request):
 def seller_home(request):
     seller=request.user
     sellerprofile=seller.seller_profile
-    products=Product.objects.filter(seller=sellerprofile,status='approved') 
-    return render(request, "seller/seller_home.html",{'sellerprofile':sellerprofile,'product':products})  
+
+    products=Product.objects.filter(seller=sellerprofile,status='approved')
+    reviews = Reviews.objects.filter(product__seller=sellerprofile).order_by("-created_at")
+    review_count = reviews.count()
+
+    orders = Order.objects.filter(orderitem__seller = sellerprofile).order_by("-created_at")
+
+    avarage_rating = reviews.aggregate(avg=Avg('rating'))['avg']
+
+    total_revenue_data = get_seller_revenue(sellerprofile)
+
+    revenue_data = get_weekly_revenue(sellerprofile)
+
+
+    total_revenue = total_revenue_data['total_revenue']
+    weekly_revenue = total_revenue_data['weekly_revenue']
+
+    return render(request, "seller/seller_home.html",{'sellerprofile' : sellerprofile,
+                                                      'product' : products,
+                                                      "avarage_rating" : avarage_rating,
+                                                      "reviews" : reviews,
+                                                      "review_count" : review_count,
+                                                      "orders" : orders,
+                                                      "total_revenue":total_revenue,
+                                                      "weekly_revenue":weekly_revenue,
+                                                      "revenue_data" : revenue_data})  
 
 @seller_required
 def seller_profile(request):
@@ -186,10 +210,8 @@ def seller_add_product(request):
                     name=name,
                     value=value
                 )
-            
-            
-                         
-        return redirect('seller_approval')        
+
+        return redirect('product_control')        
     return render(request,"seller/seller_add_product.html",{'category':category,'subcategory':subcategory})
 
 def set_primary_img(request,id):
@@ -217,9 +239,11 @@ def load_subcategory(request):
 def seller_approval(request):
     return render(request,'seller/seller_approval.html')
 
-def reject_product(request):
-    product=Product.objects.filter(status='rejected')
-    return render(request,'seller/reject_product.html',{'product':product})
+def rejected_product(request):
+    seller = request.user
+    seller = seller.seller_profile
+    products = Product.objects.filter(seller=seller, status='rejected')
+    return render(request,'seller/rejected_products.html',{'products':products})
 
 @seller_required
 def reject_product_edit(request,slug):
@@ -258,7 +282,10 @@ def reject_product_edit(request,slug):
 
 @seller_required
 def product_control(request):
-    return render(request,'seller/product_control.html')
+    seller = request.user
+    seller = seller.seller_profile
+    products = Product.objects.filter(seller=seller, status="approved")
+    return render(request,'seller/product_control.html', {"products":products})
 
 def inventory(request):
     seller=SellerProfile.objects.get(user=request.user)
@@ -269,9 +296,11 @@ def inventory(request):
     return render(request,'seller/inventory.html',{'products':products})
 
 @seller_required
-def seller_pending_approval(request):
-    product=Product.objects.filter(status="pending")
-    return render(request,"seller/seller_pending_approval.html",{'product':product})
+def under_review_products(request):
+    seller = request.user
+    seller = seller.seller_profile
+    products = Product.objects.filter(seller=seller, status="pending")
+    return render(request,"seller/under_review_products.html",{'products':products})
 
 def pending_product_delete(request,id):
     seller=SellerProfile.objects.get(user=request.user)
@@ -338,7 +367,7 @@ def seller_password(request):
 @seller_required
 def seller_orders(request):
     seller=SellerProfile.objects.get(user=request.user)
-    orders=Order.objects.filter(orderitem__product__seller=seller)
+    orders = Order.objects.filter(orderitem__seller=seller).order_by('-created_at')
     return render(request,"seller/seller_orders.html",{'orders':orders})
 
 @seller_required
@@ -356,15 +385,24 @@ def seller_order_status(request,id):
     return redirect('seller_orders')
 
 def pending_order(request):
-    order=Order.objects.filter(status ="pending")
+    seller=SellerProfile.objects.get(user=request.user)
+    order=Order.objects.filter(orderitem__seller=seller, status ="pending").order_by("-created_at")
     return render(request,"seller/pending_order.html",{'order':order})
 
+@seller_required
 def ongoing_order(request):
-    order=Order.objects.filter(status ="shipped")
-    return render(request,"seller/ongoing_order.html",{'order':order})
+    seller = SellerProfile.objects.get(user=request.user)
+
+    order = Order.objects.filter(
+        orderitem__seller=seller,
+        status__in=["shipped", "processing"]
+    ).distinct().order_by("-created_at")
+
+    return render(request, "seller/ongoing_order.html", {'order': order})
 
 def finished_order(request):
-    order=Order.objects.filter(status="delivered")
+    seller=SellerProfile.objects.get(user=request.user)
+    order=Order.objects.filter(orderitem__seller=seller, status="delivered")
     return render(request,'seller/finished_order.html',{'order':order})
 
 @seller_required
@@ -452,5 +490,61 @@ def coupon_delete(request,id):
 
 def view_reviews(request):
     seller = get_object_or_404(SellerProfile, user=request.user)
-    reviews = Reviews.objects.filter(product__seller=seller)
+    reviews = Reviews.objects.filter(product__seller=seller, product__status = "approved")
     return render(request, 'seller/view_reviews.html', {'reviews': reviews})
+
+
+from django.db.models import Sum, F
+
+def get_seller_revenue(sellerprofile):
+    today = timezone.now().date()
+    week_start = today - timedelta(days=today.weekday())  # Monday
+
+    queryset = OrderItem.objects.filter(
+        seller=sellerprofile,
+        order__status="delivered"
+    )
+
+    total_revenue = queryset.aggregate(
+        total=Sum(F('price') * F('quantity'))
+    )['total'] or 0
+    
+    weekly_revenue = queryset.filter(
+        order__created_at__date__gte=week_start
+    ).aggregate(
+        total=Sum(F('price') * F('quantity'))
+    )['total'] or 0
+
+    return {
+        "total_revenue": total_revenue,
+        "weekly_revenue": weekly_revenue
+    }
+
+from django.utils import timezone
+from datetime import timedelta
+
+def get_weekly_revenue(sellerprofile):
+    data = []
+    raw_values = []
+    
+    for i in range(6, -1, -1):
+        day = timezone.now().date() - timedelta(days=i)
+        total = OrderItem.objects.filter(
+            seller=sellerprofile,
+            order__status='delivered',
+            order__created_at__date=day
+        ).aggregate(
+            total=Sum(F('price') * F('quantity'))
+        )['total'] or 0
+        total = float(total)
+        raw_values.append(total)
+        data.append({
+            'label': 'Today' if i == 0 else day.strftime('%a'),
+            'value': float(total)
+        })
+
+    max_val = max(raw_values) if max(raw_values) > 0 else 1
+    for entry in data:
+        entry['percentage'] = (entry['value'] / max_val) * 100
+        
+    return data

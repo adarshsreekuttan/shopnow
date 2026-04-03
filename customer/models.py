@@ -1,6 +1,7 @@
 from django.db import models
 from core.models import User, Product
 from decimal import Decimal
+from seller.models import SellerProfile
 
 class Address(models.Model):
     user = models.ForeignKey('core.User', on_delete=models.CASCADE)
@@ -112,6 +113,7 @@ class Order(models.Model):
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    seller = models.ForeignKey(SellerProfile, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
     price = models.DecimalField(max_digits=10, decimal_places=2)
 

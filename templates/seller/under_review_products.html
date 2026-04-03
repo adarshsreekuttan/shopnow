@@ -59,12 +59,12 @@
             <!-- LEFT: Tabs -->
             <div class="flex items-center gap-8 overflow-x-auto no-scrollbar">
                 
-                <a href="{% url 'product_control' %}" class=" whitespace-nowrap px-1 h-full flex items-center text-[11px] font-black uppercase tracking-widest">
-                    Active Listings
+                <a href="{% url 'product_control' %}" class="text-gray-400 hover:text-pdark whitespace-nowrap px-1 h-full flex items-center text-[11px] font-black uppercase tracking-widest transition-colors">
+                   Active Listings
                 </a>
 
-                <a href="{% url 'under_review_products' %}" class="text-gray-400 hover:text-pdark whitespace-nowrap px-1 h-full flex items-center text-[11px] font-black uppercase tracking-widest transition-colors">
-                    Under Review
+                <a href="{% url 'under_review_products' %}" class="whitespace-nowrap px-1 h-full flex items-center text-[11px] font-black uppercase tracking-widest">
+                     Under Review
                 </a>
 
                 <a href="{% url 'rejected_product' %}" class="text-gray-400 hover:text-pdark whitespace-nowrap px-1 h-full flex items-center text-[11px] font-black uppercase tracking-widest transition-colors">
@@ -98,8 +98,8 @@
                     <div class="w-1.5 h-1.5 bg-primary rounded-full"></div>
                     <span class="text-primary text-[10px] font-bold uppercase tracking-[0.2em]">Inventory Manager</span>
                 </div>
-                <h1 class="text-3xl font-black text-pdark tracking-tight">Active Products</h1>
-                <p class="text-[11px] text-gray-400 font-medium mt-1">Managing {{ products.count }} listings across all categories</p>
+                <h1 class="text-3xl font-black text-pdark tracking-tight">Products Under Admin Review</h1>
+                <p class="text-[11px] text-gray-400 font-medium mt-1">Wait for admins review and actions</p>
             </div>
 
             <div class="flex items-center gap-3">
@@ -152,10 +152,6 @@
                     
                     <div class="mt-auto flex items-center justify-between pt-2 border-t border-gray-50">
                         <p class="text-sm font-black text-pdark italic">₹{{ product.price }}</p>
-                        <div class="flex items-center gap-1">
-                            <i class="fa-solid fa-star text-amber-400 text-[10px]"></i>
-                            <span class="text-[10px] font-bold text-gray-400">4.5</span>
-                        </div>
                     </div>
                 </div>
             </div>

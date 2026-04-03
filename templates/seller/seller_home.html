@@ -5,219 +5,536 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ShopNow | Seller Hub</title>
-    
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    colors: { 
-                        pdark: '#362F4F', 
-                        primary: '#5B23FF', 
-                        accent: '#008BFF', 
-                        highlight: '#E4FF30', 
-                        lightbg: '#F8F9FA' 
+                    colors: {
+                        pdark: '#362F4F',
+                        primary: '#5B23FF',
+                        accent: '#008BFF',
+                        highlight: '#E4FF30',
+                        lightbg: '#F8F9FA'
                     },
                     fontFamily: { sans: ['Inter', 'sans-serif'] }
                 }
             }
         }
     </script>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
         html { scroll-behavior: smooth; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        .premium-shadow { box-shadow: 0 10px 30px -15px rgba(54, 47, 79, 0.1); }
+
+        /* Noise texture overlay */
+        .noise::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+            opacity: 0.035;
+            pointer-events: none;
+            border-radius: inherit;
+        }
+
+        /* Card glow on hover */
+        .product-card:hover {
+            box-shadow: 0 0 0 1.5px #5B23FF22, 0 8px 32px -8px #5B23FF18;
+        }
+
+        /* Stat bar animation */
+        .stat-bar { transition: width 1s cubic-bezier(0.4,0,0.2,1); }
+
+        /* Nav icon active state */
+        .nav-link.active .nav-icon {
+            background: #5B23FF;
+            color: #fff;
+        }
+        .nav-link.active .nav-label { color: #362F4F; }
+
+        /* Pulse dot */
+        @keyframes pulse-ring {
+            0% { transform: scale(0.8); opacity: 1; }
+            100% { transform: scale(1.8); opacity: 0; }
+        }
+        .pulse-dot::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 9999px;
+            background: #ef4444;
+            animation: pulse-ring 1.6s ease-out infinite;
+        }
+
+        /* Shimmer on revenue */
+        @keyframes shimmer {
+            0% { background-position: -200% center; }
+            100% { background-position: 200% center; }
+        }
+        .shimmer-text {
+            background: linear-gradient(90deg, #fff 30%, #E4FF30 50%, #fff 70%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shimmer 3s linear infinite;
+        }
+
+        /* Table row hover */
+        tbody tr:hover { background: #F8F9FA; }
+
+        /* Scrollbar for order table */
+        .order-scroll { max-height: 320px; overflow-y: auto; }
+        .order-scroll::-webkit-scrollbar { width: 4px; }
+        .order-scroll::-webkit-scrollbar-track { background: transparent; }
+        .order-scroll::-webkit-scrollbar-thumb { background: #e5e7eb; border-radius: 4px; }
     </style>
 </head>
 
 <body class="bg-lightbg text-pdark font-sans antialiased">
     {% include "seller/navbar.html" %}
-    <main class="space-y-8">
 
-        <section class="relative min-h-[280px] bg-[#0F1111] flex items-center overflow-hidden">
-            <div class="absolute inset-0 bg-gradient-to-r from-pdark via-pdark/60 to-transparent z-10"></div>
-            <div class="absolute right-0 top-0 w-1/3 h-full bg-primary/10 blur-[120px] rounded-full"></div>
-            
-            <div class="container mx-auto px-4 lg:px-10 relative z-20">
-                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-8">
-                    <div>
-                        <div class="inline-flex items-center gap-2 bg-highlight text-pdark px-3 py-1 rounded-sm font-black text-[10px] tracking-[0.16em] uppercase italic mb-4">
-                            Live Performance
-                        </div>
-                        <h2 class="text-3xl md:text-4xl font-extrabold text-white mb-2 tracking-tight">
-                            Welcome back, <span class="text-primary italic">{{ sellerprofile.shop_name }}</span>
-                        </h2>
-                        <p class="text-gray-400 text-sm md:text-base font-medium max-w-md border-l-2 border-primary/50 pl-4">
-                            Your store traffic is up <span class="text-highlight">15.4%</span> since yesterday. Check your pending orders.
+    <main class="max-w-screen-xl mx-auto px-4 lg:px-8 pb-24 space-y-6 pt-6">
+
+        <!-- ═══════════════════════════════════════ HERO BANNER ═══ -->
+        <section class="relative rounded-2xl overflow-hidden bg-pdark noise min-h-[200px] flex items-center">
+            <!-- Background blobs -->
+            <div class="absolute -top-10 -right-10 w-64 h-64 bg-primary/30 rounded-full blur-[80px] pointer-events-none"></div>
+            <div class="absolute bottom-0 left-1/3 w-48 h-48 bg-accent/20 rounded-full blur-[60px] pointer-events-none"></div>
+            <div class="absolute top-4 right-64 w-2 h-2 bg-highlight rounded-full opacity-80"></div>
+            <div class="absolute top-12 right-80 w-1 h-1 bg-white rounded-full opacity-40"></div>
+            <div class="absolute bottom-8 right-48 w-1.5 h-1.5 bg-primary rounded-full opacity-60"></div>
+
+            <div class="relative z-10 w-full px-8 py-8 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+                <!-- Left: greeting -->
+                <div>
+                    <div class="inline-flex items-center gap-1.5 mb-3">
+                        <div class="w-1.5 h-1.5 bg-highlight rounded-full"></div>
+                        <span class="text-highlight/80 text-[10px] font-bold uppercase tracking-[0.2em]">Live Dashboard</span>
+                    </div>
+                    <h1 class="text-3xl md:text-4xl font-black text-white tracking-tight leading-none mb-2">
+                        Hey, <span class="shimmer-text">{{ sellerprofile.shop_name }}</span> 👋
+                    </h1>
+                    <p class="text-white/40 text-sm font-medium max-w-sm leading-relaxed">
+                        Traffic is up <span class="text-highlight font-bold">15.4%</span> since yesterday. You have pending orders waiting.
+                    </p>
+                </div>
+
+                <!-- Right: hero stats -->
+                <div class="flex gap-3 flex-wrap">
+                    <div class="bg-white/5 border border-white/10 backdrop-blur-sm rounded-xl px-5 py-4 min-w-[140px]">
+                        <p class="text-white/40 text-[9px] font-black uppercase tracking-[0.18em] mb-2">Today's Revenue</p>
+                        <p class="text-white text-2xl font-black italic">₹12,450</p>
+                        <p class="text-green-400 text-[10px] font-semibold mt-1">
+                            <i class="fa-solid fa-arrow-trend-up mr-1"></i>+8.2% vs yesterday
                         </p>
                     </div>
-                    
-                    <div class="flex gap-4 sm:gap-6">
-                        <div class="bg-white/5 backdrop-blur-md border border-white/10 p-5 rounded-md min-w-[140px] shadow-xl">
-                            <p class="text-white/40 text-[10px] font-black uppercase tracking-[0.2em] mb-2">Today's Revenue</p>
-                            <h3 class="text-white text-2xl font-bold italic">₹12,450</h3>
-                        </div>
-                        <div class="bg-white/5 backdrop-blur-md border border-white/10 p-5 rounded-md min-w-[140px] shadow-xl">
-                            <p class="text-white/40 text-[10px] font-black uppercase tracking-[0.2em] mb-2">Pending</p>
-                            <h3 class="text-highlight text-2xl font-bold">14 <span class="text-xs text-white/40 ml-1">Orders</span></h3>
-                        </div>
+                    <div class="bg-white/5 border border-white/10 backdrop-blur-sm rounded-xl px-5 py-4 min-w-[140px]">
+                        <p class="text-white/40 text-[9px] font-black uppercase tracking-[0.18em] mb-2">Pending Orders</p>
+                        <p class="text-highlight text-2xl font-black">14</p>
+                        <p class="text-white/30 text-[10px] font-semibold mt-1">
+                            <i class="fa-solid fa-clock mr-1"></i>3 need attention
+                        </p>
+                    </div>
+                    <div class="bg-white/5 border border-white/10 backdrop-blur-sm rounded-xl px-5 py-4 min-w-[140px]">
+                        <p class="text-white/40 text-[9px] font-black uppercase tracking-[0.18em] mb-2">Avg Rating</p>
+                        <p class="text-white text-2xl font-black">4.8 <span class="text-yellow-400 text-base">★</span></p>
+                        <p class="text-white/30 text-[10px] font-semibold mt-1">
+                            <i class="fa-solid fa-comment-dots mr-1"></i>24 new reviews
+                        </p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section class="container mx-auto px-4 lg:px-10">
-            <div class="bg-white p-6 rounded-md shadow-sm border border-gray-100">
+        <!-- ═══════════════════════════════════════ NAV TILES ═══ -->
+        <section class="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
+            <p class="text-[9px] font-black text-gray-400 uppercase tracking-[0.22em] mb-4">Store Management</p>
+            <div class="flex justify-between md:justify-start md:gap-8 overflow-x-auto no-scrollbar pb-1">
 
-                <h3 class="text-[11px] font-black text-gray-400 uppercase tracking-[0.2em] mb-6">
-                    Store Management
-                </h3>
+                <a href="{% url 'seller_home' %}" class="nav-link active flex flex-col items-center gap-2 group min-w-[60px]">
+                    <div class="nav-icon w-13 h-13 w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-lg group-hover:bg-primary group-hover:text-white transition-all duration-200 shadow-sm">
+                        <i class="fa-solid fa-chart-line"></i>
+                    </div>
+                    <span class="nav-label text-[10px] font-bold text-gray-400 group-hover:text-pdark uppercase tracking-wider whitespace-nowrap">Dashboard</span>
+                </a>
 
-                <div class="flex justify-between md:justify-start md:gap-12 overflow-x-auto no-scrollbar pb-2">
+                <a href="{% url 'seller_profile' %}" class="nav-link flex flex-col items-center gap-2 group min-w-[60px]">
+                    <div class="nav-icon w-12 h-12 rounded-xl bg-violet-50 text-primary flex items-center justify-center text-lg group-hover:bg-primary group-hover:text-white transition-all duration-200 shadow-sm">
+                        <i class="fa-solid fa-user-tie"></i>
+                    </div>
+                    <span class="nav-label text-[10px] font-bold text-gray-400 group-hover:text-pdark uppercase tracking-wider whitespace-nowrap">Profile</span>
+                </a>
 
-                    <!-- Dashboard -->
-                    <a href="{% url 'seller_home' %}" class="flex flex-col items-center group">
-                        <div class="w-14 h-14 rounded-md bg-blue-50 text-blue-600 mb-3 flex items-center justify-center text-xl group-hover:bg-blue-600 group-hover:text-white transition-all duration-300 shadow-sm">
-                            <i class="fa-solid fa-chart-line"></i>
-                        </div>
-                        <span class="text-[11px] font-bold text-gray-500 group-hover:text-pdark uppercase tracking-wider">
-                            Dashboard
-                        </span>
-                    </a>
+                <a href="{% url 'product_control' %}" class="nav-link flex flex-col items-center gap-2 group min-w-[60px]">
+                    <div class="nav-icon w-12 h-12 rounded-xl bg-purple-50 text-primary flex items-center justify-center text-lg group-hover:bg-primary group-hover:text-white transition-all duration-200 shadow-sm">
+                        <i class="fa-solid fa-box-open"></i>
+                    </div>
+                    <span class="nav-label text-[10px] font-bold text-gray-400 group-hover:text-pdark uppercase tracking-wider whitespace-nowrap">Products</span>
+                </a>
 
-                    <!-- Profile -->
-                    <a href="{% url 'seller_profile' %}" class="flex flex-col items-center group">
-                        <div class="w-14 h-14 rounded-md bg-accent/5 text-accent mb-3 flex items-center justify-center text-xl group-hover:bg-accent group-hover:text-white transition-all duration-300 shadow-sm">
-                            <i class="fa-solid fa-user-tie"></i>
-                        </div>
-                        <span class="text-[11px] font-bold text-gray-500 group-hover:text-pdark uppercase tracking-wider">
-                            Profile
-                        </span>
-                    </a>
+                <a href="{% url 'seller_orders' %}" class="nav-link flex flex-col items-center gap-2 group min-w-[60px]">
+                    <div class="nav-icon w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-lg group-hover:bg-emerald-600 group-hover:text-white transition-all duration-200 shadow-sm relative">
+                        <i class="fa-solid fa-truck-fast"></i>
+                        <span class="pulse-dot absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-white"></span>
+                    </div>
+                    <span class="nav-label text-[10px] font-bold text-gray-400 group-hover:text-pdark uppercase tracking-wider whitespace-nowrap">Orders</span>
+                </a>
 
-                    <!-- Products -->
-                    <a href="{% url 'product_control' %}" class="flex flex-col items-center group">
-                        <div class="w-14 h-14 rounded-md bg-primary/5 text-primary mb-3 flex items-center justify-center text-xl group-hover:bg-primary group-hover:text-white transition-all duration-300 shadow-sm">
-                            <i class="fa-solid fa-box-open"></i>
-                        </div>
-                        <span class="text-[11px] font-bold text-gray-500 group-hover:text-pdark uppercase tracking-wider">
-                            Products
-                        </span>
-                    </a>
+                <a href="{% url 'view_reviews' %}" class="nav-link flex flex-col items-center gap-2 group min-w-[60px]">
+                    <div class="nav-icon w-12 h-12 rounded-xl bg-amber-50 text-amber-500 flex items-center justify-center text-lg group-hover:bg-amber-500 group-hover:text-white transition-all duration-200 shadow-sm">
+                        <i class="fa-solid fa-star"></i>
+                    </div>
+                    <span class="nav-label text-[10px] font-bold text-gray-400 group-hover:text-pdark uppercase tracking-wider whitespace-nowrap">Reviews</span>
+                </a>
 
-                    <!-- Orders -->
-                    <a href="{% url 'seller_orders' %}" class="flex flex-col items-center group">
-                        <div class="w-14 h-14 rounded-md bg-green-50 text-green-600 mb-3 flex items-center justify-center text-xl group-hover:bg-green-600 group-hover:text-white transition-all duration-300 shadow-sm relative">
-                            <i class="fa-solid fa-truck-fast"></i>
-                            <span class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-white"></span>
-                        </div>
-                        <span class="text-[11px] font-bold text-gray-500 group-hover:text-pdark uppercase tracking-wider">
-                            Orders
-                        </span>
-                    </a>
+                <a href="{% url 'coupon' %}" class="nav-link flex flex-col items-center gap-2 group min-w-[60px]">
+                    <div class="nav-icon w-12 h-12 rounded-xl bg-lime-50 text-pdark flex items-center justify-center text-lg group-hover:bg-highlight group-hover:text-pdark transition-all duration-200 shadow-sm">
+                        <i class="fa-solid fa-tags"></i>
+                    </div>
+                    <span class="nav-label text-[10px] font-bold text-gray-400 group-hover:text-pdark uppercase tracking-wider whitespace-nowrap">Coupons</span>
+                </a>
 
-                    <!-- Reviews -->
-                    <a href="{% url 'view_reviews' %}" class="flex flex-col items-center group">
-                        <div class="w-14 h-14 rounded-md bg-yellow-50 text-yellow-500 mb-3 flex items-center justify-center text-xl group-hover:bg-yellow-500 group-hover:text-white transition-all duration-300 shadow-sm">
-                            <i class="fa-solid fa-star"></i>
-                        </div>
-                        <span class="text-[11px] font-bold text-gray-500 group-hover:text-pdark uppercase tracking-wider">
-                            Reviews
-                        </span>
-                    </a>
+                <a href="#" class="nav-link flex flex-col items-center gap-2 group min-w-[60px]">
+                    <div class="nav-icon w-12 h-12 rounded-xl bg-orange-50 text-orange-500 flex items-center justify-center text-lg group-hover:bg-orange-500 group-hover:text-white transition-all duration-200 shadow-sm">
+                        <i class="fa-solid fa-hourglass-half"></i>
+                    </div>
+                    <span class="nav-label text-[10px] font-bold text-gray-400 group-hover:text-pdark uppercase tracking-wider whitespace-nowrap">Approvals</span>
+                </a>
 
-                    <!-- Coupons -->
-                    <a href="{% url 'coupon' %}" class="flex flex-col items-center group">
-                        <div class="w-14 h-14 rounded-md bg-highlight/10 text-pdark mb-3 flex items-center justify-center text-xl group-hover:bg-highlight transition-all duration-300 shadow-sm">
-                            <i class="fa-solid fa-tags"></i>
-                        </div>
-                        <span class="text-[11px] font-bold text-gray-500 group-hover:text-pdark uppercase tracking-wider">
-                            Coupons
-                        </span>
-                    </a>
-
-                    <!-- Approvals (optional) -->
-                    <a href="{% url 'seller_pending_approval' %}" class="flex flex-col items-center group">
-                        <div class="w-14 h-14 rounded-md bg-orange-50 text-orange-500 mb-3 flex items-center justify-center text-xl group-hover:bg-orange-500 group-hover:text-white transition-all duration-300 shadow-sm">
-                            <i class="fa-solid fa-hourglass-half"></i>
-                        </div>
-                        <span class="text-[11px] font-bold text-gray-500 group-hover:text-pdark uppercase tracking-wider">
-                            Approvals
-                        </span>
-                    </a>
-
-                </div>
             </div>
         </section>
 
-        <section class="container mx-auto px-4 lg:px-10 pb-20">
-            <div class="flex justify-between items-end mb-6">
-                <div>
-                    <h3 class="text-2xl font-bold tracking-tight">Your Listings</h3>
-                    <p class="text-xs text-gray-500 font-medium">Managing {{ product.count }} active items</p>
+        <!-- ═══════════════════════════════════════ OVERVIEW ROW ═══ -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+
+            <!-- Weekly revenue chart placeholder -->
+            <div class="lg:col-span-2 bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                <div class="flex items-center justify-between mb-5">
+                    <div>
+                        <h3 class="text-sm font-black text-pdark">Revenue Overview</h3>
+                        <p class="text-[10px] text-gray-400 font-medium mt-0.5">Last 7 days</p>
+                    </div>
                 </div>
-                <a href="{% url 'seller_add_product' %}" class="inline-flex items-center bg-primary text-white px-5 py-2 rounded-md text-xs font-bold hover:bg-pdark transition-all">
-                    <i class="fa-solid fa-plus mr-2"></i> Add Product
-                </a>
+
+                <!-- Mini bar chart (CSS) -->
+                <div class="flex items-end gap-2 h-28 mb-3">
+                    {% for day in revenue_data %}
+                    <div class="flex-1 flex flex-col items-center gap-1 h-full group">
+        <div class="w-full h-20 bg-primary/10 group-hover:bg-primary/20 rounded-t-md transition-colors relative overflow-hidden">
+            
+            <div class="w-full bg-primary absolute bottom-0 left-0 transition-all duration-700 ease-in-out" 
+                 style="height: {{ day.percentage|default:'0' }}%; min-height: 2px;">
             </div>
             
-            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 lg:gap-6">
-                
-                {% for x in product %}
-                <div class="bg-white rounded-md border border-gray-100 hover:border-primary/40 transition-all duration-300 group flex flex-col premium-shadow overflow-hidden">
-                    <div class="aspect-square bg-gray-50 flex items-center justify-center relative p-4">
-                        {% if x.get_primary_image %}
-                        <img src="{{ x.get_primary_image.image.url }}" class="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-500 mix-blend-multiply" alt="{{ x.name }}">
-                        {% else %}
-                        <div class="text-gray-300 text-[10px] font-bold uppercase italic">No Preview</div>
-                        {% endif %}
+        </div>
+        <span class="text-[9px] text-gray-400 font-bold whitespace-nowrap">{{ day.label }}</span>
+    </div>
 
-                        <div class="absolute top-2 left-2 flex flex-col gap-1">
-                            <span class="bg-white border border-gray-100 text-[9px] font-black px-2 py-1 rounded-sm shadow-sm uppercase tracking-tighter">
-                                Stock: <span class="text-primary">{{ x.stock }}</span>
-                            </span>
-                        </div>
-                    </div>
+                    {% empty %}
+                    <!-- Placeholder bars when no data -->
                 
-                    <div class="p-4 flex-grow flex flex-col">
-                        <h4 class="text-xs font-semibold text-pdark line-clamp-2 leading-snug mb-2 h-8">{{ x.name }}</h4>
-                        
-                        <div class="flex items-center gap-2 mb-3">
-                            <div class="flex text-highlight bg-pdark px-1.5 py-0.5 rounded-sm text-[9px] font-black">
-                                {{ x.avg_rating }} <i class="fa-solid fa-star ml-1 mt-0.5"></i>
-                            </div>
-                            <span class="text-gray-400 text-[10px] font-medium">({{x.review_count}})</span>
-                        </div>
+                    <div class="flex-1 flex flex-col items-center gap-1"><div class="w-full bg-primary/20 rounded-t-md" style="height:70%"></div><span class="text-[9px] text-gray-400 font-bold">Mon</span></div>
+                    <div class="flex-1 flex flex-col items-center gap-1"><div class="w-full bg-primary/20 rounded-t-md" style="height:90%"></div><span class="text-[9px] text-gray-400 font-bold">Tue</span></div>
+                    <div class="flex-1 flex flex-col items-center gap-1"><div class="w-full bg-primary rounded-t-md" style="height:55%"></div><span class="text-[9px] text-gray-400 font-bold">Wed</span></div>
+                    <div class="flex-1 flex flex-col items-center gap-1"><div class="w-full bg-primary rounded-t-md" style="height:80%"></div><span class="text-[9px] text-gray-400 font-bold">Thu</span></div>
+                    <div class="flex-1 flex flex-col items-center gap-1"><div class="w-full bg-primary rounded-t-md" style="height:100%"></div><span class="text-[9px] text-gray-400 font-bold">Fri</span></div>
+                    <div class="flex-1 flex flex-col items-center gap-1"><div class="w-full bg-primary/40 rounded-t-md" style="height:65%"></div><span class="text-[9px] text-gray-400 font-bold">Sat</span></div>
+                    <div class="flex-1 flex flex-col items-center gap-1"><div class="w-full bg-highlight/80 rounded-t-md" style="height:88%"></div><span class="text-[9px] text-gray-400 font-bold">Today</span></div>
+                    {% endfor %}
+                </div>
 
-                        <div class="mt-auto pt-3 border-t border-gray-50 flex items-center justify-between">
-                            <div class="flex flex-col">
-                                <span class="text-sm font-black text-pdark">₹{{ x.discount_price }}</span>
-                                <span class="text-[9px] text-gray-400 line-through">₹{{ x.price }}</span>
-                            </div>
-                            
-                            <div class="flex gap-1.5">
-                                <a href="{% url 'seller_product_view' x.slug %}" class="w-8 h-8 flex items-center justify-center bg-lightbg text-pdark rounded hover:bg-primary hover:text-white transition-colors">
-                                    <i class="fa-solid fa-eye text-xs"></i>
-                                </a>
-                                <a href="{% url 'product_delete' x.id %}" class="w-8 h-8 flex items-center justify-center bg-red-50 text-red-500 rounded hover:bg-red-500 hover:text-white transition-colors">
-                                    <i class="fa-solid fa-trash text-xs"></i>
-                                </a>
-                            </div>
-                        </div>
+                <div class="flex gap-4 pt-4 border-t border-gray-50">
+                    <div>
+                        <p class="text-[9px] text-gray-400 font-black uppercase tracking-widest">This Week</p>
+                        <p class="text-lg font-black text-pdark">₹{{weekly_revenue}}</p>
                     </div>
-                </div>              
-                {% endfor %}    
+                    <div>
+                        <p class="text-[9px] text-gray-400 font-black uppercase tracking-widest">Last Week</p>
+                        <p class="text-lg font-black text-gray-400">₹{{total_revenue}}</p>
+                    </div>
+                    <div class="ml-auto flex items-end">
+                        <span class="inline-flex items-center gap-1 bg-green-50 text-green-600 text-[10px] font-black px-3 py-1 rounded-full">
+                            <i class="fa-solid fa-arrow-trend-up text-[9px]"></i> +16.4%
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick stats column -->
+            <div class="flex flex-col gap-4">
+
+                <!-- Active products -->
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center text-xl flex-shrink-0">
+                        <i class="fa-solid fa-box-open"></i>
+                    </div>
+                    <div class="flex-grow">
+                        <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Active Listings</p>
+                        <p class="text-2xl font-black text-pdark">{{ product.count }}</p>
+                    </div>
+                    <a href="{% url 'product_control' %}" class="text-primary text-xs">
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                </div>
+
+                <!-- Conversion rate -->
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+                    <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-3">Conversion Rate</p>
+                    <div class="flex items-end justify-between mb-2">
+                        <p class="text-2xl font-black text-pdark">3.2%</p>
+                        <span class="text-green-500 text-xs font-bold">+0.4%</span>
+                    </div>
+                    <div class="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                        <div class="h-full bg-primary rounded-full" style="width: 32%"></div>
+                    </div>
+                    <p class="text-[9px] text-gray-400 font-medium mt-2">Industry avg: 2.5%</p>
+                </div>
+
+                <!-- Customer satisfaction -->
+                <div class="bg-pdark rounded-2xl p-5 flex flex-col justify-between min-h-[100px]">
+                    <div class="flex items-center justify-between mb-3">
+                        <p class="text-[9px] font-black text-white/40 uppercase tracking-widest">Avarage rating of</p>
+                        <i class="fa-solid fa-face-smile-beam text-highlight text-base"></i>
+                    </div>
+                    <div>
+                        <p class="text-3xl font-black text-white">{{ avarage_rating | default:"0" }}/ 5 <i class="fa-solid fa-star text-yellow-400"></i> </p> 
+                        <p class="text-white/30 text-[10px] font-medium mt-1">Based on {{review_count}} responses</p>
+                    </div>
+                </div>
 
             </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════ ORDERS + REVIEWS ROW ═══ -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+
+            <!-- Recent Orders -->
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                <div class="flex items-center justify-between px-6 pt-5 pb-4 border-b border-gray-50">
+                    <div>
+                        <h3 class="text-sm font-black text-pdark">Recent Orders</h3>
+                        <p class="text-[10px] text-gray-400 font-medium mt-0.5">14 pending action</p>
+                    </div>
+                    <a href="{% url 'seller_orders' %}" class="text-[10px] font-bold text-primary hover:text-pdark transition-colors flex items-center gap-1">
+                        View all <i class="fa-solid fa-arrow-right text-[9px]"></i>
+                    </a>
+                </div>
+                <div class="order-scroll">
+                    <table class="w-full text-xs">
+                        <thead class="sticky top-0 bg-white z-10">
+                            <tr class="border-b border-gray-50">
+                                <th class="text-left px-6 py-3 text-[9px] font-black text-gray-400 uppercase tracking-widest">Order ID</th>
+                                <th class="text-left px-3 py-3 text-[9px] font-black text-gray-400 uppercase tracking-widest">Customer</th>
+                                <th class="text-left px-3 py-3 text-[9px] font-black text-gray-400 uppercase tracking-widest">Amount</th>
+                                <th class="text-left px-3 py-3 text-[9px] font-black text-gray-400 uppercase tracking-widest">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-50">
+                            {% for order in orders %}
+                            <tr class="transition-colors cursor-pointer" onclick="window.location='#'">
+                                <td class="px-6 py-3.5 font-bold text-pdark">#{{ order.id }}</td>
+                                <td class="px-3 py-3.5 text-gray-600">{{ order.user.first_name }}</td>
+                                <td class="px-3 py-3.5 font-bold text-pdark">₹{{ order.grand_total }}</td>
+                                <td class="px-3 py-3.5">
+                                    {% if order.status == 'pending' %}
+                                    <span class="inline-flex items-center gap-1 bg-yellow-50 text-yellow-600 text-[9px] font-black px-2 py-1 rounded-md uppercase tracking-wide">
+                                        <span class="w-1.5 h-1.5 bg-yellow-400 rounded-full"></span> Pending
+                                    </span>
+                                     {% elif order.status == 'processing' %}
+                                    <span class="inline-flex items-center gap-1 bg-blue-50 text-blue-600 text-[9px] font-black px-2 py-1 rounded-md uppercase tracking-wide">
+                                        <span class="w-1.5 h-1.5 bg-blue-400 rounded-full"></span> Processing
+                                    </span>
+                                    {% elif order.status == 'shipped' %}
+                                    <span class="inline-flex items-center gap-1 bg-blue-50 text-blue-600 text-[9px] font-black px-2 py-1 rounded-md uppercase tracking-wide">
+                                        <span class="w-1.5 h-1.5 bg-blue-400 rounded-full"></span> Shipped
+                                    </span>
+                                    {% elif order.status == 'delivered' %}
+                                    <span class="inline-flex items-center gap-1 bg-green-50 text-green-600 text-[9px] font-black px-2 py-1 rounded-md uppercase tracking-wide">
+                                        <span class="w-1.5 h-1.5 bg-green-400 rounded-full"></span> Delivered
+                                    </span>
+                                    {% else %}
+                                    <span class="inline-flex items-center gap-1 bg-gray-50 text-gray-500 text-[9px] font-black px-2 py-1 rounded-md uppercase tracking-wide">
+                                        <span class="w-1.5 h-1.5 bg-gray-300 rounded-full"></span> {{ order.status }}
+                                    </span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <!-- Placeholder rows -->
+                            <tr><td class="px-6 py-3.5 font-bold text-pdark">#1042</td><td class="px-3 py-3.5 text-gray-600">Ananya S.</td><td class="px-3 py-3.5 font-bold">₹1,290</td><td class="px-3 py-3.5"><span class="inline-flex items-center gap-1 bg-yellow-50 text-yellow-600 text-[9px] font-black px-2 py-1 rounded-md">Pending</span></td></tr>
+                            <tr><td class="px-6 py-3.5 font-bold text-pdark">#1041</td><td class="px-3 py-3.5 text-gray-600">Rohan M.</td><td class="px-3 py-3.5 font-bold">₹3,450</td><td class="px-3 py-3.5"><span class="inline-flex items-center gap-1 bg-blue-50 text-blue-600 text-[9px] font-black px-2 py-1 rounded-md">Shipped</span></td></tr>
+                            <tr><td class="px-6 py-3.5 font-bold text-pdark">#1040</td><td class="px-3 py-3.5 text-gray-600">Priya K.</td><td class="px-3 py-3.5 font-bold">₹890</td><td class="px-3 py-3.5"><span class="inline-flex items-center gap-1 bg-green-50 text-green-600 text-[9px] font-black px-2 py-1 rounded-md">Delivered</span></td></tr>
+                            <tr><td class="px-6 py-3.5 font-bold text-pdark">#1039</td><td class="px-3 py-3.5 text-gray-600">Vikram T.</td><td class="px-3 py-3.5 font-bold">₹2,100</td><td class="px-3 py-3.5"><span class="inline-flex items-center gap-1 bg-yellow-50 text-yellow-600 text-[9px] font-black px-2 py-1 rounded-md">Pending</span></td></tr>
+                            <tr><td class="px-6 py-3.5 font-bold text-pdark">#1038</td><td class="px-3 py-3.5 text-gray-600">Meena R.</td><td class="px-3 py-3.5 font-bold">₹560</td><td class="px-3 py-3.5"><span class="inline-flex items-center gap-1 bg-green-50 text-green-600 text-[9px] font-black px-2 py-1 rounded-md">Delivered</span></td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Recent Reviews -->
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                <div class="flex items-center justify-between px-6 pt-5 pb-4 border-b border-gray-50">
+                    <div>
+                        <h3 class="text-sm font-black text-pdark">Recent Reviews</h3>
+                        <p class="text-[10px] text-gray-400 font-medium mt-0.5">Customer feedback</p>
+                    </div>
+                    <a href="{% url 'view_reviews' %}" class="text-[10px] font-bold text-primary hover:text-pdark transition-colors flex items-center gap-1">
+                        View all <i class="fa-solid fa-arrow-right text-[9px]"></i>
+                    </a>
+                </div>
+                <div class="divide-y divide-gray-50 order-scroll">
+                    {% for review in reviews %}
+                    <div class="px-6 py-4">
+                        <div class="flex items-start gap-3">
+                            <div class="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-black flex-shrink-0">
+                                {{ review.user.first_name|first|upper }}
+                            </div>
+                            <div class="flex-grow min-w-0">
+                                <div class="flex items-center justify-between mb-1">
+                                    <p class="text-xs font-bold text-pdark">{{ review.user.first_name }}</p>
+                                    <div class="flex gap-0.5">
+                                        {% for i in "12345" %}
+                                        <i class="fa-solid fa-star text-[9px] {% if forloop.counter <= review.rating %}text-amber-400{% else %}text-gray-200{% endif %}"></i>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <p class="text-[11px] text-gray-500 line-clamp-2 leading-relaxed">{{ review.comment }}</p>
+                                <p class="text-[9px] text-gray-300 font-medium mt-1">{{ review.product.name }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="px-6 py-4"><div class="flex items-start gap-3"><div class="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-black flex-shrink-0">A</div><div><div class="flex items-center justify-between mb-1"><p class="text-xs font-bold text-pdark">Arun P.</p><div class="flex gap-0.5"><i class="fa-solid fa-star text-[9px] text-amber-400"></i><i class="fa-solid fa-star text-[9px] text-amber-400"></i><i class="fa-solid fa-star text-[9px] text-amber-400"></i><i class="fa-solid fa-star text-[9px] text-amber-400"></i><i class="fa-solid fa-star text-[9px] text-amber-400"></i></div></div><p class="text-[11px] text-gray-500">Really love this product! Fast shipping and exactly as described.</p><p class="text-[9px] text-gray-300 font-medium mt-1">Premium Wireless Earbuds</p></div></div></div>
+                    <div class="px-6 py-4"><div class="flex items-start gap-3"><div class="w-8 h-8 rounded-full bg-accent/10 text-accent flex items-center justify-center text-xs font-black flex-shrink-0">S</div><div><div class="flex items-center justify-between mb-1"><p class="text-xs font-bold text-pdark">Sneha M.</p><div class="flex gap-0.5"><i class="fa-solid fa-star text-[9px] text-amber-400"></i><i class="fa-solid fa-star text-[9px] text-amber-400"></i><i class="fa-solid fa-star text-[9px] text-amber-400"></i><i class="fa-solid fa-star text-[9px] text-amber-400"></i><i class="fa-solid fa-star text-[9px] text-gray-200"></i></div></div><p class="text-[11px] text-gray-500">Good quality but delivery took a bit longer than expected.</p><p class="text-[9px] text-gray-300 font-medium mt-1">Leather Wallet</p></div></div></div>
+                    <div class="px-6 py-4"><div class="flex items-start gap-3"><div class="w-8 h-8 rounded-full bg-highlight/40 text-pdark flex items-center justify-center text-xs font-black flex-shrink-0">R</div><div><div class="flex items-center justify-between mb-1"><p class="text-xs font-bold text-pdark">Rahul K.</p><div class="flex gap-0.5"><i class="fa-solid fa-star text-[9px] text-amber-400"></i><i class="fa-solid fa-star text-[9px] text-amber-400"></i><i class="fa-solid fa-star text-[9px] text-amber-400"></i><i class="fa-solid fa-star text-[9px] text-amber-400"></i><i class="fa-solid fa-star text-[9px] text-amber-400"></i></div></div><p class="text-[11px] text-gray-500">Outstanding! Will definitely buy again from this store.</p><p class="text-[9px] text-gray-300 font-medium mt-1">Smart Watch Band</p></div></div></div>
+                    {% endfor %}
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ═══════════════════════════════════════ PRODUCTS GRID ═══ -->
+        <section>
+            <div class="flex items-end justify-between mb-5">
+                <div>
+                    <h2 class="text-xl font-black text-pdark tracking-tight">Your Listings</h2>
+                    <p class="text-[11px] text-gray-400 font-medium mt-0.5">{{ product.count }} active product{{ product.count|pluralize }}</p>
+                </div>
+                <a href="{% url 'seller_add_product' %}" class="inline-flex items-center gap-2 bg-primary text-white text-[11px] font-black px-5 py-2.5 rounded-xl hover:bg-pdark transition-all duration-200 shadow-sm hover:shadow-md">
+                    <i class="fa-solid fa-plus"></i> Add Product
+                </a>
+            </div>
+
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                {% for x in product %}
+                <div class="product-card bg-white rounded-2xl border border-gray-100 transition-all duration-300 flex flex-col overflow-hidden group cursor-pointer">
+
+                    <!-- Image -->
+                    <div class="aspect-square bg-gray-50 flex items-center justify-center relative p-4 overflow-hidden">
+                        {% if x.get_primary_image %}
+                        <img src="{{ x.get_primary_image.image.url }}"
+                             class="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-500 mix-blend-multiply"
+                             alt="{{ x.name }}">
+                        {% else %}
+                        <div class="text-gray-300 text-center">
+                            <i class="fa-solid fa-image text-3xl mb-2"></i>
+                            <p class="text-[9px] font-bold uppercase tracking-wider">No Image</p>
+                        </div>
+                        {% endif %}
+
+                        <!-- Stock badge -->
+                        <div class="absolute top-2 left-2">
+                            <span class="bg-white/90 backdrop-blur-sm border border-gray-100 text-[9px] font-black px-2 py-1 rounded-lg shadow-sm">
+                                {% if x.stock > 10 %}
+                                <span class="text-green-500">●</span> {{ x.stock }}
+                                {% elif x.stock > 0 %}
+                                <span class="text-amber-500">●</span> {{ x.stock }} left
+                                {% else %}
+                                <span class="text-red-500">●</span> Out
+                                {% endif %}
+                            </span>
+                        </div>
+
+                        <!-- Action overlay -->
+                        <div class="absolute inset-0 bg-pdark/80 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all duration-200 flex items-center justify-center gap-2">
+                            <a href="{% url 'seller_product_view' x.slug %}"
+                               class="w-9 h-9 bg-white text-pdark rounded-xl flex items-center justify-center hover:bg-highlight transition-colors shadow-md"
+                               onclick="event.stopPropagation()" title="View">
+                                <i class="fa-solid fa-eye text-sm"></i>
+                            </a>
+                            <a href="{% url 'product_delete' x.id %}"
+                               class="w-9 h-9 bg-red-500 text-white rounded-xl flex items-center justify-center hover:bg-red-600 transition-colors shadow-md"
+                               onclick="event.stopPropagation()" title="Delete">
+                                <i class="fa-solid fa-trash text-sm"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Info -->
+                    <div class="p-4 flex flex-col gap-2 flex-grow">
+                        <h4 class="text-xs font-bold text-pdark line-clamp-2 leading-snug">{{ x.name }}</h4>
+
+                        <!-- Rating -->
+                        <div class="flex items-center gap-1.5">
+                            <span class="inline-flex items-center gap-1 bg-pdark text-highlight text-[9px] font-black px-1.5 py-0.5 rounded-md">
+                                {{ x.avg_rating|default:"0"  }} <i class="fa-solid fa-star text-[8px]"></i>
+                            </span>
+                            <span class="text-gray-400 text-[10px]">({{ x.review_count }})</span>
+                        </div>
+
+                        <!-- Price -->
+                        <div class="mt-auto pt-2 border-t border-gray-50 flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-black text-pdark leading-none">₹{{ x.discount_price }}</p>
+                                <p class="text-[9px] text-gray-400 line-through mt-0.5">₹{{ x.price }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <!-- Empty state -->
+                <div class="col-span-full flex flex-col items-center justify-center py-20 text-center">
+                    <div class="w-20 h-20 bg-primary/10 rounded-2xl flex items-center justify-center mb-5">
+                        <i class="fa-solid fa-box-open text-primary text-3xl"></i>
+                    </div>
+                    <h3 class="text-base font-black text-pdark mb-2">No products yet</h3>
+                    <p class="text-gray-400 text-sm mb-5 max-w-xs">Add your first product and start selling on ShopNow.</p>
+                    <a href="{% url 'seller_add_product' %}" class="inline-flex items-center gap-2 bg-primary text-white text-sm font-bold px-6 py-3 rounded-xl hover:bg-pdark transition-all">
+                        <i class="fa-solid fa-plus"></i> Add Your First Product
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+
+            {% if product.count > 10 %}
+            <div class="flex justify-center mt-6">
+                <a href="{% url 'product_control' %}" class="inline-flex items-center gap-2 border border-gray-200 text-gray-600 text-xs font-bold px-6 py-3 rounded-xl hover:border-primary hover:text-primary transition-all">
+                    View all {{ product.count }} products <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                </a>
+            </div>
+            {% endif %}
         </section>
 
     </main>
+
     {% include 'seller/footer.html' %}
 
+    <script>
+        // Mark current nav as active
+        const currentPath = window.location.pathname;
+        document.querySelectorAll('.nav-link').forEach(link => {
+            if (link.getAttribute('href') === currentPath) {
+                link.classList.add('active');
+                link.querySelector('.nav-icon')?.classList.add('!bg-primary', '!text-white');
+            }
+        });
+    </script>
 </body>
 </html>

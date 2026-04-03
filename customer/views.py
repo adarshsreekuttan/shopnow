@@ -611,6 +611,7 @@ def place_order(request):
 
             if mode == 'buy-now':
                 OrderItem.objects.create(
+                    seller=product.seller,
                     order=order,
                     product=product,
                     quantity=1,
@@ -623,6 +624,7 @@ def place_order(request):
             else:
                 for item in cart_items:
                     OrderItem.objects.create(
+                        seller=item.product.seller,
                         order=order,
                         product=item.product,
                         quantity=item.quantity,

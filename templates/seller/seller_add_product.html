@@ -4,253 +4,195 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FlipShop - Add New Product</title>
+    <title>ShopNow | Add Product</title>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    colors: {
-                        primary_dark: '#362F4F',
-                        primary: '#5B23FF',
-                        accent: '#008BFF',
-                        highlight: '#E4FF30',
-                        bg_light: '#F8F9FA',
-                        text_dark: '#212121',
-                        text_gray: '#878787'
+                    colors: { 
+                        pdark: '#362F4F', 
+                        primary: '#5B23FF', 
+                        accent: '#008BFF', 
+                        highlight: '#E4FF30', 
+                        lightbg: '#F8F9FA' 
                     },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    }
+                    fontFamily: { sans: ['Inter', 'sans-serif'] }
                 }
             }
         }
     </script>
     
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #F8F9FA; }
-        .card-shadow { box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        body { background-color: #F8F9FA; letter-spacing: -0.01em; }
         
-        /* Smooth fade in for dynamic attribute rows */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-5px); }
+        /* Premium DNA Noise Texture */
+        .noise-panel::after {
+            content: ''; position: absolute; inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+            opacity: 0.03; pointer-events: none;
+        }
+
+        .custom-input {
+            border: 1px solid #E5E7EB;
+            transition: all 0.2s ease;
+        }
+        .custom-input:focus {
+            border-color: #5B23FF;
+            box-shadow: 0 0 0 4px rgba(91, 35, 255, 0.08);
+            outline: none;
+        }
+        
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        .animate-fade-in { animation: fadeIn 0.3s ease-out forwards; }
+        .animate-up { animation: slideUp 0.4s ease forwards; }
     </style>
 </head>
-<body class="text-text_dark flex flex-col min-h-screen">
+<body class="text-pdark flex flex-col min-h-screen">
 
-    <nav class="bg-primary_dark sticky top-0 z-50 shadow-md">
-        <div class="container mx-auto px-4 h-16 flex items-center justify-between gap-4">
-            <a href="{% url 'seller_home' %}" class="flex items-center gap-2">
-                <div class="w-8 h-8 bg-highlight rounded flex items-center justify-center text-primary_dark font-bold text-xl italic">F</div>
-                <span class="text-white font-bold text-lg tracking-wide hidden sm:block">FlipShop <span class="text-xs font-normal text-highlight ml-1">Seller Hub</span></span>
-            </a>
-            <div class="flex items-center gap-4 text-white font-medium text-sm ml-auto">
-                <a href="{% url 'seller_home' %}" class="flex items-center gap-2 bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-sm transition">
-                    <i class="fa-solid fa-arrow-left"></i>
-                    <span class="hidden sm:block">Back to Dashboard</span>
-                </a>
+    {% include 'seller/navbar.html' %}
+
+    <main class="flex-grow container mx-auto px-4 py-10 max-w-6xl">
+
+        <div class="mb-10 animate-up">
+            <div class="flex items-center gap-2 mb-2">
+                <span class="w-8 h-[2px] bg-primary"></span>
+                <span class="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Inventory Systems</span>
             </div>
-        </div>
-    </nav>
-
-    <main class="flex-grow container mx-auto px-4 py-8 max-w-5xl">
-
-        <div class="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div>
-                <h1 class="text-2xl font-bold text-primary_dark">Add New Product</h1>
-                <p class="text-gray-500 text-sm mt-1">List a new item to your store's inventory.</p>
-            </div>
+            <h1 class="text-4xl font-black tracking-tight text-pdark">List New Product</h1>
         </div>
 
-        <form action="" method="POST" enctype="multipart/form-data" class="bg-white rounded-xl card-shadow overflow-hidden" onsubmit="this.querySelector('button[type=submit]').disabled = true;">
+        <form action="" method="POST" enctype="multipart/form-data" class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start" onsubmit="this.querySelector('button[type=submit]').disabled = true;">
             {% csrf_token %}
 
-            <div class="p-6 md:p-8 flex flex-col lg:flex-row gap-8">
-                
-                <div class="w-full lg:w-1/3">
-                    <h3 class="text-sm font-bold text-primary_dark border-b border-gray-100 pb-2 mb-4">Product Images</h3>
+            <div class="lg:col-span-4 space-y-6">
+                <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm relative overflow-hidden noise-panel">
+                    <h3 class="text-[11px] font-black text-pdark uppercase tracking-widest mb-6 flex items-center gap-2">
+                        <i class="fa-solid fa-images text-primary"></i> Media Gallery
+                    </h3>
                     
-                    <div id="drop-zone" class="border-2 border-dashed border-gray-300 rounded-xl p-6 flex flex-col items-center justify-center text-center bg-gray-50 hover:bg-gray-100 transition cursor-pointer min-h-[250px] group relative overflow-hidden">
+                    <div id="drop-zone" class="border-2 border-dashed border-gray-200 rounded-2xl p-8 flex flex-col items-center justify-center text-center bg-gray-50 hover:bg-white hover:border-primary transition-all cursor-pointer group relative">
                         <input type="file" id="image-upload" name="product_images" multiple accept="image/png, image/jpeg" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
                         
-                        <div class="w-16 h-16 bg-white rounded-full shadow flex items-center justify-center text-primary text-2xl mb-4 group-hover:scale-110 transition pointer-events-none">
-                            <i class="fa-solid fa-cloud-arrow-up"></i>
+                        <div class="w-14 h-14 bg-white rounded-2xl shadow-sm flex items-center justify-center text-primary mb-4 group-hover:bg-primary group-hover:text-white transition-all duration-300">
+                            <i class="fa-solid fa-plus"></i>
                         </div>
-                        <h4 class="text-sm font-bold text-gray-700 pointer-events-none">Click or drag images here</h4>
-                        <p class="text-xs text-gray-400 mt-2 pointer-events-none">Upload up to 5 images. <br> JPEG, PNG (Max 5MB)</p>
+                        <h4 class="text-xs font-bold text-pdark">Add Product Images</h4>
+                        <p class="text-[10px] text-gray-400 mt-2 font-medium">Up to 5 images (Max 5MB each)</p>
                     </div>
 
-                    <div id="image-preview-container" class="flex flex-wrap gap-3 mt-4 pb-2">
-                    </div>
+                    <div id="image-preview-container" class="grid grid-cols-4 gap-3 mt-6">
+                        </div>
                 </div>
+            </div>
 
-                <div class="w-full lg:w-2/3">
-                    <h3 class="text-sm font-bold text-primary_dark border-b border-gray-100 pb-2 mb-4">Basic Information</h3>
+            <div class="lg:col-span-8 space-y-6">
+                <div class="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm">
+                    <h3 class="text-[11px] font-black text-pdark uppercase tracking-widest mb-8 flex items-center gap-2">
+                        <i class="fa-solid fa-file-lines text-primary"></i> General Information
+                    </h3>
                     
-                    <div class="space-y-6">
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-1.5">Product Name <span class="text-red-500">*</span></label>
-                                <input type="text" name="product_name" required maxlength="200" class="w-full border border-gray-300 rounded-md p-3 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors" placeholder="e.g. Sony Headphones">
-                            </div>
+                    <div class="space-y-8">
+                        <div>
+                            <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Product Name <span class="text-red-500">*</span></label>
+                            <input type="text" name="product_name" required maxlength="200" class="custom-input w-full rounded-xl p-4 text-sm font-medium" placeholder="e.g. Premium Wireless Headphones">
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-1.5">Base Price (₹) <span class="text-red-500">*</span></label>
+                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Regular Price (₹)</label>
                                 <div class="relative">
-                                    <span class="absolute left-4 top-3 text-gray-500 font-semibold">₹</span>
-                                    <input type="number" name="product_price" required min="0" class="w-full border border-gray-300 rounded-md p-3 pl-8 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors" placeholder="0">
+                                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-sm">₹</span>
+                                    <input type="number" name="product_price" required class="custom-input w-full rounded-xl p-4 pl-10 text-sm font-bold" placeholder="0.00">
                                 </div>
                             </div>
-                            
                             <div>
-                                <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-1.5">Discount Price (₹) <span class="text-red-500">*</span></label>
+                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Sale Price (₹)</label>
                                 <div class="relative">
-                                    <span class="absolute left-4 top-3 text-gray-500 font-semibold">₹</span>
-                                    <input type="number" name="discount_price" required min="0" class="w-full border border-gray-300 rounded-md p-3 pl-8 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors" placeholder="0">
+                                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-sm">₹</span>
+                                    <input type="number" name="discount_price" required class="custom-input w-full rounded-xl p-4 pl-10 text-sm font-bold text-primary" placeholder="0.00">
                                 </div>
                             </div>
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <div>
-                                <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-1.5">Stock <span class="text-red-500">*</span></label>
-                                <input type="number" name="stock" required min="0" value="1" class="w-full border border-gray-300 rounded-md p-3 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors">
+                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Stock Level</label>
+                                <input type="number" name="stock" required min="0" value="1" class="custom-input w-full rounded-xl p-4 text-sm font-bold">
                             </div>
-
                             <div>
-                                <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-1.5">Category <span class="text-red-500">*</span></label>
-                                <div class="relative">
-                                    <select name="category" id="category" required class="w-full border border-gray-300 rounded-md p-3 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors appearance-none bg-white">
-                                        <option value="" disabled selected>Select Category</option>
-                                        {% for c in category %}
-                                        <option value="{{ c.slug }}">{{ c.name }}</option>
-                                        {% endfor %}
-                                    </select>
-                                    <i class="fa-solid fa-angle-down absolute right-4 top-3.5 text-gray-400 pointer-events-none"></i>
-                                </div>
+                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Category</label>
+                                <select name="category" id="category" required class="custom-input w-full rounded-xl p-4 text-sm font-bold bg-white appearance-none cursor-pointer">
+                                    <option value="" disabled selected>Select</option>
+                                    {% for c in category %}
+                                    <option value="{{ c.slug }}">{{ c.name }}</option>
+                                    {% endfor %}
+                                </select>
                             </div>
-
                             <div>
-                                <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-1.5">Sub Category <span class="text-red-500">*</span></label>
-                                <div class="relative">
-                                    <select name="sub_category" id="subcategory" required class="w-full border border-gray-300 rounded-md p-3 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors appearance-none bg-white">
-                                        <option value="" disabled selected> Select Sub Category</option>
-                                        {% for x in subcategory %}
-                                        <option value="{{ x.slug }}" data-category="{{ x.category.slug }}">{{ x.name }}</option>
-                                        {% endfor %}
-                                    </select>
-                                    <i class="fa-solid fa-angle-down absolute right-4 top-3.5 text-gray-400 pointer-events-none"></i>
-                                </div>
+                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Sub Category</label>
+                                <select name="sub_category" id="subcategory" required class="custom-input w-full rounded-xl p-4 text-sm font-bold bg-white appearance-none cursor-pointer">
+                                    <option value="" disabled selected>Select</option>
+                                </select>
                             </div>
                         </div>
 
                         <div>
-                            <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-1.5">Product Description <span class="text-red-500">*</span></label>
-                            <textarea name="description" required rows="4" maxlength="200" class="w-full border border-gray-300 rounded-md p-3 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors resize-none" placeholder="Describe your product..."></textarea>
-                            <p class="text-[10px] text-gray-400 mt-1 flex justify-end">0/200 Limit</p>
+                            <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Brief Description</label>
+                            <textarea name="description" required rows="4" maxlength="200" class="custom-input w-full rounded-xl p-4 text-sm font-medium resize-none" placeholder="Highlight the key features..."></textarea>
                         </div>
 
-                        <div class="pt-2">
-                            <div class="flex items-center justify-between mb-2">
-                                <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-widest">Product Attributes (Max 5)</label>
-                                <button type="button" id="add-attribute-btn" class="text-[11px] font-bold text-primary bg-primary/10 hover:bg-primary/20 px-3 py-1.5 rounded-md transition flex items-center gap-1.5">
-                                    <i class="fa-solid fa-plus"></i> Add Attribute
+                        <div class="pt-6 border-t border-gray-50">
+                            <div class="flex items-center justify-between mb-6">
+                                <div>
+                                    <h4 class="text-sm font-black text-pdark">Technical Specifications</h4>
+                                    <p class="text-[10px] text-gray-400 font-medium">Add up to 5 custom attributes</p>
+                                </div>
+                                <button type="button" id="add-attribute-btn" class="bg-primary text-white text-[10px] font-black uppercase tracking-widest px-4 py-2 rounded-lg hover:shadow-lg transition-all">
+                                    + Add New
                                 </button>
                             </div>
-                            <p class="text-xs text-gray-400 mb-4">Add specifications like RAM, ROM, Battery Capacity, Color, Size, etc.</p>
                             
                             <div id="attributes-container" class="space-y-3">
-                                <div class="flex items-center gap-3 attribute-row">
-                                    <div class="w-1/2">
-                                        <input type="text" name="attribute_names[]" placeholder="Name (e.g., RAM)" class="w-full border border-gray-300 rounded-md p-2.5 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors">
-                                    </div>
-                                    <div class="w-1/2">
-                                        <input type="text" name="attribute_values[]" placeholder="Value (e.g., 8GB)" class="w-full border border-gray-300 rounded-md p-2.5 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors">
-                                    </div>
-                                    <button type="button" class="remove-attribute-btn w-8 h-8 flex-shrink-0 flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-md transition-colors" title="Remove Attribute">
-                                        <i class="fa-solid fa-trash-can"></i>
+                                <div class="flex items-center gap-3 attribute-row group">
+                                    <input type="text" name="attribute_names[]" placeholder="RAM" class="w-1/3 custom-input rounded-xl p-3 text-xs font-bold">
+                                    <input type="text" name="attribute_values[]" placeholder="16GB" class="flex-grow custom-input rounded-xl p-3 text-xs font-medium">
+                                    <button type="button" class="remove-attribute-btn w-10 h-10 flex items-center justify-center text-gray-300 hover:text-red-500 transition-colors">
+                                        <i class="fa-solid fa-circle-xmark"></i>
                                     </button>
                                 </div>
                             </div>
                         </div>
-                        </div>
+                    </div>
                 </div>
 
+                <div class="flex items-center justify-end gap-4 pb-12">
+                    <a href="{% url 'product_control' %}" 
+                        class="inline-flex items-center text-[11px] font-black uppercase tracking-widest text-gray-400 hover:text-red-500 transition-colors px-6 h-full">
+                            Discard
+                        </a>
+                    <button type="submit" class="bg-pdark text-white px-10 py-4 rounded-2xl text-[11px] font-black uppercase tracking-widest shadow-xl hover:bg-primary transition-all active:scale-95 flex items-center gap-3">
+                        <i class="fa-solid fa-cloud-arrow-up text-highlight"></i>
+                        Publish Product
+                    </button>
+                </div>
             </div>
-
-            <div class="bg-gray-50 p-6 border-t border-gray-200 flex flex-col-reverse sm:flex-row items-center justify-end gap-3">
-                <button type="button" class="w-full sm:w-auto px-6 py-2.5 text-sm font-semibold text-gray-600 bg-white border border-gray-300 rounded-md hover:bg-gray-100 transition">
-                    Discard
-                </button>
-                <button type="submit" class="w-full sm:w-auto px-8 py-2.5 text-sm font-bold text-white bg-primary rounded-md shadow hover:bg-opacity-90 transition active:scale-[0.98] flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-check"></i> Add Product
-                </button>
-            </div>
-
         </form>
-
     </main>
 
-    <footer class="bg-primary_dark text-white mt-12 py-12">
-        <div class="container mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-8">
-            <div>
-                <h4 class="text-highlight text-sm font-bold uppercase mb-4">About</h4>
-                <ul class="space-y-2 text-sm text-gray-300">
-                    <li><a href="#" class="hover:text-white transition">Contact Us</a></li>
-                    <li><a href="#" class="hover:text-white transition">About Us</a></li>
-                    <li><a href="#" class="hover:text-white transition">Careers</a></li>
-                    <li><a href="#" class="hover:text-white transition">Corporate Information</a></li>
-                </ul>
-            </div>
-            <div>
-                <h4 class="text-highlight text-sm font-bold uppercase mb-4">Help</h4>
-                <ul class="space-y-2 text-sm text-gray-300">
-                    <li><a href="#" class="hover:text-white transition">Payments</a></li>
-                    <li><a href="#" class="hover:text-white transition">Shipping</a></li>
-                    <li><a href="#" class="hover:text-white transition">Cancellation & Returns</a></li>
-                    <li><a href="#" class="hover:text-white transition">FAQ</a></li>
-                </ul>
-            </div>
-            <div>
-                <h4 class="text-highlight text-sm font-bold uppercase mb-4">Policy</h4>
-                <ul class="space-y-2 text-sm text-gray-300">
-                    <li><a href="#" class="hover:text-white transition">Return Policy</a></li>
-                    <li><a href="#" class="hover:text-white transition">Terms of Use</a></li>
-                    <li><a href="#" class="hover:text-white transition">Security</a></li>
-                    <li><a href="#" class="hover:text-white transition">Privacy</a></li>
-                </ul>
-            </div>
-            <div>
-                <h4 class="text-highlight text-sm font-bold uppercase mb-4">Social</h4>
-                <div class="flex gap-4 text-xl text-gray-300">
-                    <a href="#" class="hover:text-white transition"><i class="fa-brands fa-facebook"></i></a>
-                    <a href="#" class="hover:text-white transition"><i class="fa-brands fa-twitter"></i></a>
-                    <a href="#" class="hover:text-white transition"><i class="fa-brands fa-youtube"></i></a>
-                    <a href="#" class="hover:text-white transition"><i class="fa-brands fa-instagram"></i></a>
-                </div>
-            </div>
-        </div>
-        <div class="container mx-auto px-4 mt-12 pt-8 border-t border-gray-600 text-center text-sm text-gray-400">
-            &copy; 2024 FlipShop. All rights reserved. Designed with Tailwind CSS.
-        </div>
-    </footer>
+    {% include 'seller/footer.html' %}
 
     <script>
-        // --- CATEGORY & SUBCATEGORY FILTERING LOGIC ---
+         // --- CATEGORY & SUBCATEGORY FILTERING LOGIC ---
         $(document).ready(function() {
             var allSubcategories = $('#subcategory option:not(:first)').clone();
             
