@@ -23,11 +23,13 @@
                     <span class="absolute -top-1.5 -right-1.5 bg-primary text-white text-[9px] font-black w-4 h-4 flex items-center justify-center rounded-full border-2 border-pdark">5</span>
                 </a>
                 <div class="h-6 w-[1px] bg-white/10"></div>
+                <a href="{% url 'seller_profile' %}">
                 <div class="flex items-center gap-3">
                     <div class="w-8 h-8 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center text-primary font-bold text-xs italic">
                         {{ sellerprofile.shop_name|slice:":1" }}
                     </div>
                 </div>
+                </a>
             </div>
         </div>
     </nav>

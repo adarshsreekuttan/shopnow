@@ -4,181 +4,174 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FlipShop Seller Hub - Profile View</title>
-    
     <script src="https://cdn.tailwindcss.com"></script>
-    
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    colors: {
-                        primary_dark: '#362F4F',
-                        primary: '#5B23FF',
-                        accent: '#008BFF',
-                        highlight: '#E4FF30',
-                        bg_light: '#F1F3F6',
-                        text_dark: '#212121',
-                        text_gray: '#878787'
+                    colors: { 
+                        pdark: '#362F4F', 
+                        primary: '#5B23FF', 
+                        accent: '#008BFF', 
+                        highlight: '#E4FF30', 
+                        lightbg: '#F8F9FA'
                     },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    }
+                    fontFamily: { sans: ['Inter', 'sans-serif'] }
                 }
             }
         }
     </script>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #F1F3F6; }
-        .card-shadow { box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
+        body { background-color: #F1F3F6; }
+        .glass-header { background: linear-gradient(135deg, #362F4F 0%, #1a1629 100%); }
     </style>
 </head>
-<body class="text-text_dark">
+<body class="text-pdark antialiased">
 
-    <nav class="bg-primary_dark sticky top-0 z-50 shadow-md">
-        <div class="container mx-auto px-4 h-16 flex items-center justify-between gap-4">
-            <a href="#" class="flex items-center gap-2">
-                <div class="w-8 h-8 bg-highlight rounded flex items-center justify-center text-primary_dark font-bold text-xl italic">F</div>
-                <span class="text-white font-bold text-lg tracking-wide hidden sm:block">FlipShop <span class="text-xs font-normal text-highlight ml-1">Seller Hub</span></span>
-            </a>
+    {% include 'seller/navbar.html' %}
 
-            <div class="flex-1 max-w-2xl mx-4">
-                <div class="relative group">
-                    <input type="text" placeholder="Search..." class="w-full h-9 px-4 rounded-sm text-sm focus:outline-none focus:ring-2 focus:ring-accent shadow-sm transition-all text-black">
-                    <button class="absolute right-0 top-0 h-9 w-10 text-primary font-bold">
-                        <i class="fa-solid fa-magnifying-glass"></i>
-                    </button>
-                </div>
-            </div>
-
-            <div class="flex items-center gap-5 text-white font-medium text-sm">
-                <div class="flex items-center gap-2 cursor-pointer relative hover:text-highlight transition">
-                    <i class="fa-solid fa-bell text-lg"></i>
-                </div>
-                <button class="flex items-center gap-2 bg-white/20 px-3 py-1.5 rounded-sm transition">
-                    <i class="fa-solid fa-user-tie text-highlight"></i>
-                    <span class="hidden sm:block">{{ sellerprofile.shop_name }}</span>
-                </button>
-            </div>
-        </div>
-    </nav>
-
-    <main class="container mx-auto px-4 py-8 max-w-6xl">
+    <main class="container mx-auto px-4 py-10 max-w-6xl">
         
-        <div class="mb-6">
-            <h1 class="text-2xl font-bold text-primary_dark">Profile Management</h1>
-            <p class="text-gray-500 text-sm">View your store details and account information.</p>
+        <div class="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div>
+                <div class="inline-flex items-center gap-2 mb-2">
+                    <div class="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
+                    <span class="text-primary text-[10px] font-black uppercase tracking-[0.2em]">Account Settings</span>
+                </div>
+                <h1 class="text-3xl font-black text-pdark tracking-tight">Profile Management</h1>
+                <p class="text-gray-500 text-sm mt-1">Manage your public store presence and business credentials.</p>
+            </div>
         </div>
 
-        <div class="flex flex-col lg:flex-row gap-6">
+        <div class="flex flex-col lg:flex-row gap-8">
             
             <div class="w-full lg:w-1/3 space-y-6">
-                
-                <div class="bg-white rounded-xl card-shadow p-6 text-center relative overflow-hidden">
-                    <div class="h-20 bg-primary absolute top-0 left-0 w-full z-0"></div>
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="h-24 glass-header relative">
+                        <div class="absolute -right-4 -top-4 w-24 h-24 bg-highlight/10 rounded-full blur-2xl"></div>
+                    </div>
                     
-                    <div class="relative z-10 mt-6">
-                        <div class="w-24 h-24 bg-white rounded-full border-4 border-white shadow-md mx-auto flex items-center justify-center text-4xl text-primary overflow-hidden">
-                            <i class="fa-solid fa-store bg-gray-100 w-full h-full flex items-center justify-center"></i>
+                    <div class="px-6 pb-8 text-center">
+                        <div class="relative -mt-12 mb-4 inline-block">
+                            <div class="w-24 h-24 bg-white rounded-2xl shadow-xl border-4 border-white flex items-center justify-center text-3xl text-pdark overflow-hidden">
+                                <i class="fa-solid fa-store bg-gray-50 w-full h-full flex items-center justify-center"></i>
+                            </div>
+                            <div class="absolute bottom-1 -right-1 w-6 h-6 bg-highlight border-4 border-white rounded-full"></div>
                         </div>
                         
-                        <h2 class="text-xl font-bold mt-3 text-primary_dark">{{ sellerprofile.shop_name }}</h2>
-                        <p class="text-gray-500 text-sm mb-4">Seller ID: {{ sellerprofile.id }}</p>
+                        <h2 class="text-xl font-black text-pdark leading-tight">{{ sellerprofile.shop_name }}</h2>
+                        <p class="text-gray-400 text-[11px] font-bold uppercase tracking-widest mt-1">Seller ID: #{{ sellerprofile.id }}</p>
 
-                        <div class="flex flex-col gap-2 w-full max-w-[200px] mx-auto mb-4">
-                            <div class="flex items-center justify-center gap-2 bg-green-50 text-green-700 py-1.5 px-3 rounded-full text-xs font-bold border border-green-200">
-                                <i class="fa-solid fa-circle-check"></i> Verified Seller
+                        <div class="flex flex-col gap-2 mt-6">
+                            <div class="flex items-center justify-center gap-2 bg-green-50 text-green-700 py-2 px-4 rounded-xl text-[11px] font-black border border-green-100">
+                                <i class="fa-solid fa-shield-check"></i> VERIFIED MERCHANT
                             </div>
-                            <div class="flex items-center justify-center gap-2 bg-blue-50 text-blue-700 py-1.5 px-3 rounded-full text-xs font-bold border border-blue-200">
-                                <i class="fa-solid fa-bolt"></i> Account Active
+                            <div class="flex items-center justify-center gap-2 bg-pdark text-white py-2 px-4 rounded-xl text-[11px] font-black tracking-wide">
+                                <i class="fa-solid fa-circle text-[6px] text-highlight"></i> ACCOUNT ACTIVE
                             </div>
                         </div>
 
-                        <div class="border-t border-gray-100 pt-4 mt-2 text-xs text-gray-400 text-left space-y-1">
-                            <p><i class="fa-solid fa-calendar-days w-4 text-center mr-1"></i> Joined: <span class="text-gray-600 font-medium">{{ sellerprofile.created_at }}</span></p>
-                            <p><i class="fa-solid fa-clock-rotate-left w-4 text-center mr-1"></i> Last Updated: <span class="text-gray-600 font-medium">{{ sellerprofile.updated_at }}</span></p>
+                        <div class="grid grid-cols-2 gap-4 border-t border-gray-50 pt-6 mt-6">
+                            <div class="text-left">
+                                <p class="text-[9px] text-gray-400 font-black uppercase">Member Since</p>
+                                <p class="text-xs font-bold text-pdark">{{ sellerprofile.created_at|date:"M Y" }}</p>
+                            </div>
+                            <div class="text-left">
+                                <p class="text-[9px] text-gray-400 font-black uppercase">Avg. Growth</p>
+                                <p class="text-xs font-bold text-green-600">+14.2%</p>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="bg-white rounded-xl card-shadow p-2">
-                    <ul class="text-sm font-medium text-gray-600">
-                        <li>
-                            <a href="#" class="flex items-center gap-3 px-4 py-3 bg-blue-50 text-primary rounded-lg transition">
-                                <i class="fa-solid fa-user"></i> General Information
-                            </a>
-                        </li>
-                        
-                    </ul>
-                </div>
+                <nav class="bg-white rounded-2xl shadow-sm border border-gray-100 p-2">
+                    <a href="#" class="flex items-center gap-3 px-4 py-3 bg-primary/5 text-primary rounded-xl font-bold text-sm transition">
+                        <i class="fa-solid fa-id-card"></i> General Information
+                    </a>
+                    <a href="#" class="flex items-center gap-3 px-4 py-3 text-gray-500 hover:bg-gray-50 rounded-xl font-bold text-sm transition mt-1">
+                        <i class="fa-solid fa-building-columns"></i> Bank Details
+                    </a>
+                </nav>
             </div>
 
             <div class="w-full lg:w-2/3">
-                <div class="bg-white rounded-xl card-shadow p-6 sm:p-8">
-                    <div class="flex items-center justify-between border-b border-gray-100 pb-4 mb-6">
-                        <h3 class="text-lg font-bold text-primary_dark">Profile Details</h3>
-                    </div>
-
-                    <h4 class="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-4">Personal & Shop Info</h4>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-8">
-                        <div class="sm:col-span-2">
-                            <span class="block text-xs font-bold text-gray-500 mb-1.5">Shop Name</span>
-                            <div class="w-full bg-gray-50 border border-gray-100 rounded-md p-2.5 text-sm font-medium text-text_dark">{{ sellerprofile.shop_name }}</div>
-                        </div>
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-10">
+                    <div class="flex items-center justify-between mb-8">
                         <div>
-                            <span class="block text-xs font-bold text-gray-500 mb-1.5">Email Address</span>
-                            <div class="w-full bg-gray-50 border border-gray-100 rounded-md p-2.5 text-sm font-medium text-text_dark">{{ user.email }}</div>
+                            <h3 class="text-lg font-black text-pdark">Business Identity</h3>
+                            <p class="text-xs text-gray-400 font-medium">Verify your registered trade information</p>
                         </div>
-                        <div>
-                            <span class="block text-xs font-bold text-gray-500 mb-1.5">Phone Number</span>
-                            <div class="w-full bg-gray-50 border border-gray-100 rounded-md p-2.5 text-sm font-medium text-text_dark">{{ user.phone }}</div>
+                        <i class="fa-solid fa-address-card text-gray-100 text-3xl"></i>
+                    </div>
+
+                    <div class="space-y-6 mb-10">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="md:col-span-2">
+                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Registered Shop Name</label>
+                                <div class="w-full bg-gray-50 border-2 border-gray-50 rounded-xl px-4 py-3 text-sm font-bold text-pdark flex items-center gap-3">
+                                    <i class="fa-solid fa-shop text-primary/40"></i> {{ sellerprofile.shop_name }}
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Primary Email</label>
+                                <div class="w-full bg-gray-50 border-2 border-gray-50 rounded-xl px-4 py-3 text-sm font-medium text-pdark">{{ user.email }}</div>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Phone Number</label>
+                                <div class="w-full bg-gray-50 border-2 border-gray-50 rounded-xl px-4 py-3 text-sm font-medium text-pdark">{{ user.phone }}</div>
+                            </div>
                         </div>
                     </div>
 
-                    <h4 class="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-4">Business & Location Info</h4>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 gap-5 mb-8">
+                    <div class="pt-8 border-t border-gray-50">
+                        <h3 class="text-sm font-black text-pdark uppercase tracking-widest mb-6 flex items-center gap-2">
+                            <span class="w-4 h-[2px] bg-highlight"></span> Logistics & Taxation
+                        </h3>
                         
-                        <div class="sm:col-span-2 md:col-span-6">
-                            <span class="block text-xs font-bold text-gray-500 mb-1.5">Full Address</span>
-                            <div class="w-full bg-gray-50 border border-gray-100 rounded-md p-2.5 text-sm font-medium text-text_dark min-h-[44px]">{{ sellerprofile.address }}</div>
-                        </div>
-                        
-                        <div class="sm:col-span-1 md:col-span-2">
-                            <span class="block text-xs font-bold text-gray-500 mb-1.5">City</span>
-                            <div class="w-full bg-gray-50 border border-gray-100 rounded-md p-2.5 text-sm font-medium text-text_dark">{{ sellerprofile.city }}</div>
-                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-6 gap-6">
+                            <div class="md:col-span-6">
+                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Warehouse Address</label>
+                                <div class="w-full bg-gray-50 border-2 border-gray-50 rounded-xl px-4 py-3 text-sm font-medium text-pdark">{{ sellerprofile.address }}</div>
+                            </div>
+                            
+                            <div class="md:col-span-2">
+                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">City</label>
+                                <div class="w-full bg-gray-50 border-2 border-gray-50 rounded-xl px-4 py-3 text-sm font-medium text-pdark">{{ sellerprofile.city }}</div>
+                            </div>
 
-                        <div class="sm:col-span-1 md:col-span-2">
-                            <span class="block text-xs font-bold text-gray-500 mb-1.5">State</span>
-                            <div class="w-full bg-gray-50 border border-gray-100 rounded-md p-2.5 text-sm font-medium text-text_dark">{{ sellerprofile.state }}</div>
-                        </div>
-                        
-                        <div class="sm:col-span-1 md:col-span-2">
-                            <span class="block text-xs font-bold text-gray-500 mb-1.5">Pincode</span>
-                            <div class="w-full bg-gray-50 border border-gray-100 rounded-md p-2.5 text-sm font-medium text-text_dark">{{ sellerprofile.pincode }}</div>
-                        </div>
-                        
-                        <div class="sm:col-span-2 md:col-span-3">
-                            <span class="block text-xs font-bold text-gray-500 mb-1.5">GST Number</span>
-                            <div class="w-full bg-gray-50 border border-gray-100 rounded-md p-2.5 text-sm font-medium text-text_dark font-mono uppercase">{{ sellerprofile.gst_number }}</div>
+                            <div class="md:col-span-2">
+                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">State</label>
+                                <div class="w-full bg-gray-50 border-2 border-gray-50 rounded-xl px-4 py-3 text-sm font-medium text-pdark">{{ sellerprofile.state }}</div>
+                            </div>
+                            
+                            <div class="md:col-span-2">
+                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Pincode</label>
+                                <div class="w-full bg-gray-50 border-2 border-gray-50 rounded-xl px-4 py-3 text-sm font-medium text-pdark">{{ sellerprofile.pincode }}</div>
+                            </div>
+                            
+                            <div class="md:col-span-3">
+                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Tax Identification (GSTIN)</label>
+                                <div class="w-full bg-highlight/10 border-2 border-highlight/20 rounded-xl px-4 py-3 text-sm font-black text-pdark font-mono uppercase">
+                                    {{ sellerprofile.gst_number }}
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="border-t border-gray-100 pt-6 flex items-center justify-end gap-3">
-                        <button type="button" class="px-6 py-2.5 text-sm font-bold text-white bg-primary rounded-md shadow hover:bg-opacity-90 transition active:scale-95 flex items-center gap-2">
-                            <a href="{% url 'seller_profile_edit' %}">
-                                <i class="fa-solid fa-pen"></i> Edit Profile
-                            </a>
-                        </button>
+                    <div class="mt-12 flex items-center justify-end">
+                        <a href="{% url 'seller_profile_edit' %}" class="group px-8 py-4 bg-pdark text-white rounded-2xl font-black text-sm shadow-xl shadow-pdark/20 hover:bg-primary transition-all active:scale-95 flex items-center gap-3">
+                            <i class="fa-solid fa-pen-nib text-highlight group-hover:rotate-12 transition-transform"></i>
+                            Modify Profile
+                        </a>
                     </div>
-
                 </div>
             </div>
         </div>
     </main>
+
+    {% include 'seller/footer.html' %}
 
 </body>
 </html>
