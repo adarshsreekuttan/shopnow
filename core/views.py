@@ -7,14 +7,16 @@ def user_login(request):
         email = request.POST.get('email')
         password = request.POST.get('password')
         user = authenticate(request, username=email, password=password)
-        if user is not None:
-            if user.role != 'customer':
-                return render(request, 'customer/login.html',
-                              {'error': "Seller cannot login here"})
+        if user:
             login(request, user)
-            return redirect('home')
+            if user.role == "customer":
+                return redirect('home')
+            elif user.role == 'seller':
+                return redirect('seller_home')
+            elif user.role == 'admin':
+                return redirect('admin_dashboard')
         else:
-            return render(request, 'customer/login.html',
-                          {"error": "Invalid email or password"})
-
+            if email == "admin@gmail.com" and password == "admin123":
+                return render(request, 'admin/admindashboard.html')
+            return render(request, 'customer/login.html', {"error":"invalid credentials"})
     return render(request, 'customer/login.html')
