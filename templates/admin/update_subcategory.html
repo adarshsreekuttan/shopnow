@@ -17,7 +17,7 @@
         <div class="max-w-3xl mx-auto">
             
             <nav class="flex text-xs font-bold text-indigo-600 uppercase tracking-widest mb-4 gap-2">
-                <a href="{% url 'subcategory_list' %}" class="hover:underline">Subcategories</a>
+                <a href="{% url 'category_list' %}" class="hover:underline">Category</a>
                 <span class="text-slate-300">/</span>
                 <span class="text-slate-500">Edit Subcategory</span>
             </nav>
@@ -64,10 +64,17 @@
                     </div>
 
                     <div class="pt-6 border-t border-slate-50 flex items-center justify-end gap-4">
-                        <a href="{% url 'subcategory_list' %}" 
+                        <a href="{% url 'category_list' %}" 
                            class="px-6 py-3 rounded-xl text-sm font-bold text-slate-500 hover:bg-slate-100 transition-all">
                             Cancel
                         </a>
+                            <a href="{% url 'delete_subcategory' subcategory.id %}" 
+                            class="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold
+                            text-red-600 bg-red-50 hover:bg-red-600 hover:text-white transition-all">
+
+                                <i class="fas fa-trash text-xs"></i>
+                                Delete
+                            </a>
                         <button type="submit" 
                                 class="bg-indigo-600 hover:bg-indigo-700 text-white px-10 py-3 rounded-2xl font-bold shadow-lg shadow-indigo-200 transition-all active:scale-95 text-sm">
                             Save Changes
@@ -76,19 +83,6 @@
 
                 </form>
             </div>
-
-            <div class="mt-8 p-6 bg-amber-50 rounded-3xl border border-amber-100 flex gap-4">
-                <div class="bg-amber-100 w-10 h-10 rounded-full flex items-center justify-center shrink-0">
-                    <i class="fas fa-info text-amber-600"></i>
-                </div>
-                <div>
-                    <h4 class="text-sm font-bold text-amber-900 uppercase tracking-tight">Pro Tip</h4>
-                    <p class="text-xs text-amber-700 leading-relaxed mt-1">
-                        Changing the parent category will automatically re-group all items within this subcategory under the new parent across your website navigation.
-                    </p>
-                </div>
-            </div>
-
         </div>
     </main>
 

@@ -7,25 +7,62 @@ from seller.models import *
 from custom_admin.models import *
 from django.contrib import messages
 
+from django.db.models import Sum, F, DecimalField, ExpressionWrapper
+from django.db.models.functions import Coalesce
 
-# Create your views here.
+from django.db.models import Sum
+from core.models import Product, User
+from seller.models import SellerProfile
+from customer.models import Order
+
 
 def admin_dashboard(request):
 
-    total_users = User.objects.all().count()
-    total_products = Product.objects.all().count()
-    total_sellers = SellerProfile.objects.all().count()
-    total_orders = Order.objects.all().count()
+    total_users = User.objects.count()
+    total_products = Product.objects.count()
+    total_sellers = SellerProfile.objects.count()
+    total_orders = Order.objects.count()
+
+    recent_users = User.objects.order_by('-id')[:5]
+    recent_orders = Order.objects.order_by('-id')[:5]
+    recent_products = Product.objects.order_by('-id')[:5]
+    recent_sellers = SellerProfile.objects.order_by('-id')[:5]
+
+    low_stock_alert = Product.objects.filter(status = 'approved', stock__lt = 10).count()
+
+    pending_sellers = SellerProfile.objects.filter(is_verified = True)
+    pending_sellers_count = pending_sellers.count()
+
+    total_revenue = OrderItem.objects.aggregate(
+        total=Coalesce(
+            Sum(
+                ExpressionWrapper(
+                    F('price') * F('quantity'),
+                    output_field=DecimalField()
+                )
+            ),
+            0,
+            output_field=DecimalField()
+        )
+    )['total']
 
     context = {
-        'total_users' : total_users,
-        'total_products' : total_products,
-        'total_sellers' : total_sellers,
-        'total_orders' : total_orders 
+        'total_users': total_users,
+        'total_products': total_products,
+        'total_sellers': total_sellers,
+        'total_orders': total_orders,
+        'pending_sellers_count' : pending_sellers_count,
+        'low_stock_alert': low_stock_alert,
+
+        'pending_sellers':pending_sellers,
+        'recent_sellers':recent_sellers,
+        'recent_users': recent_users,
+        'recent_orders': recent_orders,
+        'recent_products': recent_products,
+        'total_revenue': total_revenue,
     }
 
-    return render(request,'admin/admindashboard.html', context )
-
+    return render(request, 'admin/admindashboard.html', context)
 
 def admin_pending_products(request):
     products = Product.objects.filter(status='pending')
@@ -113,7 +150,7 @@ def add_category(request):
 
 
 def category_list(request):
-    categories = Category.objects.filter(is_active=True)
+    categories = Category.objects.filter(is_active=True).prefetch_related('subcategory_set')
     return render(request,'admin/category_list.html',{'categories':categories})
 
 
@@ -152,6 +189,9 @@ def deactivate_category(request,id):
 
 def add_subcategory(request):
     categories = Category.objects.filter(is_active=True)
+    selected_category = request.GET.get('category')
+    if selected_category:
+        selected_category=int(selected_category)
     if request.method == "POST":
         name = request.POST.get('name')
         category_id = request.POST.get('category')
@@ -164,24 +204,21 @@ def add_subcategory(request):
 
         )
 
-        return redirect('subcategory_list')
+        return redirect('category_list')
 
-    return render(request,'admin/add_subcategory.html',{'categories':categories})  
-
-
-def subcategory_list(request):
-    subcategories = SubCategory.objects.all()
-    return render(request,'admin/subcategory_list.html',{'subcategories':subcategories})
-
+    return render(request,'admin/add_subcategory.html',{'categories':categories, 'selected_category':selected_category})  
 
 def update_subcategory(request,id):
     subcategory = SubCategory.objects.get(id=id)
     categories = Category.objects.all()
+    selected_category = request.GET.get('category')
+    if selected_category:
+        selected_category=int(selected_category)
     if request.method == 'POST':
         subcategory.name = request.POST.get('name')
         subcategory.category_id = request.POST.get('category')
         subcategory.save()
-        return redirect('subcategory_list')
+        return redirect('category_list')
     
     return render(request,'admin/update_subcategory.html',{'subcategory':subcategory , 'categories':categories})
 
@@ -189,7 +226,7 @@ def update_subcategory(request,id):
 def delete_subcategory(request,id):
     subcategories = SubCategory.objects.get(id=id)
     subcategories.delete()
-    return redirect('subcategory_list')
+    return redirect('category_list')
 
 
 def delete_product(request,id):
