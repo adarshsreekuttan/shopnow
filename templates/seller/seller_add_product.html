@@ -192,21 +192,25 @@
     {% include 'seller/footer.html' %}
 
     <script>
-         // --- CATEGORY & SUBCATEGORY FILTERING LOGIC ---
-        $(document).ready(function() {
-            var allSubcategories = $('#subcategory option:not(:first)').clone();
-            
-            $('#subcategory').empty().append('<option value="" disabled selected> Select Sub Category</option>');
+        $('#category').change(function () {
+            var categorySlug = $(this).val();
 
-            $('#category').change(function() {
-                var selectedCategory = $(this).val();
-                var $subcategorySelect = $('#subcategory');
-                
-                $subcategorySelect.empty().append('<option value="" disabled selected> Select Sub Category</option>');
-                
-                if (selectedCategory) {
-                    var filteredOptions = allSubcategories.filter('[data-category="' + selectedCategory + '"]');
-                    $subcategorySelect.append(filteredOptions);
+            $.ajax({
+                url: "{% url 'load_subcategory' %}",  // check URL matches urls.py
+                data: {
+                    'category_slug': categorySlug
+                },
+                success: function (data) {
+                    let subcat = $('#subcategory');
+                    subcat.empty();
+
+                    subcat.append('<option disabled selected>Select</option>');
+
+                    data.forEach(function (item) {
+                        subcat.append(
+                            `<option value="${item.slug}">${item.name}</option>`
+                        );
+                    });
                 }
             });
         });
