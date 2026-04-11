@@ -406,11 +406,6 @@ def finished_order(request):
     return render(request,'seller/finished_order.html',{'order':order})
 
 @seller_required
-def pending_single(request,slug):
-    product=Product.objects.get(slug=slug,approved=False)
-    return render(request,'seller/pending_single.html',{'product':product})
-
-@seller_required
 def pending_edit(request,slug):
     
     product=Product.objects.get(slug=slug,status="pending")
@@ -442,7 +437,7 @@ def pending_edit(request,slug):
                     product=product,
                     image=img
                 )        
-        return redirect('pending_single',slug=product.slug)        
+        return redirect('under_review_products')        
     return render(request,"seller/pending_edit.html",{'product':product,'subcategory':subcategory})
 
 def message(request):

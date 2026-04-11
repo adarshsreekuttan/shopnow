@@ -1,149 +1,136 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin | Edit Product</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+{% extends 'admin/base_admin.html' %}
 
-    <style type="text/tailwindcss">
-        @layer components {
-            .input-field {
-                @apply w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none transition-all font-medium text-slate-800 placeholder-slate-400;
-            }
-            .label-title {
-                @apply block text-xs font-black text-slate-700 uppercase tracking-widest mb-2 ml-1;
-            }
-        }
-    </style>
-</head>
-<body class="bg-[#f8fafc] text-slate-900 antialiased font-sans flex min-h-screen">
+{% block title %}Edit Product{% endblock %}
+{% block header_title %}Edit Product{% endblock %}
+{% block header_breadcrumbs %}Inventory Management / All Products / Modify{% endblock %}
 
-    <aside class="w-64 bg-white border-r border-slate-200 sticky top-0 h-screen overflow-y-auto z-50 flex-shrink-0">
-        {% include 'admin/admin_navbar.html' %}
-    </aside>
+{% block content %}
+<div class="max-w-5xl mx-auto">
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        
+        <div class="p-8 border-b border-gray-50 bg-white flex justify-between items-center">
+            <div>
+                <h2 class="font-bold text-slate-800 tracking-tight text-lg">Modify Product</h2>
+                <p class="text-xs text-slate-400 mt-1 font-medium">Updating: <span class="text-brand-600 font-bold">"{{ products.name }}"</span></p>
+            </div>
+            <a href="{% url 'product_view' %}" class="text-xs font-bold text-slate-400 hover:text-brand-600 transition flex items-center">
+                <i class="fas fa-arrow-left mr-2"></i> BACK TO INVENTORY
+            </a>
+        </div>
 
-    <main class="flex-1 min-w-0">
-        <div class="max-w-5xl mx-auto px-6 py-12">
-            
-            <div class="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-4">
+        <form action="{% url 'edit_product' products.id %}" method="POST" class="p-8 bg-white">
+            {% csrf_token %}
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                
+                <div class="md:col-span-2">
+                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Product Name</label>
+                    <input type="text" name="name" value="{{ products.name }}" required
+                        class="w-full px-4 py-3 bg-slate-50 border border-gray-100 rounded-xl focus:bg-white focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 outline-none transition-all text-sm text-slate-700 font-medium placeholder-slate-400 shadow-inner" 
+                        placeholder="e.g. Premium Wireless Headphones">
+                </div>
+
                 <div>
-                    <nav class="flex text-[10px] font-bold text-indigo-600 uppercase tracking-widest mb-2 gap-2">
-                        <a href="{% url 'product_view' %}" class="hover:underline">Inventory</a>
-                        <span class="text-slate-300">/</span>
-                        <span class="text-slate-400">Modify</span>
-                    </nav>
-                    <h1 class="text-3xl font-black text-slate-900 tracking-tight">Edit Product</h1>
-                    <p class="text-slate-500 font-medium">Updating: <span class="text-indigo-600">"{{ products.name }}"</span></p>
+                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Assigned Seller</label>
+                    <div class="relative group">
+                        <select name="seller" required class="w-full px-4 py-3 bg-slate-50 border border-gray-100 rounded-xl focus:bg-white focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 outline-none transition-all text-sm text-slate-700 font-medium appearance-none shadow-inner cursor-pointer relative z-0">
+                            {% for s in seller %}
+                                <option value="{{ s.id }}" {% if s.id == products.seller_id %}selected{% endif %}>
+                                    {{ s.user.username }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        <div class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none z-10">
+                            <i class="fas fa-chevron-down text-[10px]"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Inventory Stock</label>
+                    <div class="relative group">
+                        <div class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-brand-500 transition-colors">
+                            <i class="fas fa-box text-xs"></i>
+                        </div>
+                        <input type="number" name="stock" value="{{ products.stock }}" required
+                            class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-gray-100 rounded-xl focus:bg-white focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 outline-none transition-all text-sm text-slate-700 font-medium placeholder-slate-400 shadow-inner">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Retail Price ($)</label>
+                    <div class="relative group">
+                        <div class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold group-focus-within:text-brand-500 transition-colors">
+                            $
+                        </div>
+                        <input type="number" step="0.01" name="price" value="{{ products.price }}" required
+                            class="w-full pl-8 pr-4 py-3 bg-slate-50 border border-gray-100 rounded-xl focus:bg-white focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 outline-none transition-all text-sm text-slate-700 font-medium placeholder-slate-400 shadow-inner">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Discount Price ($)</label>
+                    <div class="relative group">
+                        <div class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold group-focus-within:text-brand-500 transition-colors">
+                            $
+                        </div>
+                        <input type="number" step="0.01" name="discount_price" value="{{ products.discount_price }}"
+                            class="w-full pl-8 pr-4 py-3 bg-slate-50 border border-gray-100 rounded-xl focus:bg-white focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 outline-none transition-all text-sm text-slate-700 font-medium placeholder-slate-400 shadow-inner">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Category</label>
+                    <div class="relative group">
+                        <select name="category" required class="w-full px-4 py-3 bg-slate-50 border border-gray-100 rounded-xl focus:bg-white focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 outline-none transition-all text-sm text-slate-700 font-medium appearance-none shadow-inner cursor-pointer relative z-0">
+                            {% for cat in category %}
+                                <option value="{{ cat.id }}" {% if cat.id == products.category_id %}selected{% endif %}>
+                                    {{ cat.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        <div class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none z-10">
+                            <i class="fas fa-chevron-down text-[10px]"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Sub-Category</label>
+                    <div class="relative group">
+                        <select name="subcategory" required class="w-full px-4 py-3 bg-slate-50 border border-gray-100 rounded-xl focus:bg-white focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 outline-none transition-all text-sm text-slate-700 font-medium appearance-none shadow-inner cursor-pointer relative z-0">
+                            {% for sub in subcategory %}
+                                <option value="{{ sub.id }}" {% if sub.id == products.sub_category_id %}selected{% endif %}>
+                                    {{ sub.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        <div class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none z-10">
+                            <i class="fas fa-chevron-down text-[10px]"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="md:col-span-2">
+                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Full Description</label>
+                    <textarea name="description" rows="5" required
+                        class="w-full px-4 py-3 bg-slate-50 border border-gray-100 rounded-xl focus:bg-white focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 outline-none transition-all text-sm text-slate-700 font-medium placeholder-slate-400 shadow-inner resize-none">{{ products.description }}</textarea>
                 </div>
                 
-                <a href="{% url 'product_view' %}" class="text-sm font-bold text-slate-400 hover:text-slate-600 transition flex items-center">
-                    <i class="fas fa-arrow-left mr-2"></i> Back to list
+            </div>
+
+            <div class="flex items-center justify-end space-x-4 pt-6 mt-8 border-t border-gray-50">
+                <a href="{% url 'product_view' %}" 
+                   class="px-6 py-2.5 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-50 hover:text-slate-700 transition-colors">
+                    DISCARD CHANGES
                 </a>
+                <button type="submit"
+                    class="bg-brand-600 text-white px-8 py-2.5 rounded-xl text-xs font-bold shadow-sm hover:bg-brand-700 hover:shadow transition-all flex items-center">
+                    <i class="fas fa-check-circle mr-2"></i> UPDATE PRODUCT
+                </button>
             </div>
 
-            <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-200 overflow-hidden">
-                <form action="{% url 'edit_product' products.id %}" method="POST" class="p-8 md:p-12">
-                    {% csrf_token %}
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
-                        
-                        <div class="md:col-span-2">
-                            <label class="label-title">Product Name</label>
-                            <input type="text" name="name" value="{{ products.name }}" required
-                                class="input-field" placeholder="e.g. Premium Wireless Headphones">
-                        </div>
-
-                        <div>
-                            <label class="label-title">Assigned Seller</label>
-                            <div class="relative">
-                                <select name="seller" required class="input-field appearance-none">
-                                    {% for s in seller %}
-                                        <option value="{{ s.id }}" {% if s.id == products.seller_id %}selected{% endif %}>
-                                            {{ s.user.username }}
-                                        </option>
-                                    {% endfor %}
-                                </select>
-                                <i class="fas fa-chevron-down absolute right-5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-xs"></i>
-                            </div>
-                        </div>
-
-                        <div>
-                            <label class="label-title">Inventory Stock</label>
-                            <div class="relative">
-                                <i class="fas fa-box absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-                                <input type="number" name="stock" value="{{ products.stock }}" required
-                                    class="input-field pl-12">
-                            </div>
-                        </div>
-
-                        <div>
-                            <label class="label-title">Retail Price ($)</label>
-                            <div class="relative">
-                                <span class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 font-bold">$</span>
-                                <input type="number" step="0.01" name="price" value="{{ products.price }}" required
-                                    class="input-field pl-10">
-                            </div>
-                        </div>
-
-                        <div>
-                            <label class="label-title">Discount Price ($)</label>
-                            <div class="relative">
-                                <span class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 font-bold">$</span>
-                                <input type="number" step="0.01" name="discount_price" value="{{ products.discount_price }}"
-                                    class="input-field pl-10">
-                            </div>
-                        </div>
-
-                        <div>
-                            <label class="label-title">Category</label>
-                            <div class="relative">
-                                <select name="category" required class="input-field appearance-none">
-                                    {% for cat in category %}
-                                        <option value="{{ cat.id }}" {% if cat.id == products.category_id %}selected{% endif %}>
-                                            {{ cat.name }}
-                                        </option>
-                                    {% endfor %}
-                                </select>
-                                <i class="fas fa-chevron-down absolute right-5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-xs"></i>
-                            </div>
-                        </div>
-
-                        <div>
-                            <label class="label-title">Sub-Category</label>
-                            <div class="relative">
-                                <select name="subcategory" required class="input-field appearance-none">
-                                    {% for sub in subcategory %}
-                                        <option value="{{ sub.id }}" {% if sub.id == products.sub_category_id %}selected{% endif %}>
-                                            {{ sub.name }}
-                                        </option>
-                                    {% endfor %}
-                                </select>
-                                <i class="fas fa-chevron-down absolute right-5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-xs"></i>
-                            </div>
-                        </div>
-
-                        <div class="md:col-span-2">
-                            <label class="label-title">Full Description</label>
-                            <textarea name="description" rows="5" required
-                                class="input-field resize-none">{{ products.description }}</textarea>
-                        </div>
-                    </div>
-
-                    <div class="mt-10 pt-8 border-t border-slate-100 flex items-center justify-end gap-4">
-                        <a href="{% url 'product_view' %}" class="px-6 py-3 rounded-xl text-sm font-bold text-slate-500 hover:bg-slate-50 transition-all">
-                            Discard Changes
-                        </a>
-                        <button type="submit" 
-                                class="bg-indigo-600 text-white px-10 py-3 rounded-2xl font-bold shadow-lg shadow-indigo-100 hover:bg-indigo-700 hover:-translate-y-1 active:translate-y-0 transition-all text-sm">
-                            <i class="fas fa-check-circle mr-2"></i> Update Product
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </main>
-
-</body>
-</html>
+        </form>
+    </div>
+</div>
+{% endblock %}

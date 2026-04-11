@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html class="antialiased font-sans">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f5f7ff',
+                            100: '#ebf0fe',
+                            200: '#dce4fe',
+                            300: '#c3d2fd',
+                            400: '#a4bcfc',
+                            500: '#839efa',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            800: '#3730a3',
+                            900: '#312e81',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <title>{% block title %}Admin Dashboard{% endblock %} | Premium</title>
+    
+    <style>
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #cbd5e1; }
+    </style>
+</head>
+
+<body class="bg-[#F9FAFB] text-slate-900 m-0">
+    <div class="flex h-[100dvh] overflow-hidden">
+        
+        {% include 'admin/admin_navbar.html' %}
+
+        <main class="flex-1 flex flex-col min-w-0 bg-[#F9FAFB] overflow-hidden">
+            
+            <header class="bg-white/80 backdrop-blur-md border-b border-gray-100 px-4 md:px-8 py-4 flex justify-between items-center sticky top-0 z-30">
+                
+                <div class="flex items-center gap-4">
+                    <button id="open-sidebar" class="md:hidden flex items-center justify-center w-10 h-10 bg-white border border-gray-200 text-slate-500 rounded-xl hover:text-brand-600 hover:bg-brand-50 hover:border-brand-200 transition-all shadow-sm">
+                        <i class="fas fa-bars text-lg"></i>
+                    </button>
+
+                    <div>
+                        <h1 class="text-xl font-bold tracking-tight text-slate-800">
+                            {% block header_title %}Admin Overview{% endblock %}
+                        </h1>
+                        <p class="text-xs text-slate-500 font-medium uppercase tracking-wider hidden sm:block mt-0.5">
+                            {% block header_breadcrumbs %}Dashboard / Analytics{% endblock %}
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-3 md:space-x-5">
+                    <button class="relative p-2 text-slate-400 hover:text-brand-600 transition-colors">
+                        <span class="absolute top-1.5 right-1.5 h-2.5 w-2.5 bg-rose-500 rounded-full border-2 border-white"></span>
+                        <i class="fas fa-bell text-xl"></i>
+                    </button>
+                    
+                    <div class="h-8 w-px bg-gray-200 hidden sm:block"></div>
+                    
+                    <div class="flex items-center group cursor-pointer">
+                        <div class="text-right mr-3 hidden sm:block">
+                            <p class="text-sm font-semibold text-slate-700 leading-none">System Admin</p>
+                            <p class="text-[11px] text-slate-400 mt-1">Superuser</p>
+                        </div>
+                        <img src="https://ui-avatars.com/api/?name=Admin&background=4f46e5&color=fff" alt="Profile" 
+                             class="h-10 w-10 rounded-xl border-2 border-brand-100 group-hover:border-brand-600 transition-all shadow-sm">
+                    </div>
+                </div>
+            </header>
+
+            <div class="p-4 md:p-8 overflow-y-auto space-y-8 custom-scrollbar h-full">
+                {% block content %}
+                {% endblock %}
+            </div>
+            
+        </main>
+    </div>
+</body> 
+</html>

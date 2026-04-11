@@ -129,7 +129,7 @@
                     {% endif %}
                     
                     <div class="absolute inset-0 bg-pdark/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                        <a href="{% url 'edit_product' product.id %}" class="w-9 h-9 bg-white rounded-full flex items-center justify-center text-pdark hover:bg-highlight transition-colors">
+                        <a href="{% url 'pending_edit' product.slug %}" class="w-9 h-9 bg-white rounded-full flex items-center justify-center text-pdark hover:bg-highlight transition-colors">
                             <i class="fa-solid fa-pen-to-square text-xs"></i>
                         </a>
                         <button class="w-9 h-9 bg-white rounded-full flex items-center justify-center text-red-500 hover:bg-red-50 transition-colors">

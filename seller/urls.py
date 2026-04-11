@@ -25,7 +25,6 @@ urlpatterns = [
     path('seller_approval', views.seller_approval, name="seller_approval"),
     path('under-review-products', views.under_review_products, name='under_review_products'),
     path('pending_product_delete/<int:id>', views.pending_product_delete, name='pending_product_delete'),
-    path('pending_single/<str:slug>', views.pending_single, name='pending_single'),
     path('pending_edit/<str:slug>', views.pending_edit, name='pending_edit'),
 
     path('seller_orders', views.seller_orders, name='seller_orders'),

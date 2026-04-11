@@ -1,320 +1,247 @@
-<!DOCTYPE html>
-<html class="antialiased font-sans">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+{% extends 'admin/base_admin.html' %}
+
+{% block title %}Dashboard Overview{% endblock %}
+{% block header_title %}Admin Overview{% endblock %}
+{% block header_breadcrumbs %}Dashboard / Analytics{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div class="group bg-white p-6 rounded-3xl shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-slate-100 flex items-center justify-between">
+        <div>
+            <p class="text-xs text-slate-400 font-bold uppercase tracking-widest">Total Users</p>
+            <h3 class="text-3xl font-extrabold text-slate-800 mt-2 leading-none">{{ total_users }}</h3>
+        </div>
+        <div class="bg-indigo-50 p-4 rounded-2xl text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300">
+            <i class="fas fa-user-group text-xl"></i>
+        </div>
+    </div>
+
+    <div class="group bg-white p-6 rounded-3xl shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-slate-100 flex items-center justify-between">
+        <div>
+            <p class="text-xs text-slate-400 font-bold uppercase tracking-widest">Products</p>
+            <h3 class="text-3xl font-extrabold text-slate-800 mt-2 leading-none">{{ total_products }}</h3>
+        </div>
+        <div class="bg-emerald-50 p-4 rounded-2xl text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-all duration-300">
+            <i class="fas fa-tags text-xl"></i>
+        </div>
+    </div>
+
+    <div class="group bg-white p-6 rounded-3xl shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-slate-100 flex items-center justify-between">
+        <div>
+            <p class="text-xs text-slate-400 font-bold uppercase tracking-widest">Sellers</p>
+            <h3 class="text-3xl font-extrabold text-slate-800 mt-2 leading-none">{{ total_sellers }}</h3>
+        </div>
+        <div class="bg-amber-50 p-4 rounded-2xl text-amber-600 group-hover:bg-amber-600 group-hover:text-white transition-all duration-300">
+            <i class="fas fa-store text-xl"></i>
+        </div>
+    </div>
+
+    <div class="group bg-white p-6 rounded-3xl shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-slate-100 flex items-center justify-between">
+        <div>
+            <p class="text-xs text-slate-400 font-bold uppercase tracking-widest">Total Orders</p>
+            <h3 class="text-3xl font-extrabold text-slate-800 mt-2 leading-none">{{ total_orders }}</h3>
+        </div>
+        <div class="bg-violet-50 p-4 rounded-2xl text-violet-600 group-hover:bg-violet-600 group-hover:text-white transition-all duration-300">
+            <i class="fas fa-truck text-xl"></i>
+        </div>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
     
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
-                    colors: {
-                        brand: {
-                            50: '#f5f7ff',
-                            100: '#ebf0fe',
-                            600: '#4f46e5',
-                            700: '#4338ca',
-                            900: '#312e81',
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-    <title>Admin Dashboard | Premium</title>
-</head>
+    <div class="lg:col-span-2 bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
+        <div class="flex justify-between items-center mb-8">
+            <div>
+                <h2 class="font-bold text-slate-800 text-lg tracking-tight">Sales Performance</h2>
+                <p class="text-xs text-slate-400 font-medium mt-1">Net revenue and growth analytics</p>
+            </div>
+            <button class="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-brand-600 hover:bg-slate-50 transition-colors">
+                <i class="fas fa-ellipsis-v"></i>
+            </button>
+        </div>
+        <div class="h-72 bg-gradient-to-br from-slate-50 to-white rounded-2xl border-2 border-dashed border-slate-200 flex items-center justify-center group">
+            <div class="text-center transform transition-transform group-hover:scale-105 duration-300">
+                <div class="h-16 w-16 bg-white rounded-full flex items-center justify-center shadow-sm mx-auto mb-4 border border-slate-100">
+                    <i class="fas fa-chart-line text-2xl text-slate-300 group-hover:text-brand-400 transition-colors"></i>
+                </div>
+                <p class="text-slate-400 font-medium text-sm">Sales Chart will render here</p>
+            </div>
+        </div>
+    </div>
 
-<body class="bg-[#F9FAFB] text-slate-900 m-0">
-    <div class="flex h-screen overflow-hidden">
-        
-        <aside class="flex-shrink-0">
-            {% include 'admin/admin_navbar.html' %}
-        </aside>
-
-        <main class="flex-1 flex flex-col min-w-0 bg-[#F9FAFB]">
+    <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 flex flex-col">
+        <h2 class="font-bold text-slate-800 text-lg tracking-tight mb-6">Action Center</h2>
+        <div class="space-y-4 flex-1">
             
-            <header class="bg-white/80 backdrop-blur-md border-b border-gray-100 px-8 py-4 flex justify-between items-center sticky top-0 z-30">
-                <div>
-                    <h1 class="text-xl font-bold tracking-tight text-slate-800">Admin Overview</h1>
-                    <p class="text-xs text-slate-500 font-medium uppercase tracking-wider">Dashboard / Analytics</p>
-                </div>
-                
-                <div class="flex items-center space-x-5">
-                    <button class="relative p-2 text-slate-400 hover:text-brand-600 transition-colors">
-                        <span class="absolute top-2 right-2.5 h-2 w-2 bg-rose-500 rounded-full border-2 border-white"></span>
-                        <i class="fas fa-bell text-xl"></i>
-                    </button>
-                    
-                    <div class="h-8 w-px bg-gray-200 mx-2"></div>
-                    
-                    <div class="flex items-center group cursor-pointer">
-                        <div class="text-right mr-3">
-                            <p class="text-sm font-semibold text-slate-700 leading-none">System Admin</p>
-                            <p class="text-[11px] text-slate-400 mt-1">Superuser</p>
-                        </div>
-                        <img src="https://ui-avatars.com/api/?name=Admin&background=4f46e5&color=fff" alt="Profile" 
-                             class="h-10 w-10 rounded-xl border-2 border-brand-100 group-hover:border-brand-600 transition-all shadow-sm">
+            <div class="group p-5 bg-rose-50/40 rounded-2xl border border-rose-100 hover:bg-rose-50 hover:border-rose-200 hover:-translate-y-0.5 transition-all duration-300 cursor-pointer">
+                <div class="flex items-start">
+                    <div class="bg-white w-10 h-10 rounded-xl shadow-sm border border-rose-100/50 flex items-center justify-center text-rose-500 mr-4">
+                        <i class="fas fa-user-clock"></i>
                     </div>
-                </div>
-            </header>
-
-            <div class="p-8 overflow-y-auto space-y-8 custom-scrollbar">
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <div class="group bg-white p-6 rounded-2xl shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] hover:shadow-brand-100 transition-all border border-gray-50 flex items-center justify-between">
-                        <div>
-                            <p class="text-xs text-slate-400 font-bold uppercase tracking-widest">Total Users</p>
-                            <h3 class="text-3xl font-extrabold text-slate-800 mt-2 leading-none">{{ total_users }}</h3>
-                        </div>
-                        <div class="bg-indigo-50 p-4 rounded-xl text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-all">
-                            <i class="fas fa-user-group text-xl"></i>
-                        </div>
-                    </div>
-
-                    <div class="group bg-white p-6 rounded-2xl shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] border border-gray-50 flex items-center justify-between">
-                        <div>
-                            <p class="text-xs text-slate-400 font-bold uppercase tracking-widest">Products</p>
-                            <h3 class="text-3xl font-extrabold text-slate-800 mt-2 leading-none">{{ total_products }}</h3>
-                        </div>
-                        <div class="bg-emerald-50 p-4 rounded-xl text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-all">
-                            <i class="fas fa-tags text-xl"></i>
-                        </div>
-                    </div>
-
-                    <div class="group bg-white p-6 rounded-2xl shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] border border-gray-50 flex items-center justify-between">
-                        <div>
-                            <p class="text-xs text-slate-400 font-bold uppercase tracking-widest">Sellers</p>
-                            <h3 class="text-3xl font-extrabold text-slate-800 mt-2 leading-none">{{ total_sellers }}</h3>
-                        </div>
-                        <div class="bg-amber-50 p-4 rounded-xl text-amber-600 group-hover:bg-amber-600 group-hover:text-white transition-all">
-                            <i class="fas fa-store text-xl"></i>
-                        </div>
-                    </div>
-
-                    <div class="group bg-white p-6 rounded-2xl shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] border border-gray-50 flex items-center justify-between">
-                        <div>
-                            <p class="text-xs text-slate-400 font-bold uppercase tracking-widest">Total Orders</p>
-                            <h3 class="text-3xl font-extrabold text-slate-800 mt-2 leading-none">{{ total_orders }}</h3>
-                        </div>
-                        <div class="bg-violet-50 p-4 rounded-xl text-violet-600 group-hover:bg-violet-600 group-hover:text-white transition-all">
-                            <i class="fas fa-truck text-xl"></i>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    <div class="lg:col-span-2 bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
-                        <div class="flex justify-between items-center mb-8">
-                            <div>
-                                <h2 class="font-bold text-slate-800 text-lg">Sales Performance</h2>
-                                <p class="text-sm text-slate-400">Net revenue and growth analytics</p>
-                            </div>
-                            <button class="text-slate-400 hover:text-brand-600 text-sm font-semibold">
-                                <i class="fas fa-ellipsis-v"></i>
-                            </button>
-                        </div>
-                        <div class="h-72 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200 flex items-center justify-center">
-                            <div class="text-center">
-                                <div class="h-16 w-16 bg-white rounded-full flex items-center justify-center shadow-sm mx-auto mb-4">
-                                    <i class="fas fa-chart-line text-2xl text-slate-300"></i>
-                                </div>
-                                <p class="text-slate-400 font-medium">Sales Chart will render here</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
-                        <h2 class="font-bold text-slate-800 text-lg mb-6">Action Center</h2>
-                        <div class="space-y-4">
-                            <div class="group p-4 bg-rose-50/50 rounded-2xl border border-rose-100 hover:bg-rose-50 transition-colors">
-                                <div class="flex items-start">
-                                    <div class="bg-white p-2.5 rounded-xl shadow-sm text-rose-600 mr-4">
-                                        <i class="fas fa-user-clock"></i>
-                                    </div>
-                                    <div class="flex-1">
-                                        <p class="text-sm font-bold text-rose-900">{{pending_sellers_count}} Seller Requests</p>
-                                        <p class="text-xs text-rose-600/80 mt-0.5">Approval required to start selling.</p>
-                                        <a href="{% url 'pending_seller' %}" class="inline-flex items-center text-xs font-bold text-rose-700 mt-3 hover:gap-2 transition-all">
-                                            REVIEW NOW <i class="fas fa-chevron-right ml-1 text-[10px]"></i>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="group p-4 bg-amber-50/50 rounded-2xl border border-amber-100 hover:bg-amber-50 transition-colors">
-                                <div class="flex items-start">
-                                    <div class="bg-white p-2.5 rounded-xl shadow-sm text-amber-600 mr-4">
-                                        <i class="fas fa-triangle-exclamation"></i>
-                                    </div>
-                                    <div class="flex-1">
-                                        <p class="text-sm font-bold text-amber-900">Inventory Alert</p>
-                                        <p class="text-xs text-amber-600/80 mt-0.5">{{low_stock_alert}} items below threshold</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 gap-8 pb-8">
-                    
-                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                        <div class="p-6 border-b border-gray-50 flex justify-between items-center bg-white">
-                            <h2 class="font-bold text-slate-800 tracking-tight">Recent Transactions</h2>
-                            <a href="{% url 'order_view' %}" class="px-4 py-2 bg-slate-50 text-brand-600 text-xs font-bold rounded-lg hover:bg-brand-50 transition-colors">
-                                VIEW ALL ORDERS
-                            </a>
-                        </div>
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-left">
-                                <thead class="bg-slate-50/50 text-slate-400 text-[11px] uppercase tracking-[0.1em] font-bold">
-                                    <tr>
-                                        <th class="px-8 py-4">Reference</th>
-                                        <th class="px-8 py-4">Customer</th>
-                                        <th class="px-8 py-4">Status</th>
-                                        <th class="px-8 py-4 text-right">Details</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-gray-50">
-                                    {% for recent_order in recent_orders %}
-                                    <tr class="hover:bg-slate-50/50 transition-colors group">
-                                        <td class="px-8 py-5 text-sm font-bold text-slate-700">#ORD-{{ recent_order.id }}</td>
-                                        <td class="px-8 py-5">
-                                            <div class="flex items-center">
-                                                <div class="h-7 w-7 rounded-full bg-slate-100 flex items-center justify-center text-[10px] font-bold text-slate-500 mr-3">
-                                                    {{ recent_order.user.first_name|first }}
-                                                </div>
-                                                <span class="text-sm text-slate-600 font-medium">{{recent_order.user.first_name}}</span>
-                                            </div>
-                                        </td>
-                                        <td class="px-8 py-5">
-                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider
-                                                {% if recent_order.status == 'pending' or recent_order.status == 'processing' %}
-                                                    bg-amber-100 text-amber-700
-                                                {% elif recent_order.status == 'delivered' %}
-                                                    bg-emerald-100 text-emerald-700
-                                                {% else %}
-                                                    bg-slate-100 text-slate-600
-                                                {% endif %}">
-                                                {{ recent_order.status }}
-                                            </span>
-                                        </td>
-                                        <td class="px-8 py-5 text-right">
-                                            <button class="p-2 text-slate-300 hover:text-brand-600 group-hover:bg-white rounded-lg transition-all shadow-none hover:shadow-sm">
-                                                <i class="fas fa-eye text-sm"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                        
-                        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                            <div class="p-6 border-b border-gray-50 flex justify-between items-center">
-                                <h2 class="font-bold text-slate-800">New Sellers</h2>
-                                <a href="{% url 'seller_view' %}" class="text-brand-600 text-xs font-bold hover:underline underline-offset-4">VIEW ALL</a>
-                            </div>
-                            <div class="overflow-x-auto">
-                                <table class="w-full text-left">
-                                    <thead class="bg-slate-50/50 text-slate-400 text-[10px] uppercase font-bold">
-                                        <tr>
-                                            <th class="px-6 py-4">ID</th>
-                                            <th class="px-6 py-4">Name</th>
-                                            <th class="px-6 py-4">Status</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="divide-y divide-gray-50">
-                                        {% for seller in recent_sellers %}
-                                        <tr class="hover:bg-slate-50/50 transition-colors">
-                                            <td class="px-6 py-4 text-xs font-bold text-slate-400">#SEL-{{ seller.id }}</td>
-                                            <td class="px-6 py-4 text-sm font-semibold text-slate-700">{{ seller.user.first_name }}</td>
-                                            <td class="px-6 py-4">
-                                                <div class="flex items-center">
-                                                    {% if seller.status == "approved" %}
-                                                    <span class="h-1.5 w-1.5 rounded-full bg-emerald-500 mr-2"></span>
-                                                    <span class="text-[11px] font-bold text-emerald-600 uppercase">Active</span>
-                                                    {% else %}
-                                                    <span class="h-1.5 w-1.5 rounded-full bg-amber-500 mr-2"></span>
-                                                    <span class="text-[11px] font-bold text-amber-600 uppercase">Pending</span>
-                                                    {% endif %}
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                            <div class="p-6 border-b border-gray-50 flex justify-between items-center">
-                                <h2 class="font-bold text-slate-800">Recent Products</h2>
-                                <a href="#" class="text-brand-600 text-xs font-bold hover:underline underline-offset-4">VIEW ALL</a>
-                            </div>
-                            <div class="overflow-x-auto">
-                                <table class="w-full text-left">
-                                    <thead class="bg-slate-50/50 text-slate-400 text-[10px] uppercase font-bold">
-                                        <tr>
-                                            <th class="px-6 py-4">Product</th>
-                                            <th class="px-6 py-4">Status</th>
-                                            <th class="px-6 py-4 text-right">View</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="divide-y divide-gray-50">
-                                        {% for product in recent_products %}
-                                        <tr class="hover:bg-slate-50/50 transition-colors">
-                                            <td class="px-6 py-4">
-                                                <p class="text-sm font-semibold text-slate-700">{{ product.name }}</p>
-                                                <p class="text-[10px] text-slate-400 font-bold uppercase mt-0.5">ID: {{ product.id }}</p>
-                                            </td>
-                                            <td class="px-6 py-4 text-xs font-medium">
-                                                {% if product.status == "approved" %}
-                                                <span class="text-emerald-600 font-bold">Approved</span>
-                                                {% else %}
-                                                <span class="text-amber-600 font-bold">Pending</span>
-                                                {% endif %}
-                                            </td>
-                                            <td class="px-6 py-4 text-right">
-                                                <a href="#" class="text-slate-300 hover:text-brand-600 transition-colors">
-                                                    <i class="fas fa-arrow-right text-xs"></i>
-                                                </a>
-                                            </td>
-                                        </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-
+                    <div class="flex-1">
+                        <p class="text-sm font-bold text-rose-900">{{pending_sellers_count}} Seller Requests</p>
+                        <p class="text-xs text-rose-600/70 mt-0.5 font-medium">Approval required to start selling.</p>
+                        <a href="{% url 'pending_seller' %}" class="inline-flex items-center text-[10px] font-black uppercase tracking-widest text-rose-700 mt-4 group-hover:gap-2 transition-all">
+                            REVIEW NOW <i class="fas fa-arrow-right ml-1"></i>
+                        </a>
                     </div>
                 </div>
             </div>
-        </main>
+
+            <div class="group p-5 bg-amber-50/40 rounded-2xl border border-amber-100 hover:bg-amber-50 hover:border-amber-200 hover:-translate-y-0.5 transition-all duration-300 cursor-pointer">
+                <div class="flex items-start">
+                    <div class="bg-white w-10 h-10 rounded-xl shadow-sm border border-amber-100/50 flex items-center justify-center text-amber-500 mr-4">
+                        <i class="fas fa-triangle-exclamation"></i>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-sm font-bold text-amber-900">Inventory Alert</p>
+                        <p class="text-xs text-amber-600/70 mt-0.5 font-medium">{{low_stock_alert}} items below threshold</p>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 gap-8 pb-8">
+    
+    <div class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+        <div class="p-6 border-b border-slate-50 flex justify-between items-center bg-white">
+            <h2 class="font-bold text-slate-800 tracking-tight">Recent Transactions</h2>
+            <a href="{% url 'order_view' %}" class="px-4 py-2 bg-slate-50 text-brand-600 text-[10px] uppercase tracking-wider font-bold rounded-lg hover:bg-brand-50 hover:text-brand-700 transition-colors">
+                VIEW ALL
+            </a>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left">
+                <thead class="bg-slate-50/50 text-slate-400 text-[10px] uppercase tracking-[0.1em] font-bold">
+                    <tr>
+                        <th class="px-8 py-4">Reference</th>
+                        <th class="px-8 py-4">Customer</th>
+                        <th class="px-8 py-4">Status</th>
+                        <th class="px-8 py-4 text-right">Details</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-50">
+                    {% for recent_order in recent_orders %}
+                    <tr class="hover:bg-slate-50/50 transition-colors group">
+                        <td class="px-8 py-5 text-sm font-bold text-slate-700">#ORD-{{ recent_order.id }}</td>
+                        <td class="px-8 py-5">
+                            <div class="flex items-center">
+                                <div class="h-8 w-8 rounded-full bg-brand-50 flex items-center justify-center text-[10px] font-bold text-brand-600 mr-3 border border-brand-100/50">
+                                    {{ recent_order.user.first_name|first }}
+                                </div>
+                                <span class="text-sm text-slate-600 font-medium">{{recent_order.user.first_name}}</span>
+                            </div>
+                        </td>
+                        <td class="px-8 py-5">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider
+                                {% if recent_order.status == 'pending' or recent_order.status == 'processing' %}
+                                    bg-amber-100 text-amber-700
+                                {% elif recent_order.status == 'delivered' %}
+                                    bg-emerald-100 text-emerald-700
+                                {% else %}
+                                    bg-slate-100 text-slate-600
+                                {% endif %}">
+                                {{ recent_order.status }}
+                            </span>
+                        </td>
+                        <td class="px-8 py-5 text-right">
+                            <button class="w-8 h-8 rounded-lg flex items-center justify-center ml-auto text-slate-300 hover:text-brand-600 hover:bg-white transition-all shadow-none hover:shadow-sm">
+                                <i class="fas fa-arrow-right text-xs"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 
-    <style>
-        .custom-scrollbar::-webkit-scrollbar {
-            width: 4px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-            background: #f1f1f1;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: #e2e8f0;
-            border-radius: 10px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-            background: #cbd5e1;
-        }
-    </style>
-</body> 
-</html>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        
+        <div class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+            <div class="p-6 border-b border-slate-50 flex justify-between items-center bg-white">
+                <h2 class="font-bold text-slate-800 tracking-tight">New Sellers</h2>
+                <a href="{% url 'seller_view' %}" class="px-3 py-1.5 bg-slate-50 text-brand-600 text-[10px] uppercase tracking-wider font-bold rounded-lg hover:bg-brand-50 transition-colors">
+                    VIEW ALL
+                </a>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead class="bg-slate-50/50 text-slate-400 text-[10px] uppercase tracking-[0.1em] font-bold">
+                        <tr>
+                            <th class="px-6 py-4">ID</th>
+                            <th class="px-6 py-4">Name</th>
+                            <th class="px-6 py-4 text-right">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-50">
+                        {% for seller in recent_sellers %}
+                        <tr class="hover:bg-slate-50/50 transition-colors">
+                            <td class="px-6 py-4 text-xs font-bold text-slate-400">#SEL-{{ seller.id }}</td>
+                            <td class="px-6 py-4 text-sm font-semibold text-slate-700">{{ seller.user.first_name }}</td>
+                            <td class="px-6 py-4 text-right">
+                                <div class="inline-flex items-center">
+                                    {% if seller.status == "approved" %}
+                                    <span class="h-1.5 w-1.5 rounded-full bg-emerald-500 mr-2"></span>
+                                    <span class="text-[10px] font-bold text-emerald-600 uppercase tracking-wider">Active</span>
+                                    {% else %}
+                                    <span class="h-1.5 w-1.5 rounded-full bg-amber-500 mr-2"></span>
+                                    <span class="text-[10px] font-bold text-amber-600 uppercase tracking-wider">Pending</span>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+            <div class="p-6 border-b border-slate-50 flex justify-between items-center bg-white">
+                <h2 class="font-bold text-slate-800 tracking-tight">Recent Products</h2>
+                <a href="#" class="px-3 py-1.5 bg-slate-50 text-brand-600 text-[10px] uppercase tracking-wider font-bold rounded-lg hover:bg-brand-50 transition-colors">
+                    VIEW ALL
+                </a>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead class="bg-slate-50/50 text-slate-400 text-[10px] uppercase tracking-[0.1em] font-bold">
+                        <tr>
+                            <th class="px-6 py-4">Product</th>
+                            <th class="px-6 py-4">Status</th>
+                            <th class="px-6 py-4 text-right">View</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-50">
+                        {% for product in recent_products %}
+                        <tr class="hover:bg-slate-50/50 transition-colors group">
+                            <td class="px-6 py-4">
+                                <p class="text-sm font-semibold text-slate-700">{{ product.name }}</p>
+                                <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">ID: {{ product.id }}</p>
+                            </td>
+                            <td class="px-6 py-4">
+                                {% if product.status == "approved" %}
+                                <span class="text-[10px] uppercase tracking-wider text-emerald-600 font-bold">Approved</span>
+                                {% else %}
+                                <span class="text-[10px] uppercase tracking-wider text-amber-600 font-bold">Pending</span>
+                                {% endif %}
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <a href="#" class="w-8 h-8 rounded-lg inline-flex items-center justify-center text-slate-300 hover:text-brand-600 hover:bg-white transition-all shadow-none hover:shadow-sm">
+                                    <i class="fas fa-arrow-right text-xs"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

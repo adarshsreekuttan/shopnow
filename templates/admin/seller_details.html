@@ -1,143 +1,142 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin | Seller Profile</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-</head>
-<body class="bg-[#f8fafc] text-slate-900 antialiased font-sans flex min-h-screen">
+{% extends 'admin/base_admin.html' %}
 
-    <aside class="w-64 bg-white border-r border-slate-200 sticky top-0 h-screen overflow-y-auto flex-shrink-0">
-        {% include 'admin/admin_navbar.html' %}
-    </aside>
+{% block title %}Seller Profile | {{ seller.user }}{% endblock %}
+{% block header_title %}Seller Profile{% endblock %}
+{% block header_breadcrumbs %}User Management / Sellers / {{ seller.user }}{% endblock %}
 
-    <main class="flex-1 p-6 lg:p-12 min-w-0">
-        <div class="max-w-6xl mx-auto">
+{% block content %}
+<div class="space-y-8 max-w-6xl mx-auto">
+    
+    <div class="flex justify-end gap-3">
+        <button class="px-5 py-2.5 bg-white border border-gray-200 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-50 transition-colors shadow-sm inline-flex items-center">
+            <i class="fas fa-envelope mr-2 text-brand-500"></i> CONTACT SELLER
+        </button>
+        <button class="px-5 py-2.5 bg-rose-50 border border-rose-100 rounded-xl text-xs font-bold text-rose-600 hover:bg-rose-100 transition-colors inline-flex items-center">
+            <i class="fas fa-ban mr-2"></i> SUSPEND ACCOUNT
+        </button>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <div class="lg:col-span-2 bg-white rounded-2xl p-8 border border-gray-100 shadow-sm flex flex-col md:flex-row gap-8 items-center md:items-start">
             
-            <div class="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
-                <div>
-                    <nav class="flex text-[10px] font-bold text-indigo-600 uppercase tracking-[0.2em] mb-3 gap-2">
-                        <a href="{% url 'seller_view' %}" class="hover:underline">Sellers</a>
-                        <span class="text-slate-300">/</span>
-                        <span class="text-slate-500">Profile Details</span>
-                    </nav>
-                    <h1 class="text-4xl font-black text-slate-900 tracking-tight">Seller Profile</h1>
-                </div>
-                <div class="flex gap-3">
-                    <button class="px-5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-50 transition shadow-sm">
-                        <i class="fas fa-envelope mr-2 text-indigo-500"></i>Contact Seller
-                    </button>
-                    <button class="px-5 py-2.5 bg-rose-50 border border-rose-100 rounded-xl text-sm font-bold text-rose-600 hover:bg-rose-100 transition">
-                        <i class="fas fa-ban mr-2"></i>Suspend Account
-                    </button>
-                </div>
+            <div class="relative flex-shrink-0">
+                <img src="https://ui-avatars.com/api/?name={{ seller.user.username }}&background=4f46e5&color=fff&size=128" 
+                     class="w-32 h-32 rounded-2xl shadow-sm border border-gray-100 object-cover" alt="Seller">
+                <span class="absolute -bottom-2 -right-2 bg-emerald-500 border-4 border-white w-8 h-8 rounded-full shadow-sm"></span>
             </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-10">
+            
+            <div class="flex-1 text-center md:text-left w-full">
+                <div class="flex flex-col md:flex-row md:items-center gap-3 mb-3">
+                    <h2 class="text-2xl font-bold text-slate-800 tracking-tight">{{ seller.user }}</h2>
+                    <span class="px-2.5 py-0.5 bg-brand-50 text-brand-600 text-[10px] font-bold uppercase tracking-wider rounded-full border border-brand-100/50 w-fit mx-auto md:mx-0">
+                        <i class="fas fa-check-circle mr-1 opacity-70"></i> Verified Seller
+                    </span>
+                </div>
                 
-                <div class="lg:col-span-2 bg-white rounded-[2.5rem] p-8 border border-slate-200 shadow-sm flex flex-col md:flex-row gap-8 items-center md:items-start">
-                    <div class="relative">
-                        <img src="https://ui-avatars.com/api/?name={{ seller.user.username }}&background=6366f1&color=fff&size=128" 
-                             class="w-32 h-32 rounded-[2rem] shadow-xl border-4 border-white" alt="Seller">
-                        <span class="absolute -bottom-2 -right-2 bg-emerald-500 border-4 border-white w-8 h-8 rounded-full"></span>
-                    </div>
-                    <div class="flex-1 text-center md:text-left">
-                        <div class="flex flex-col md:flex-row md:items-center gap-3 mb-2">
-                            <h2 class="text-2xl font-black text-slate-900">{{ seller.user }}</h2>
-                            <span class="px-3 py-1 bg-indigo-50 text-indigo-600 text-[10px] font-black uppercase tracking-tighter rounded-full border border-indigo-100 w-fit mx-auto md:mx-0">Verified Seller</span>
-                        </div>
-                        <p class="text-slate-500 font-medium mb-4">{{ seller.bio|default:"No bio provided for this seller profile." }}</p>
-                        
-                        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 border-t border-slate-50 pt-6">
-                            <div>
-                                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Email Address</p>
-                                <p class="text-sm font-bold text-slate-700">{{ seller.user.email }}</p>
-                            </div>
-                            <div>
-                                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Joined Date</p>
-                                <p class="text-sm font-bold text-slate-700">{{ seller.user.created_at }}</p>
-                            </div>
-                            <div>
-                                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Location</p>
-                                <p class="text-sm font-bold text-slate-700">Global Vendor</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-indigo-600 rounded-[2.5rem] p-8 text-white shadow-xl shadow-indigo-100 flex flex-col justify-between">
+                <p class="text-sm text-slate-500 font-medium mb-6 leading-relaxed">
+                    {{ seller.bio|default:"No bio provided for this seller profile." }}
+                </p>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 border-t border-gray-50 pt-6">
                     <div>
-                        <h3 class="font-black uppercase tracking-widest text-[11px] opacity-70 mb-6">Performance Stats</h3>
-                        <div class="space-y-6">
-                            <div>
-                                <p class="text-3xl font-black">{{ products.count }}</p>
-                                <p class="text-xs font-bold opacity-80 uppercase tracking-wider">Active Products</p>
-                            </div>
-                            <div>
-                                <p class="text-3xl font-black">4.8/5.0</p>
-                                <p class="text-xs font-bold opacity-80 uppercase tracking-wider">Average Rating</p>
-                            </div>
-                        </div>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Email Address</p>
+                        <p class="text-sm font-bold text-slate-700 truncate" title="{{ seller.user.email }}">{{ seller.user.email }}</p>
                     </div>
-                    <div class="mt-8 pt-6 border-t border-indigo-500/50">
-                        <p class="text-[10px] font-black uppercase tracking-widest opacity-60">Status</p>
-                        <p class="font-bold flex items-center">
-                            <i class="fas fa-circle text-[8px] text-emerald-400 mr-2"></i> Active & Operational
-                        </p>
+                    <div>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Joined Date</p>
+                        <p class="text-sm font-bold text-slate-700">{{ seller.user.created_at|date:"M d, Y" }}</p>
                     </div>
-                </div>
-            </div>
-
-            <div class="bg-white rounded-[2.5rem] border border-slate-200 shadow-sm overflow-hidden">
-                <div class="p-8 border-b border-slate-100 flex items-center justify-between">
-                    <h3 class="text-xl font-black text-slate-900">Products by this Seller</h3>
-                    <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">{{ products|length }} Items Found</span>
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-slate-100">
-                        <thead class="bg-slate-50/50">
-                            <tr>
-                                <th class="px-8 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Product</th>
-                                <th class="px-8 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Stock</th>
-                                <th class="px-8 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Price</th>
-                                <th class="px-8 py-4 text-right text-[10px] font-black text-slate-400 uppercase tracking-widest">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-slate-50">
-                            {% for product in products %}
-                            <tr class="group hover:bg-slate-50/50 transition">
-                                <td class="px-8 py-4">
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-10 h-10 rounded-lg bg-slate-100 overflow-hidden">
-                                            <img src="{{ product.image.url }}" class="w-full h-full object-cover">
-                                        </div>
-                                        <span class="text-sm font-bold text-slate-900">{{ product.name }}</span>
-                                    </div>
-                                </td>
-                                <td class="px-8 py-4">
-                                    <span class="text-sm font-bold text-slate-600">{{ product.stock }} units</span>
-                                </td>
-                                <td class="px-8 py-4">
-                                    <span class="text-sm font-black text-indigo-600">${{ product.price }}</span>
-                                </td>
-                                <td class="px-8 py-4 text-right">
-                                    <a href="{% url 'edit_product' product.id %}" class="text-xs font-bold text-slate-400 hover:text-indigo-600 transition">
-                                        View Details <i class="fas fa-chevron-right ml-1"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                            {% empty %}
-                            <tr>
-                                <td colspan="4" class="px-8 py-12 text-center text-slate-400 italic">No products listed by this seller yet.</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                    <div>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Location</p>
+                        <p class="text-sm font-bold text-slate-700">Global Vendor</p>
+                    </div>
                 </div>
             </div>
         </div>
-    </main>
-</body>
-</html>
+
+        <div class="bg-brand-600 rounded-2xl p-8 text-white shadow-md flex flex-col justify-between relative overflow-hidden">
+            <div class="absolute top-0 right-0 -mt-4 -mr-4 w-32 h-32 bg-white opacity-5 rounded-full blur-2xl pointer-events-none"></div>
+            
+            <div class="relative z-10">
+                <h3 class="font-bold uppercase tracking-widest text-[10px] text-brand-100 mb-6">Performance Stats</h3>
+                <div class="space-y-6">
+                    <div>
+                        <p class="text-4xl font-extrabold tracking-tight">{{ products.count }}</p>
+                        <p class="text-xs font-bold text-brand-200 uppercase tracking-wider mt-1">Active Products</p>
+                    </div>
+                    <div>
+                        <p class="text-4xl font-extrabold tracking-tight">4.8<span class="text-lg text-brand-300">/5.0</span></p>
+                        <p class="text-xs font-bold text-brand-200 uppercase tracking-wider mt-1">Average Rating</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-8 pt-6 border-t border-brand-500 relative z-10">
+                <p class="text-[10px] font-bold uppercase tracking-widest text-brand-200 mb-1">Account Status</p>
+                <p class="font-bold text-sm flex items-center">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 mr-2 shadow-[0_0_8px_rgba(52,211,153,0.8)]"></span> Active & Operational
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+        
+        <div class="p-6 border-b border-gray-50 flex items-center justify-between bg-white">
+            <h3 class="text-lg font-bold text-slate-800 tracking-tight">Products by this Seller</h3>
+            <span class="px-3 py-1 bg-slate-50 text-slate-500 text-xs font-bold rounded-lg border border-gray-100">{{ products|length }} Items</span>
+        </div>
+        
+        <div class="overflow-x-auto">
+            <table class="w-full text-left">
+                <thead class="bg-slate-50/50 text-slate-400 text-[11px] uppercase tracking-[0.1em] font-bold">
+                    <tr>
+                        <th class="px-8 py-4">Product</th>
+                        <th class="px-8 py-4">Stock</th>
+                        <th class="px-8 py-4">Price</th>
+                        <th class="px-8 py-4 text-right">Action</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-50">
+                    {% for product in products %}
+                    <tr class="group hover:bg-slate-50/50 transition-colors">
+                        <td class="px-8 py-4">
+                            <div class="flex items-center gap-4">
+                                <div class="w-10 h-10 rounded-xl bg-slate-50 border border-gray-100 overflow-hidden shadow-sm flex-shrink-0">
+                                    <img src="{{ product.image.url }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
+                                </div>
+                                <div>
+                                    <span class="text-sm font-bold text-slate-700">{{ product.name }}</span>
+                                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">SKU: PROD-{{ product.id }}</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-8 py-4">
+                            <span class="text-sm font-bold text-slate-600">{{ product.stock }} units</span>
+                        </td>
+                        <td class="px-8 py-4">
+                            <span class="text-sm font-extrabold text-brand-600">${{ product.price }}</span>
+                        </td>
+                        <td class="px-8 py-4 text-right">
+                            <div class="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                <a href="{% url 'edit_product' product.id %}" class="px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-[10px] font-bold uppercase tracking-wider text-slate-500 hover:text-brand-600 hover:border-brand-200 transition-all shadow-sm inline-flex items-center">
+                                    Details <i class="fas fa-chevron-right ml-2 text-[8px]"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="px-8 py-16 text-center text-slate-400">
+                            <i class="fas fa-box-open text-3xl mb-3 text-slate-200 block"></i>
+                            <span class="text-sm font-medium">No products listed by this seller yet.</span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

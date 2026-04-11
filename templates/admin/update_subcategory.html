@@ -1,90 +1,68 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <title>Update Subcategory</title>
-</head>
-<body class="bg-slate-50 min-h-screen font-sans flex"> 
+{% extends 'admin/base_admin.html' %}
+
+{% block title %}Update Subcategory{% endblock %}
+{% block header_title %}Update Subcategory{% endblock %}
+{% block header_breadcrumbs %}Inventory Management / Categories / Edit Subcategory{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto space-y-8">
     
-    <aside class="w-64 min-h-screen sticky top-0 bg-white border-r border-slate-200 hidden md:block">
-        {% include 'admin/admin_navbar.html' %}
-    </aside>
-
-    <main class="flex-1 py-10 px-4 md:px-12">
-        <div class="max-w-3xl mx-auto">
-            
-            <nav class="flex text-xs font-bold text-indigo-600 uppercase tracking-widest mb-4 gap-2">
-                <a href="{% url 'category_list' %}" class="hover:underline">Category</a>
-                <span class="text-slate-300">/</span>
-                <span class="text-slate-500">Edit Subcategory</span>
-            </nav>
-
-            <div class="mb-10">
-                <h1 class="text-3xl font-black text-slate-900 tracking-tight">Update Subcategory</h1>
-                <p class="text-slate-500 mt-1 font-medium">Modify details for <span class="text-indigo-600">"{{ subcategory.name }}"</span></p>
-            </div>
-
-            <div class="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden">
-                <form action="{% url 'update_subcategory' subcategory.id %}" method="POST" class="p-8 space-y-8">
-                    {% csrf_token %}
-                    
-                    <div class="grid grid-cols-1 gap-8">
-                        
-                        <div>
-                            <label for="name" class="block text-xs font-black text-slate-700 uppercase tracking-wider mb-3">
-                                Subcategory Name
-                            </label>
-                            <input type="text" name="name" id="name" value="{{ subcategory.name }}" required
-                                   class="w-full px-5 py-4 rounded-2xl border border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none text-slate-800 font-medium"
-                                   placeholder="Enter subcategory name">
-                        </div>
-
-                        <div>
-                            <label for="category" class="block text-xs font-black text-slate-700 uppercase tracking-wider mb-3">
-                                Parent Category
-                            </label>
-                            <div class="relative">
-                                <select name="category" id="category" required
-                                        class="w-full px-5 py-4 rounded-2xl border border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none text-slate-800 font-medium appearance-none bg-white">
-                                    {% for cat in categories %}
-                                        <option value="{{ cat.id }}" {% if cat.id == subcategory.category.id %}selected{% endif %}>
-                                            {{ cat.name }}
-                                        </option>
-                                    {% endfor %}
-                                </select>
-                                <div class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none text-slate-400">
-                                    <i class="fas fa-chevron-down text-xs"></i>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <div class="pt-6 border-t border-slate-50 flex items-center justify-end gap-4">
-                        <a href="{% url 'category_list' %}" 
-                           class="px-6 py-3 rounded-xl text-sm font-bold text-slate-500 hover:bg-slate-100 transition-all">
-                            Cancel
-                        </a>
-                            <a href="{% url 'delete_subcategory' subcategory.id %}" 
-                            class="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold
-                            text-red-600 bg-red-50 hover:bg-red-600 hover:text-white transition-all">
-
-                                <i class="fas fa-trash text-xs"></i>
-                                Delete
-                            </a>
-                        <button type="submit" 
-                                class="bg-indigo-600 hover:bg-indigo-700 text-white px-10 py-3 rounded-2xl font-bold shadow-lg shadow-indigo-200 transition-all active:scale-95 text-sm">
-                            Save Changes
-                        </button>
-                    </div>
-
-                </form>
-            </div>
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="p-8 border-b border-gray-50 bg-white">
+            <h2 class="font-bold text-slate-800 tracking-tight text-lg">Modify Subcategory</h2>
+            <p class="text-xs text-slate-400 mt-1 font-medium">Update details for <span class="text-brand-600 font-bold">"{{ subcategory.name }}"</span></p>
         </div>
-    </main>
 
-</body>
-</html>
+        <form action="{% url 'update_subcategory' subcategory.id %}" method="POST" class="p-8 space-y-6 bg-white">
+            {% csrf_token %}
+            
+            <div>
+                <label for="name" class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Subcategory Name</label>
+                <input type="text" name="name" id="name" value="{{ subcategory.name }}" required
+                    class="w-full px-4 py-3 bg-slate-50 border border-gray-100 rounded-xl focus:bg-white focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 outline-none transition-all text-sm text-slate-700 font-medium placeholder-slate-400 shadow-inner"
+                    placeholder="Enter subcategory name">
+            </div>
+
+            <div>
+                <label for="category" class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Parent Category</label>
+                <div class="relative">
+                    <select name="category" id="category" required
+                        class="w-full px-4 py-3 bg-slate-50 border border-gray-100 rounded-xl focus:bg-white focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 outline-none transition-all text-sm text-slate-700 font-medium appearance-none shadow-inner cursor-pointer">
+                        {% for cat in categories %}
+                            <option value="{{ cat.id }}" {% if cat.id == subcategory.category.id %}selected{% endif %}>
+                                {{ cat.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    <div class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none text-slate-400">
+                        <i class="fas fa-chevron-down text-xs"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-end space-x-4 pt-6 mt-8 border-t border-gray-50">
+                <a href="{% url 'category_list' %}" 
+                   class="px-6 py-2.5 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-50 hover:text-slate-700 transition-colors">
+                    CANCEL
+                </a>
+                <button type="submit"
+                    class="bg-brand-600 text-white px-8 py-2.5 rounded-xl text-xs font-bold shadow-sm hover:bg-brand-700 hover:shadow transition-all flex items-center">
+                    <i class="fas fa-save mr-2"></i> SAVE CHANGES
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <div class="bg-rose-50/50 border border-rose-100 rounded-2xl p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div>
+            <h4 class="text-rose-800 font-bold text-sm">Delete Subcategory</h4>
+            <p class="text-rose-600/70 text-xs mt-1">Careful, this action cannot be undone.</p>
+        </div>
+        <a href="{% url 'delete_subcategory' subcategory.id %}" onclick="return confirm('Are you sure you want to PERMANENTLY delete the {{ subcategory.name }} subcategory?')" 
+           class="px-5 py-2.5 bg-white border border-rose-200 text-rose-600 rounded-lg text-xs font-bold hover:bg-rose-600 hover:text-white hover:border-rose-600 transition-all shadow-sm whitespace-nowrap">
+            REMOVE SUBCATEGORY
+        </a>
+    </div>
+
+</div>
+{% endblock %}

@@ -366,12 +366,21 @@
                                 </td>
                             </tr>
                             {% empty %}
-                            <!-- Placeholder rows -->
-                            <tr><td class="px-6 py-3.5 font-bold text-pdark">#1042</td><td class="px-3 py-3.5 text-gray-600">Ananya S.</td><td class="px-3 py-3.5 font-bold">₹1,290</td><td class="px-3 py-3.5"><span class="inline-flex items-center gap-1 bg-yellow-50 text-yellow-600 text-[9px] font-black px-2 py-1 rounded-md">Pending</span></td></tr>
-                            <tr><td class="px-6 py-3.5 font-bold text-pdark">#1041</td><td class="px-3 py-3.5 text-gray-600">Rohan M.</td><td class="px-3 py-3.5 font-bold">₹3,450</td><td class="px-3 py-3.5"><span class="inline-flex items-center gap-1 bg-blue-50 text-blue-600 text-[9px] font-black px-2 py-1 rounded-md">Shipped</span></td></tr>
-                            <tr><td class="px-6 py-3.5 font-bold text-pdark">#1040</td><td class="px-3 py-3.5 text-gray-600">Priya K.</td><td class="px-3 py-3.5 font-bold">₹890</td><td class="px-3 py-3.5"><span class="inline-flex items-center gap-1 bg-green-50 text-green-600 text-[9px] font-black px-2 py-1 rounded-md">Delivered</span></td></tr>
-                            <tr><td class="px-6 py-3.5 font-bold text-pdark">#1039</td><td class="px-3 py-3.5 text-gray-600">Vikram T.</td><td class="px-3 py-3.5 font-bold">₹2,100</td><td class="px-3 py-3.5"><span class="inline-flex items-center gap-1 bg-yellow-50 text-yellow-600 text-[9px] font-black px-2 py-1 rounded-md">Pending</span></td></tr>
-                            <tr><td class="px-6 py-3.5 font-bold text-pdark">#1038</td><td class="px-3 py-3.5 text-gray-600">Meena R.</td><td class="px-3 py-3.5 font-bold">₹560</td><td class="px-3 py-3.5"><span class="inline-flex items-center gap-1 bg-green-50 text-green-600 text-[9px] font-black px-2 py-1 rounded-md">Delivered</span></td></tr>
+                                <tr>
+                                    <td colspan="4" class="px-6 py-10 text-center">
+                                        <div class="flex flex-col items-center justify-center text-gray-400">
+                                            
+                                            <i class="fa-solid fa-box-open text-3xl mb-3"></i>
+                                            
+                                            <p class="text-sm font-bold text-gray-500">No Orders Found</p>
+                                            <p class="text-xs text-gray-400 mt-1">
+                                                Orders will appear here once customers start purchasing
+                                            </p>
+
+                                        </div>
+                                    </td>
+                                </tr>
+
                             {% endfor %}
                         </tbody>
                     </table>
@@ -411,9 +420,16 @@
                         </div>
                     </div>
                     {% empty %}
-                    <div class="px-6 py-4"><div class="flex items-start gap-3"><div class="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-black flex-shrink-0">A</div><div><div class="flex items-center justify-between mb-1"><p class="text-xs font-bold text-pdark">Arun P.</p><div class="flex gap-0.5"><i class="fa-solid fa-star text-[9px] text-amber-400"></i><i class="fa-solid fa-star text-[9px] text-amber-400"></i><i class="fa-solid fa-star text-[9px] text-amber-400"></i><i class="fa-solid fa-star text-[9px] text-amber-400"></i><i class="fa-solid fa-star text-[9px] text-amber-400"></i></div></div><p class="text-[11px] text-gray-500">Really love this product! Fast shipping and exactly as described.</p><p class="text-[9px] text-gray-300 font-medium mt-1">Premium Wireless Earbuds</p></div></div></div>
-                    <div class="px-6 py-4"><div class="flex items-start gap-3"><div class="w-8 h-8 rounded-full bg-accent/10 text-accent flex items-center justify-center text-xs font-black flex-shrink-0">S</div><div><div class="flex items-center justify-between mb-1"><p class="text-xs font-bold text-pdark">Sneha M.</p><div class="flex gap-0.5"><i class="fa-solid fa-star text-[9px] text-amber-400"></i><i class="fa-solid fa-star text-[9px] text-amber-400"></i><i class="fa-solid fa-star text-[9px] text-amber-400"></i><i class="fa-solid fa-star text-[9px] text-amber-400"></i><i class="fa-solid fa-star text-[9px] text-gray-200"></i></div></div><p class="text-[11px] text-gray-500">Good quality but delivery took a bit longer than expected.</p><p class="text-[9px] text-gray-300 font-medium mt-1">Leather Wallet</p></div></div></div>
-                    <div class="px-6 py-4"><div class="flex items-start gap-3"><div class="w-8 h-8 rounded-full bg-highlight/40 text-pdark flex items-center justify-center text-xs font-black flex-shrink-0">R</div><div><div class="flex items-center justify-between mb-1"><p class="text-xs font-bold text-pdark">Rahul K.</p><div class="flex gap-0.5"><i class="fa-solid fa-star text-[9px] text-amber-400"></i><i class="fa-solid fa-star text-[9px] text-amber-400"></i><i class="fa-solid fa-star text-[9px] text-amber-400"></i><i class="fa-solid fa-star text-[9px] text-amber-400"></i><i class="fa-solid fa-star text-[9px] text-amber-400"></i></div></div><p class="text-[11px] text-gray-500">Outstanding! Will definitely buy again from this store.</p><p class="text-[9px] text-gray-300 font-medium mt-1">Smart Watch Band</p></div></div></div>
+                        <div class="px-6 py-10 flex flex-col items-center justify-center text-center text-gray-400">
+                            
+                            <i class="fa-solid fa-star-half-stroke text-3xl mb-3"></i>
+                            
+                            <p class="text-sm font-bold text-gray-500">No Reviews Yet</p>
+                            <p class="text-xs text-gray-400 mt-1">
+                                Customer feedback will appear here after purchases
+                            </p>
+
+                        </div>
                     {% endfor %}
                 </div>
             </div>
