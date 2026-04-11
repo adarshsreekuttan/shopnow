@@ -1,121 +1,83 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shop Now | Customer Login</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: { pdark: '#362F4F', primary: '#5B23FF', accent: '#008BFF', highlight: '#E4FF30' },
-                    fontFamily: { sans: ['Inter', 'sans-serif'] }
-                }
-            }
-        }
-    </script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-</head>
-<body class="bg-[url('https://images.unsplash.com/photo-1586880244406-556ebe35f282?q=80&w=2000&auto=format&fit=crop')] bg-cover bg-center bg-no-repeat bg-fixed font-sans antialiased flex flex-col min-h-screen relative">
+{% extends 'customer/base.html' %}
+{% load static %}
 
+{% block title %}Shop Now | Customer Login{% endblock %}
+
+{% block content %}
+<div class="relative w-full flex items-center justify-center min-h-[calc(100vh-100px)] bg-[url('https://images.unsplash.com/photo-1586880244406-556ebe35f282?q=80&w=2000&auto=format&fit=crop')] bg-cover bg-center bg-no-repeat bg-fixed py-12 px-4">
+    
     <div class="absolute inset-0 bg-gray-900/60 z-0"></div>
 
-    <div class="relative z-10 flex flex-col min-h-screen w-full">
-
-        <nav class="sticky top-0 z-50 bg-pdark/90 backdrop-blur-md text-white shadow-md border-b border-white/10">
-            <div class="container mx-auto px-4 py-3 flex items-center justify-between">
-                <a href="#" class="text-2xl font-bold italic tracking-tight flex items-center gap-1">
-                    <span class="text-highlight">Shop</span>Now
-                    <span class="text-sm not-italic font-normal opacity-80 border-l border-gray-400 pl-3 ml-1 text-gray-200">
-                        Customer Login
-                    </span>
-                </a>
-                <a href="{% url 'home' %}" class="text-sm font-medium hover:text-highlight transition flex items-center gap-1 text-white">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-                    </svg>
-                    Home
-                </a>
+    <div class="relative z-10 w-full max-w-md bg-white/95 backdrop-blur-sm rounded-lg shadow-2xl overflow-hidden border border-gray-200">
+        <div class="p-8 md:p-10">
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold text-pdark tracking-tight">Welcome Back</h2>
+                <p class="text-gray-500 text-sm mt-2">Sign in to your account to continue shopping.</p>
             </div>
-        </nav>
 
-        <main class="flex-grow flex items-center justify-center p-4">
-            <div class="w-full max-w-md bg-white/95 rounded-md shadow-xl overflow-hidden border border-gray-200">
-                <div class="p-8">
-                    <div class="text-center mb-8">
-                        <h2 class="text-2xl font-semibold text-pdark">Welcome Back</h2>
-                        <p class="text-gray-500 text-sm mt-1">Sign in to your account to continue shopping.</p>
-                    </div>
-
-                    <form method="POST" class="space-y-5">
-                        {% csrf_token %}
-                        <div>
-                            <label class="block text-xs font-semibold text-gray-500 uppercase mb-1 tracking-wide">Email Address</label>
-                            <div class="relative">
-                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                              d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.206"/>
-                                    </svg>
-                                </span>
-                                <input type="email" name="email" required placeholder="name@example.com"
-                                       class="w-full border border-gray-300 rounded-md py-3 pl-10 pr-3 text-sm
-                                              focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent
-                                              bg-gray-50 focus:bg-white transition">
-                            </div>
-                        </div>
-
-                        <div>
-                            <div class="flex justify-between items-center mb-1">
-                                <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide">Password</label>
-                                <a href="{% url 'reset_password' %}" class="text-xs text-primary hover:underline">Forgot?</a>
-                            </div>
-                            <div class="relative">
-                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                              d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
-                                    </svg>
-                                </span>
-                                <input type="password" name="password" required placeholder="••••••••"
-                                       class="w-full border border-gray-300 rounded-md py-3 pl-10 pr-3 text-sm
-                                              focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent
-                                              bg-gray-50 focus:bg-white transition">
-                            </div>
-                        </div>
-
-                        <div class="flex justify-center">
-                            {% if error %}
-                                <p class="text-red-500 text-center font-medium mt-1 text-sm">
-                                    {{ error }}
-                                </p>
-                            {% endif %}
-                        </div>
-
-                        <button type="submit"
-                                class="w-full bg-pdark text-white font-semibold py-3 rounded-md shadow-md
-                                       hover:bg-primary transition transform active:scale-95 text-sm">
-                            Sign In
-                        </button>
-                    </form>
-
-                    <div class="mt-8 text-center pt-6 border-t border-gray-100">
-                        <p class="text-sm text-gray-600">
-                            New here?
-                            <a href="{% url 'customer_register' %}" class="font-semibold text-primary hover:underline">
-                                Create an account
-                            </a>
-                        </p>
+            <form method="POST" class="space-y-6">
+                {% csrf_token %}
+                
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1.5 tracking-wider">Email Address</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-gray-400">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.206"/>
+                            </svg>
+                        </span>
+                        <input type="email" name="email" required placeholder="name@example.com"
+                               class="w-full border border-gray-300 rounded-md py-3 pl-11 pr-4 text-sm text-pdark
+                                      focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary
+                                      bg-gray-50 focus:bg-white transition-all shadow-sm">
                     </div>
                 </div>
-            </div>
-        </main>
 
-        <footer class="bg-black/80 text-white/70 py-5 text-center text-xs backdrop-blur-md">
-            &copy; 2026 Shop Now. All rights reserved.
-        </footer>
+                <div>
+                    <div class="flex justify-between items-center mb-1.5">
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider">Password</label>
+                        <a href="{% url 'reset_password' %}" class="text-xs font-semibold text-primary hover:text-pdark transition-colors">Forgot?</a>
+                    </div>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-gray-400">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                            </svg>
+                        </span>
+                        <input type="password" name="password" required placeholder="••••••••"
+                               class="w-full border border-gray-300 rounded-md py-3 pl-11 pr-4 text-sm text-pdark
+                                      focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary
+                                      bg-gray-50 focus:bg-white transition-all shadow-sm">
+                    </div>
+                </div>
+
+                {% if error %}
+                <div class="flex items-center gap-2 bg-red-50 border border-red-100 text-red-600 p-3 rounded-md">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                    </svg>
+                    <p class="text-xs font-semibold">{{ error }}</p>
+                </div>
+                {% endif %}
+
+                <button type="submit"
+                        class="w-full bg-pdark text-white font-bold py-3.5 rounded-md shadow-md
+                               hover:bg-primary transition-all duration-300 transform active:scale-[0.98] text-sm">
+                    Sign In
+                </button>
+            </form>
+
+            <div class="mt-8 pt-6 border-t border-gray-100 text-center">
+                <p class="text-sm text-gray-600 font-medium">
+                    New here? 
+                    <a href="{% url 'customer_register' %}" class="font-bold text-primary hover:text-pdark transition-colors ml-1">
+                        Create an account
+                    </a>
+                </p>
+            </div>
+        </div>
     </div>
-</body>
-</html>
+</div>
+{% endblock %}

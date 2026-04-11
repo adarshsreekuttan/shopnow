@@ -685,7 +685,7 @@ def apply_filter(request, queryset):
     elif sort_by == "price_high_to_low":
         queryset = queryset.order_by('-discount_price')
     elif sort_by == "new_arrivals":
-        queryset = queryset.order_by('created_at')
+        queryset = queryset.order_by('-created_at')
 
     return queryset
 
