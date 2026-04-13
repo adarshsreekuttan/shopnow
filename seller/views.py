@@ -287,14 +287,6 @@ def product_control(request):
     products = Product.objects.filter(seller=seller, status="approved")
     return render(request,'seller/product_control.html', {"products":products})
 
-def inventory(request):
-    seller=SellerProfile.objects.get(user=request.user)
-    all_products=Product.objects.filter(seller=seller,status='approved')
-    paginator=Paginator(all_products,15)
-    page_no=request.GET.get('page')
-    products=paginator.get_page(page_no)
-    return render(request,'seller/inventory.html',{'products':products})
-
 @seller_required
 def under_review_products(request):
     seller = request.user

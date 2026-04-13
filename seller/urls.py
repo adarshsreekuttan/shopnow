@@ -16,7 +16,6 @@ urlpatterns = [
     path('seller_product_edit/<str:slug>', views.seller_product_edit, name="seller_product_edit"),
     path('product_delete/<int:id>', views.product_delete, name='product_delete'),
     path('product-control', views.product_control, name='product_control'),
-    path('inventory', views.inventory, name='inventory'),
 
     path('set_primary_img/<int:id>', views.set_primary_img, name='set_primary_img'),
     path('rejected-product', views.rejected_product, name='rejected_product'),

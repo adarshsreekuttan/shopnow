@@ -1,176 +1,103 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ShopNow | Product Control</title>
+{% extends 'seller/seller_base.html' %}
 
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        pdark: '#362F4F',
-                        primary: '#5B23FF',
-                        accent: '#008BFF',
-                        highlight: '#E4FF30',
-                        lightbg: '#F8F9FA'
-                    },
-                    fontFamily: { sans: ['Inter', 'sans-serif'] }
-                }
-            }
-        }
-    </script>
+{% block title %}ShopNow | Rejected Products{% endblock %}
 
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+{% block extra_css %}
+{% endblock %}
 
-    <style>
-        html { scroll-behavior: smooth; }
-        .noise::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-            opacity: 0.035;
-            pointer-events: none;
-            border-radius: inherit;
-        }
-        .product-card:hover {
-            box-shadow: 0 0 0 1.5px #5B23FF22, 0 8px 32px -8px #5B23FF18;
-        }
-        .sub-nav-active {
-            color: #5B23FF;
-            border-bottom: 2px solid #5B23FF;
-        }
-    </style>
-</head>
+{% block content %}
+<main class="max-w-screen-xl mx-auto px-4 lg:px-8 py-8 space-y-6">
 
-<body class="bg-lightbg text-pdark font-sans antialiased">
-    {% include "seller/navbar.html" %}
-
-    <nav class="bg-white border-b border-gray-100 sticky top-0 z-30">
-    <div class="max-w-screen-xl mx-auto px-4 lg:px-8">
-        
-        <div class="flex items-center justify-between h-14">
-
-            <!-- LEFT: Tabs -->
-            <div class="flex items-center gap-8 overflow-x-auto no-scrollbar">
-                
-                <a href="{% url 'product_control' %}" class="text-gray-400 hover:text-pdark whitespace-nowrap px-1 h-full flex items-center text-[11px] font-black uppercase tracking-widest transition-colors">
-                   Active Listings
-                </a>
-
-                <a href="{% url 'under_review_products' %}" class="text-gray-400 hover:text-pdark whitespace-nowrap px-1 h-full flex items-center text-[11px] font-black uppercase tracking-widest transition-colors">
-                   Under Review
-                </a>
-
-                <a href="{% url 'rejected_product' %}" class="whitespace-nowrap px-1 h-full flex items-center text-[11px] font-black uppercase tracking-widest">
-                    Rejected
-                </a>
-                
-
-            </div>
-
-            <!-- RIGHT: Button -->
-            <div class="flex items-center">
-                <a href="{% url 'seller_add_product' %}" 
-                class="flex items-center gap-2 bg-pdark text-white px-5 py-2.5 rounded-xl transition-all duration-200 hover:bg-primary active:scale-95 group">
-                    
-                    <i class="fa-solid fa-plus text-[10px] text-highlight group-hover:text-white transition-colors"></i>
-                    
-                    <span class="text-[11px] font-bold uppercase tracking-wider whitespace-nowrap">
-                        Add New Product
-                    </span>
-                </a>
-            </div>
-
+    <header class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900 tracking-tight">Rejected Products</h1>
+            <p class="text-sm text-gray-500 mt-1">Review the issues with these listings and update them to request approval again.</p>
         </div>
-    </div>
-</nav>
 
-    <main class="max-w-screen-xl mx-auto px-4 lg:px-8 py-8 space-y-8">
-
-        <header class="flex flex-col md:flex-row md:items-end justify-between gap-4">
-            <div>
-                <div class="inline-flex items-center gap-1.5 mb-2">
-                    <div class="w-1.5 h-1.5 bg-primary rounded-full"></div>
-                    <span class="text-primary text-[10px] font-bold uppercase tracking-[0.2em]">Inventory Manager</span>
-                </div>
-                <h1 class="text-3xl font-black text-pdark tracking-tight">Products Rejected</h1>
-                <p class="text-[11px] text-gray-400 font-medium mt-1">Check on the rejected reasons and request again </p>
+        <div class="flex items-center gap-3 w-full md:w-auto">
+            <div class="relative flex-grow md:w-72">
+                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+                <input type="text" placeholder="Search products..." 
+                       class="w-full bg-gray-50 border border-gray-200 rounded-lg py-2 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all">
             </div>
+            
+            <a href="{% url 'seller_add_product' %}" 
+               class="flex items-center gap-2 bg-gray-900 text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors whitespace-nowrap shadow-sm">
+                <i class="fa-solid fa-plus text-xs"></i>
+                <span class="text-sm font-medium">Add Product</span>
+            </a>
+        </div>
+    </header>
 
-            <div class="flex items-center gap-3">
-                <div class="relative">
-                    <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
-                    <input type="text" placeholder="Search products..." 
-                           class="bg-white border border-gray-100 rounded-xl py-2.5 pl-10 pr-4 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-primary/20 w-full md:w-64 shadow-sm transition-all">
-                </div>
-                <button class="bg-pdark text-white p-2.5 rounded-xl hover:bg-primary transition-colors shadow-sm">
-                    <i class="fa-solid fa-sliders text-xs"></i>
+    <nav class="flex items-center gap-6 px-2 border-b border-gray-200 overflow-x-auto no-scrollbar">
+        <a href="{% url 'product_control' %}" class="text-sm font-medium text-gray-500 hover:text-gray-900 py-3 whitespace-nowrap transition-colors">
+            Active Listings
+        </a>
+        <a href="{% url 'under_review_products' %}" class="text-sm font-medium text-gray-500 hover:text-gray-900 py-3 whitespace-nowrap transition-colors">
+            Pending Review
+        </a>
+        <a href="{% url 'rejected_product' %}" class="text-sm font-semibold text-gray-900 py-3 whitespace-nowrap border-b-2 border-gray-900">
+            Needs Attention ({{ products.count }})
+        </a>
+    </nav>
+
+    <section class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5 pt-2">
+        
+        {% for product in products %}
+        <div class="group bg-white rounded-xl border border-gray-200 hover:border-red-300 hover:shadow-md transition-all duration-200 flex flex-col overflow-hidden relative">
+            
+            <div class="absolute top-3 right-3 z-10 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                <a href="{% url 'edit_product' product.id %}" class="w-8 h-8 bg-white border border-gray-100 rounded-full flex items-center justify-center text-gray-600 hover:text-primary hover:bg-gray-50 shadow-sm transition-colors">
+                    <i class="fa-solid fa-pen text-xs"></i>
+                </a>
+                <button class="w-8 h-8 bg-white border border-gray-100 rounded-full flex items-center justify-center text-gray-600 hover:text-red-600 hover:bg-red-50 shadow-sm transition-colors">
+                    <i class="fa-solid fa-trash text-xs"></i>
                 </button>
             </div>
-        </header>
 
-        <section class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5">
-            
-            {% for product in products %}
-            <div class="product-card bg-white rounded-2xl border border-gray-100 transition-all duration-300 flex flex-col overflow-hidden group">
+            <div class="aspect-square bg-white flex items-center justify-center relative p-4 border-b border-gray-100">
+                {% if product.get_primary_image %}
+                    <img src="{{ product.get_primary_image.image.url }}" 
+                         class="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-300" 
+                         alt="{{ product.name }}">
+                {% else %}
+                    <div class="w-full h-full bg-gray-50 rounded-lg flex items-center justify-center">
+                        <i class="fa-solid fa-box text-gray-300 text-3xl"></i>
+                    </div>
+                {% endif %}
                 
-                <div class="aspect-square bg-gray-50 flex items-center justify-center relative p-6 overflow-hidden">
-                    {% if product.get_primary_image %}
-                        <img src="{{ product.get_primary_image.image.url }}" 
-                             class="max-h-full max-w-full object-contain group-hover:scale-110 transition-transform duration-500 mix-blend-multiply" 
-                             alt="{{ product.name }}">
-                    {% else %}
-                        <i class="fa-solid fa-box text-gray-200 text-4xl"></i>
-                    {% endif %}
-                    
-                    <div class="absolute inset-0 bg-pdark/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                        <a href="{% url 'edit_product' product.id %}" class="w-9 h-9 bg-white rounded-full flex items-center justify-center text-pdark hover:bg-highlight transition-colors">
-                            <i class="fa-solid fa-pen-to-square text-xs"></i>
-                        </a>
-                        <button class="w-9 h-9 bg-white rounded-full flex items-center justify-center text-red-500 hover:bg-red-50 transition-colors">
-                            <i class="fa-solid fa-trash-can text-xs"></i>
-                        </button>
-                    </div>
-
-                    <div class="absolute top-3 left-3">
-                        <span class="bg-white/90 backdrop-blur-md px-2 py-1 rounded-md text-[9px] font-black text-pdark shadow-sm uppercase tracking-tighter">
-                            Qty: {{ product.stock }}
-                        </span>
-                    </div>
-                </div>
-
-                <div class="p-4 flex flex-col flex-grow">
-                    <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">{{ product.category.name }}</p>
-                    <h3 class="text-xs font-extrabold text-pdark line-clamp-1 mb-2 group-hover:text-primary transition-colors">
-                        {{ product.name }}
-                    </h3>
-                    
-                    <div class="mt-auto flex items-center justify-between pt-2 border-t border-gray-50">
-                        <p class="text-sm font-black text-pdark italic">₹{{ product.price }}</p>
-                    </div>
+                <div class="absolute bottom-3 left-3">
+                    <span class="bg-red-50 border border-red-200 px-2 py-0.5 rounded text-xs font-medium text-red-700 flex items-center gap-1.5">
+                        <i class="fa-solid fa-circle-exclamation text-[10px]"></i> Rejected
+                    </span>
                 </div>
             </div>
-            {% empty %}
-            <div class="col-span-full py-20 flex flex-col items-center justify-center bg-white rounded-3xl border-2 border-dashed border-gray-100">
-                <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center text-gray-300 mb-4">
-                    <i class="fa-solid fa-plus text-2xl"></i>
+
+            <div class="p-4 flex flex-col flex-grow">
+                <span class="text-xs font-medium text-gray-500 mb-1">{{ product.category.name }}</span>
+                <h3 class="text-sm font-semibold text-gray-900 line-clamp-2 leading-tight mb-3">
+                    {{ product.name }}
+                </h3>
+                
+                <div class="mt-auto flex items-center justify-between">
+                    <span class="text-lg font-bold text-gray-900">₹{{ product.price }}</span>
+                    <span class="text-xs text-gray-500">Qty: {{ product.stock }}</span>
                 </div>
-                <p class="text-sm font-bold text-gray-400">No products found</p>
-                <a href="{% url 'seller_add_product' %}" class="mt-4 text-[11px] font-black text-primary uppercase tracking-widest">Create your first listing</a>
             </div>
-            {% endfor %}
+        </div>
+        
+        {% empty %}
+        
+        <div class="col-span-full py-16 flex flex-col items-center justify-center bg-gray-50 rounded-2xl border border-dashed border-gray-300">
+            <div class="w-12 h-12 bg-white rounded-full shadow-sm flex items-center justify-center text-emerald-500 mb-3">
+                <i class="fa-solid fa-check-circle text-xl"></i>
+            </div>
+            <h3 class="text-sm font-semibold text-gray-900">No rejected products!</h3>
+            <p class="text-sm text-gray-500 mt-1 mb-4">Great job. All of your submitted listings are either active or under review.</p>
+        </div>
+        {% endfor %}
 
-        </section>
+    </section>
 
-    </main>
-
-    {% include 'seller/footer.html' %}
-
-</body>
-</html>
+</main>
+{% endblock %}

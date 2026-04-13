@@ -1,56 +1,63 @@
-<nav class="flex flex-col md:flex-row items-center justify-between gap-6 mb-4 border-b border-gray-100">
-    
+<nav class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 mb-6">
+
     {% with status=request.GET.status|default:'all' %}
-    
-    <div class="flex-shrink-0">
-        <h1 class="text-3xl font-extrabold text-pdark tracking-tight">My Orders</h1>
+
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
+
+        <div>
+            <h1 class="text-2xl font-bold text-gray-800">My Orders</h1>
+            <p class="text-xs text-gray-400 mt-1">Track and manage your orders</p>
+        </div>
+
+        <div class="bg-gray-50 border px-4 py-2 rounded-lg">
+            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                Total Orders
+                <span class="text-gray-800 ml-1 font-bold">{{ orders|length }}</span>
+            </p>
+        </div>
+
     </div>
 
-    <div class="flex items-center gap-1 bg-white p-1 rounded-lg border border-gray-100 shadow-sm overflow-x-auto no-scrollbar">
+    <div class="flex gap-2 overflow-x-auto no-scrollbar pb-1">
+
         <a href="?status=all"
-           class="px-5 py-2 rounded-md text-[11px] font-bold uppercase tracking-widest transition-all
-           {% if status == 'all' %} bg-pdark text-highlight {% else %} text-gray-400 hover:bg-lightbg hover:text-pdark {% endif %}">
+           class="px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all
+           {% if status == 'all' %}bg-gray-900 text-white shadow-sm{% else %}bg-gray-100 text-gray-500 hover:bg-gray-200{% endif %}">
             All
         </a>
 
         <a href="?status=pending"
-           class="px-5 py-2 rounded-md text-[11px] font-bold uppercase tracking-widest transition-all
-           {% if status == 'pending' %} bg-pdark text-highlight {% else %} text-gray-400 hover:bg-lightbg hover:text-pdark {% endif %}">
+           class="px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all
+           {% if status == 'pending' %}bg-gray-900 text-white shadow-sm{% else %}bg-gray-100 text-gray-500 hover:bg-gray-200{% endif %}">
             Pending
         </a>
 
         <a href="?status=processing"
-           class="px-5 py-2 rounded-md text-[11px] font-bold uppercase tracking-widest transition-all
-           {% if status == 'processing' %} bg-pdark text-highlight {% else %} text-gray-400 hover:bg-lightbg hover:text-pdark {% endif %}">
+           class="px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all
+           {% if status == 'processing' %}bg-gray-900 text-white shadow-sm{% else %}bg-gray-100 text-gray-500 hover:bg-gray-200{% endif %}">
             Processing
         </a>
 
         <a href="?status=shipped"
-           class="px-5 py-2 rounded-md text-[11px] font-bold uppercase tracking-widest transition-all
-           {% if status == 'shipped' %} bg-pdark text-highlight {% else %} text-gray-400 hover:bg-lightbg hover:text-pdark {% endif %}">
+           class="px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all
+           {% if status == 'shipped' %}bg-gray-900 text-white shadow-sm{% else %}bg-gray-100 text-gray-500 hover:bg-gray-200{% endif %}">
             Shipped
         </a>
 
         <a href="?status=delivered"
-           class="px-5 py-2 rounded-md text-[11px] font-bold uppercase tracking-widest transition-all
-           {% if status == 'delivered' %} bg-pdark text-highlight {% else %} text-gray-400 hover:bg-lightbg hover:text-pdark {% endif %}">
+           class="px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all
+           {% if status == 'delivered' %}bg-gray-900 text-white shadow-sm{% else %}bg-gray-100 text-gray-500 hover:bg-gray-200{% endif %}">
             Delivered
         </a>
 
         <a href="?status=cancelled"
-           class="px-5 py-2 rounded-md text-[11px] font-bold uppercase tracking-widest transition-all
-           {% if status == 'cancelled' %} bg-pdark text-highlight {% else %} text-gray-400 hover:bg-lightbg hover:text-pdark {% endif %}">
+           class="px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all
+           {% if status == 'cancelled' %}bg-gray-900 text-white shadow-sm{% else %}bg-gray-100 text-gray-500 hover:bg-gray-200{% endif %}">
             Cancelled
         </a>
-    </div>
 
-    <div class="hidden lg:flex items-center">
-        <div class="bg-primary/5 border border-primary/10 px-4 py-2 rounded-md">
-            <p class="text-[10px] font-bold text-primary uppercase tracking-widest">
-                Total Orders: <span class="text-pdark ml-1">{{ orders|length }}</span>
-            </p>
-        </div>
     </div>
 
     {% endwith %}
+
 </nav>
