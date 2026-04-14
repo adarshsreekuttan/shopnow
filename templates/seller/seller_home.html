@@ -111,61 +111,53 @@
         </div>
     </section>
 
-    <section class="bg-white rounded-xl border border-gray-100 p-4 shadow-sm mb-6">
-        <div class="flex justify-between md:justify-start md:gap-6 overflow-x-auto no-scrollbar">
+<section class="bg-white rounded-xl border border-gray-100 p-4 shadow-sm mb-6">
+    <div class="flex items-center gap-3 md:gap-4 overflow-x-auto flex-nowrap no-scrollbar pb-1 w-full">
 
-            <a href="{% url 'seller_home' %}" class="nav-link active flex items-center gap-3 group px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors">
-                <div class="nav-icon w-10 h-10 rounded-md bg-blue-50 text-blue-600 flex items-center justify-center text-sm shadow-sm group-hover:bg-primary group-hover:text-white transition-all">
-                    <i class="fa-solid fa-chart-line"></i>
-                </div>
-                <span class="nav-label text-xs font-bold text-gray-500 group-hover:text-pdark uppercase tracking-wider">Dashboard</span>
-            </a>
+        <a href="{% url 'seller_home' %}" class="nav-link active flex-1 min-w-[140px] flex items-center justify-center md:justify-start gap-3 group px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors">
+            <div class="nav-icon shrink-0 w-10 h-10 rounded-md bg-blue-50 text-blue-600 flex items-center justify-center text-sm shadow-sm group-hover:bg-primary group-hover:text-white transition-all">
+                <i class="fa-solid fa-chart-line"></i>
+            </div>
+            <span class="nav-label whitespace-nowrap text-xs font-bold text-gray-500 group-hover:text-pdark uppercase tracking-wider">Dashboard</span>
+        </a>
 
-            <a href="{% url 'seller_profile' %}" class="nav-link flex items-center gap-3 group px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors">
-                <div class="nav-icon w-10 h-10 rounded-md bg-violet-50 text-primary flex items-center justify-center text-sm shadow-sm group-hover:bg-primary group-hover:text-white transition-all">
-                    <i class="fa-solid fa-user-tie"></i>
-                </div>
-                <span class="nav-label text-xs font-bold text-gray-500 group-hover:text-pdark uppercase tracking-wider">Profile</span>
-            </a>
+        <a href="{% url 'seller_profile' %}" class="nav-link flex-1 min-w-[140px] flex items-center justify-center md:justify-start gap-3 group px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors">
+            <div class="nav-icon shrink-0 w-10 h-10 rounded-md bg-violet-50 text-primary flex items-center justify-center text-sm shadow-sm group-hover:bg-primary group-hover:text-white transition-all">
+                <i class="fa-solid fa-user-tie"></i>
+            </div>
+            <span class="nav-label whitespace-nowrap text-xs font-bold text-gray-500 group-hover:text-pdark uppercase tracking-wider">Profile</span>
+        </a>
 
-            <a href="{% url 'product_control' %}" class="nav-link flex items-center gap-3 group px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors">
-                <div class="nav-icon w-10 h-10 rounded-md bg-purple-50 text-primary flex items-center justify-center text-sm shadow-sm group-hover:bg-primary group-hover:text-white transition-all">
-                    <i class="fa-solid fa-box-open"></i>
-                </div>
-                <span class="nav-label text-xs font-bold text-gray-500 group-hover:text-pdark uppercase tracking-wider">Products</span>
-            </a>
+        <a href="{% url 'product_control' %}" class="nav-link flex-1 min-w-[140px] flex items-center justify-center md:justify-start gap-3 group px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors">
+            <div class="nav-icon shrink-0 w-10 h-10 rounded-md bg-purple-50 text-primary flex items-center justify-center text-sm shadow-sm group-hover:bg-primary group-hover:text-white transition-all">
+                <i class="fa-solid fa-box-open"></i>
+            </div>
+            <span class="nav-label whitespace-nowrap text-xs font-bold text-gray-500 group-hover:text-pdark uppercase tracking-wider">Products</span>
+        </a>
 
-            <a href="{% url 'seller_orders' %}" class="nav-link flex items-center gap-3 group px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors relative">
-                <div class="nav-icon w-10 h-10 rounded-md bg-emerald-50 text-emerald-600 flex items-center justify-center text-sm shadow-sm group-hover:bg-emerald-600 group-hover:text-white transition-all relative">
-                    <i class="fa-solid fa-truck-fast"></i>
-                    <span class="pulse-dot absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full border border-white"></span>
-                </div>
-                <span class="nav-label text-xs font-bold text-gray-500 group-hover:text-pdark uppercase tracking-wider">Orders</span>
-            </a>
+        <a href="{% url 'seller_orders' %}" class="nav-link flex-1 min-w-[140px] flex items-center justify-center md:justify-start gap-3 group px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors relative">
+            <div class="nav-icon shrink-0 w-10 h-10 rounded-md bg-emerald-50 text-emerald-600 flex items-center justify-center text-sm shadow-sm group-hover:bg-emerald-600 group-hover:text-white transition-all relative">
+                <i class="fa-solid fa-truck-fast"></i>
+                <span class="pulse-dot absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full border border-white"></span>
+            </div>
+            <span class="nav-label whitespace-nowrap text-xs font-bold text-gray-500 group-hover:text-pdark uppercase tracking-wider">Orders</span>
+        </a>
 
-            <a href="{% url 'view_reviews' %}" class="nav-link flex items-center gap-3 group px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors">
-                <div class="nav-icon w-10 h-10 rounded-md bg-amber-50 text-amber-500 flex items-center justify-center text-sm shadow-sm group-hover:bg-amber-500 group-hover:text-white transition-all">
-                    <i class="fa-solid fa-star"></i>
-                </div>
-                <span class="nav-label text-xs font-bold text-gray-500 group-hover:text-pdark uppercase tracking-wider">Reviews</span>
-            </a>
+        <a href="{% url 'view_reviews' %}" class="nav-link flex-1 min-w-[140px] flex items-center justify-center md:justify-start gap-3 group px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors">
+            <div class="nav-icon shrink-0 w-10 h-10 rounded-md bg-amber-50 text-amber-500 flex items-center justify-center text-sm shadow-sm group-hover:bg-amber-500 group-hover:text-white transition-all">
+                <i class="fa-solid fa-star"></i>
+            </div>
+            <span class="nav-label whitespace-nowrap text-xs font-bold text-gray-500 group-hover:text-pdark uppercase tracking-wider">Reviews</span>
+        </a>
 
-            <a href="{% url 'coupon' %}" class="nav-link flex items-center gap-3 group px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors">
-                <div class="nav-icon w-10 h-10 rounded-md bg-lime-50 text-pdark flex items-center justify-center text-sm shadow-sm group-hover:bg-highlight group-hover:text-pdark transition-all">
-                    <i class="fa-solid fa-tags"></i>
-                </div>
-                <span class="nav-label text-xs font-bold text-gray-500 group-hover:text-pdark uppercase tracking-wider">Coupons</span>
-            </a>
-
-            <a href="#" class="nav-link flex items-center gap-3 group px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors">
-                <div class="nav-icon w-10 h-10 rounded-md bg-orange-50 text-orange-500 flex items-center justify-center text-sm shadow-sm group-hover:bg-orange-500 group-hover:text-white transition-all">
-                    <i class="fa-solid fa-hourglass-half"></i>
-                </div>
-                <span class="nav-label text-xs font-bold text-gray-500 group-hover:text-pdark uppercase tracking-wider">Approvals</span>
-            </a>
-
-        </div>
-    </section>
+        <a href="{% url 'coupon' %}" class="nav-link flex-1 min-w-[140px] flex items-center justify-center md:justify-start gap-3 group px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors">
+            <div class="nav-icon shrink-0 w-10 h-10 rounded-md bg-lime-50 text-pdark flex items-center justify-center text-sm shadow-sm group-hover:bg-highlight group-hover:text-pdark transition-all">
+                <i class="fa-solid fa-tags"></i>
+            </div>
+            <span class="nav-label whitespace-nowrap text-xs font-bold text-gray-500 group-hover:text-pdark uppercase tracking-wider">Coupons</span>
+        </a>
+    </div>
+</section>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
 

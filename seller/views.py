@@ -311,7 +311,7 @@ def seller_product_view(request,slug):
 
 @seller_required
 def seller_product_edit(request,slug):
-    product=Product.objects.get(slug=slug,status='approved')
+    product=get_object_or_404(Product, slug=slug)
     category=Category.objects.all()
     subcategory=SubCategory.objects.all()
     if request.method=="POST":
@@ -343,7 +343,7 @@ def seller_product_edit(request,slug):
                     product=product,
                     image=img
                 )        
-        return redirect('seller_pending_approval')        
+        return redirect('under_review_products')        
     return render(request,"seller/seller_product_edit.html",{'product':product,'category':category,'subcategory':subcategory})
 
 @seller_required
