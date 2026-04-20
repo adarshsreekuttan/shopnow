@@ -95,6 +95,8 @@ def seller_home(request):
     orders = Order.objects.filter(orderitem__seller = sellerprofile).order_by("-created_at")
 
     avarage_rating = reviews.aggregate(avg=Avg('rating'))['avg']
+    if not avarage_rating:
+        avarage_rating = 0
     avarage_rating = round(avarage_rating, 1)
 
     total_revenue_data = get_seller_revenue(sellerprofile)
