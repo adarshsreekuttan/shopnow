@@ -1,0 +1,254 @@
+## 🛒 SHOPNOW — Detailed Project Description
+
+**SHOPNOW** is a full-stack e-commerce web application built with Django that supports **multi-role interaction (Customer, Seller, Admin)**. The system enables product discovery, ordering, seller-side management, and admin moderation within a structured workflow.
+
+---
+
+# 🎯 System Overview
+
+* **Architecture:** Django MVC (Templates + Views + Models)
+* **Roles:** Customer, Seller, Admin
+* **Core Idea:** Controlled marketplace with **approval-based product publishing**
+
+---
+
+# 👤 CUSTOMER MODULE
+
+## 🔐 Authentication & Profile
+
+* Register / Login / Logout
+* Password reset (Django auth)
+* Profile update
+* Address management (add/edit/delete)
+
+---
+
+## 🛍️ Product Interaction
+
+* Browse products (home page)
+* View single product (`slug-based routing`)
+* Category & subcategory filtering
+* Dynamic subcategory loading (AJAX)
+
+---
+
+## 🛒 Cart System
+
+* Add to cart
+* Remove item
+* Clear cart
+* Increment / decrement quantity
+
+👉 Uses **dynamic update logic (URL-based actions)**
+
+---
+
+## ❤️ Wishlist System
+
+* Add/remove wishlist
+* Move item to cart
+
+---
+
+## 🔍 Search System
+
+* Product search
+* Live search suggestions
+
+---
+
+## ⭐ Review System
+
+* Users can post reviews on products
+
+---
+
+## 💳 Checkout & Orders
+
+* Checkout page
+* Address selection
+* Place order
+* Order success page
+* View all orders
+* View single order details
+
+---
+
+## 💰 Payment System
+
+* Payment gateway integration (basic flow)
+* Payment success handling
+
+---
+
+# 🏪 SELLER MODULE
+
+## 🔐 Seller Account
+
+* Seller registration
+* Seller login/logout
+* Password reset
+* Profile management
+
+---
+
+## 📦 Product Management
+
+* Add product
+* Edit product
+* Delete product
+* Upload images
+* Set primary image
+
+---
+
+## 🔄 Product Approval Workflow (IMPORTANT)
+
+* Newly added products → **Pending state**
+* Admin reviews → Approve / Reject
+* Rejected products → Seller can edit & resubmit
+
+👉 This is a **moderated marketplace system**
+
+---
+
+## 📊 Seller Dashboard
+
+* View own products
+* Manage product status
+* Track orders
+
+---
+
+## 📦 Order Management
+
+* View all orders
+* View single order
+* Update order status
+
+  * Pending
+  * Ongoing
+  * Finished
+
+---
+
+## 🎟️ Coupon System (ADVANCED)
+
+* Create coupon
+* Activate / deactivate
+* Delete coupon
+
+👉 Adds **business logic layer**
+
+---
+
+## 🔔 Notifications
+
+* Seller notifications system
+
+---
+
+## ⭐ Reviews Monitoring
+
+* Sellers can view customer reviews
+
+---
+
+# 🧑‍⚖️ ADMIN MODULE
+
+## 🧑‍💼 Admin Dashboard
+
+Central control panel for the system
+
+---
+
+## 📦 Product Moderation
+
+* View all products
+* View pending products
+* Approve / Reject products
+* Edit / Delete products
+
+---
+
+## 🏷️ Category Management
+
+* Add category
+* Update category
+* Activate / deactivate
+* Delete category
+
+---
+
+## 🔖 Subcategory Management
+
+* Add / edit / delete subcategories
+
+---
+
+## 🏪 Seller Management
+
+* View sellers
+* Approve new sellers
+* Deactivate sellers
+* View seller details
+
+---
+
+## 📦 Order Monitoring
+
+* View all orders
+* View order details
+* Delete orders
+
+---
+
+## 👥 User Management
+
+* View all customers
+
+---
+
+# 🔁 SYSTEM WORKFLOW
+
+### 📌 Product Flow
+
+Seller → Add product → Admin approval → Visible to customers
+
+### 📌 Order Flow
+
+Customer → Add to cart → Checkout → Payment → Seller processes → Status update
+
+---
+
+# 🧠 KEY TECHNICAL HIGHLIGHTS
+
+* **Slug-based routing** for SEO-friendly URLs
+* **AJAX-based dynamic loading** (subcategories)
+* **Role-based access control**
+* **Session-based cart handling**
+* **Approval workflow system**
+* **Modular Django apps (core, seller, customer, admin)**
+
+---
+
+# 🚀 PROJECT STRENGTHS
+
+* Full multi-role architecture
+* Real-world marketplace logic
+* Admin-controlled product validation
+* Advanced features (coupon, wishlist, reviews)
+* Clean separation of concerns (apps & routes)
+
+---
+
+# 📌 ONE-LINE SUMMARY (USE THIS)
+
+> “SHOPNOW is a multi-vendor e-commerce platform with role-based access, product approval workflow, dynamic cart system, and complete order management.”
+
+---
+
+If needed next:
+
+* I can convert this into **perfect PPT slides**
+* Or give **viva Q&A (very useful for exam)**

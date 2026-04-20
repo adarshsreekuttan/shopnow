@@ -95,6 +95,7 @@ def seller_home(request):
     orders = Order.objects.filter(orderitem__seller = sellerprofile).order_by("-created_at")
 
     avarage_rating = reviews.aggregate(avg=Avg('rating'))['avg']
+    avarage_rating = round(avarage_rating, 1)
 
     total_revenue_data = get_seller_revenue(sellerprofile)
 
@@ -432,9 +433,6 @@ def pending_edit(request,slug):
         return redirect('under_review_products')        
     return render(request,"seller/pending_edit.html",{'product':product,'subcategory':subcategory})
 
-def message(request):
-    return render(request,'seller/message.html')
-
 def coupon(request):
     return render(request,'seller/coupon.html')
 
@@ -535,3 +533,20 @@ def get_weekly_revenue(sellerprofile):
         entry['percentage'] = (entry['value'] / max_val) * 100
         
     return data
+
+from seller.models import SellerNotification
+
+def notifications(request):
+    all_notifications = SellerNotification.objects.filter(seller=request.user)
+    
+    unread_count = all_notifications.filter(is_read=False).count()
+    order_count = all_notifications.filter(notification_type='order').count()
+    stock_count = all_notifications.filter(notification_type='stock').count()
+
+    context = {
+        'notifications': all_notifications,
+        'unread_count': unread_count,
+        'order_count': order_count,
+        'stock_count': stock_count,
+    }
+    return render(request, 'seller/notifications.html', context)

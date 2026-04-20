@@ -41,7 +41,7 @@ urlpatterns = [
     path('coupon_delete/<int:id>', views.coupon_delete, name='coupon_delete'),
 
     path('ajax/load_subcategory', views.load_subcategory, name='load_subcategory'),
-    path('message', views.message, name='message'),
+    path('notifications', views.notifications, name='notifications'),
     path('testing', views.testing, name='testing'),
 
     path('view-reviews', views.view_reviews, name='view_reviews'),

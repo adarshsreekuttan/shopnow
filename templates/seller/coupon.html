@@ -1,156 +1,140 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FlipShop - Coupon Dashboard</title>
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary_dark: '#362F4F',
-                        primary: '#5B23FF',
-                        accent: '#008BFF',
-                        highlight: '#E4FF30',
-                        bg_light: '#F1F3F6',
-                        text_dark: '#212121',
-                        text_gray: '#878787'
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    }
-                }
-            }
-        }
-    </script>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+{% extends 'seller/seller_base.html' %} {% load static %}
 
-    <style>
-        body { font-family: 'Inter', sans-serif; background-color: #F1F3F6; }
-        .card-shadow { box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
-        .hover-lift { transition: transform 0.2s ease, box-shadow 0.2s ease; }
-        .hover-lift:hover { transform: translateY(-4px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-    </style>
-</head>
-<body class="text-text_dark flex flex-col min-h-screen">
+{% block title %}Coupon Intelligence | FlipShop{% endblock %}
 
-    <nav class="bg-primary_dark sticky top-0 z-50 shadow-md">
-        <div class="container mx-auto px-4 h-16 flex items-center justify-between gap-4">
-            <a href="#" class="flex items-center gap-2">
-                <div class="w-8 h-8 bg-highlight rounded flex items-center justify-center text-primary_dark font-bold text-xl italic">F</div>
-                <span class="text-white font-bold text-lg tracking-wide hidden sm:block">FlipShop <span class="text-xs font-normal text-highlight ml-1">Seller Hub</span></span>
-            </a>
-            <div class="flex items-center gap-4 text-white font-medium text-sm ml-auto">
-                <a href="{% url 'seller_home' %}" class="flex items-center gap-2 bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-sm transition">
-                    <i class="fa-solid fa-arrow-left"></i>
-                    <span class="hidden sm:block">Back to Main Dashboard</span>
-                </a>
-            </div>
+{% block extra_css %}
+<style>
+    /* Premium Dashboard Styles scoped to this view */
+    .glass-card { 
+        background: #ffffff;
+        border: 1px solid rgba(226, 232, 240, 0.8);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .glass-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
+        border-color: rgba(91, 35, 255, 0.2); /* Subtle primary color border on hover */
+    }
+    .icon-wrapper {
+        transition: transform 0.3s ease;
+    }
+    .glass-card:hover .icon-wrapper {
+        transform: scale(1.1) rotate(-5deg);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8 max-w-7xl">
+
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+        <div>
+            <nav class="flex mb-2 text-xs font-bold uppercase tracking-widest text-gray-400 gap-2">
+                <a href="{% url 'seller_home' %}" class="hover:text-indigo-600 transition">Dashboard</a>
+                <span>/</span>
+                <span class="text-gray-600">Marketing</span>
+            </nav>
+            <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight">Coupon Intelligence</h1>
+            <p class="text-gray-500 mt-2 text-sm max-w-xl">Drive more sales by offering targeted discounts and special promotions to your customers.</p>
         </div>
-    </nav>
+        <a href="{% url 'add_coupon' %}" class="inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2.5 rounded-lg font-semibold shadow-lg shadow-indigo-200 transition-all active:scale-95">
+            <i class="fa-solid fa-plus text-sm"></i>
+            New Campaign
+        </a>
+    </div>
 
-    <main class="flex-grow container mx-auto px-4 py-8 max-w-6xl">
-
-        <div class="mb-8">
-            <h1 class="text-2xl font-bold text-primary_dark mb-1">Coupon Management</h1>
-            <p class="text-gray-500 text-sm">Drive more sales by offering discounts and special promotions to your customers.</p>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-            <div class="bg-white rounded-xl p-6 card-shadow border border-gray-100 flex items-center justify-between">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+        <div class="glass-card rounded-2xl p-6 relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-50 rounded-bl-full -mr-8 -mt-8 z-0"></div>
+            <div class="relative z-10 flex items-start justify-between">
                 <div>
-                    <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Live Coupons</p>
-                    <h3 class="text-3xl font-black text-gray-800">{{ active_count|default:"0" }}</h3>
+                    <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Live Now</p>
+                    <div class="flex items-baseline gap-2">
+                        <h3 class="text-4xl font-black text-gray-800">{{ active_count|default:"0" }}</h3>
+                        <span class="text-emerald-500 bg-emerald-50 px-2 py-0.5 rounded text-xs font-bold"><i class="fa-solid fa-arrow-trend-up mr-1"></i>Active</span>
+                    </div>
                 </div>
-                <div class="w-12 h-12 rounded-full bg-green-50 flex items-center justify-center text-green-500 text-xl">
-                    <i class="fa-solid fa-circle-check"></i>
-                </div>
-            </div>
-
-            <div class="bg-white rounded-xl p-6 card-shadow border border-gray-100 flex items-center justify-between">
-                <div>
-                    <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Pending Approval</p>
-                    <h3 class="text-3xl font-black text-gray-800">{{ pending_count|default:"0" }}</h3>
-                </div>
-                <div class="w-12 h-12 rounded-full bg-yellow-50 flex items-center justify-center text-yellow-500 text-xl">
-                    <i class="fa-solid fa-clock"></i>
-                </div>
-            </div>
-
-            <div class="bg-white rounded-xl p-6 card-shadow border border-gray-100 flex items-center justify-between">
-                <div>
-                    <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Total Redemptions</p>
-                    <h3 class="text-3xl font-black text-gray-800">{{ total_uses|default:"0" }}</h3>
-                </div>
-                <div class="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center text-primary text-xl">
-                    <i class="fa-solid fa-chart-line"></i>
+                <div class="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center text-emerald-600 text-xl shadow-sm">
+                    <i class="fa-solid fa-ticket-simple"></i>
                 </div>
             </div>
         </div>
 
-        <h2 class="text-lg font-bold text-primary_dark mb-4 border-b border-gray-200 pb-2">Quick Actions</h2>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            
-            <a href="{% url 'add_coupon' %}" class="bg-white rounded-xl p-6 card-shadow border border-gray-100 hover-lift group block relative overflow-hidden">
-                <div class="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
-                
-                <div class="w-14 h-14 rounded-xl bg-primary text-white flex items-center justify-center text-2xl mb-5 shadow-sm">
-                    <i class="fa-solid fa-plus"></i>
+        <div class="glass-card rounded-2xl p-6 relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-amber-50 rounded-bl-full -mr-8 -mt-8 z-0"></div>
+            <div class="relative z-10 flex items-start justify-between">
+                <div>
+                    <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">In Review</p>
+                    <div class="flex items-baseline gap-2">
+                        <h3 class="text-4xl font-black text-gray-800">{{ pending_count|default:"0" }}</h3>
+                        <span class="text-amber-500 bg-amber-50 px-2 py-0.5 rounded text-xs font-bold"><i class="fa-solid fa-clock mr-1"></i>Pending</span>
+                    </div>
                 </div>
-                <h3 class="text-lg font-bold text-gray-800 mb-2 group-hover:text-primary transition-colors">Create New Coupon</h3>
-                <p class="text-sm text-gray-500 mb-4 line-clamp-2">Generate a new discount code, set usage limits, and define minimum cart rules.</p>
-                <div class="text-primary text-sm font-bold flex items-center">
-                    Get Started <i class="fa-solid fa-arrow-right ml-2 text-xs transition-transform group-hover:translate-x-1"></i>
-                </div>
-            </a>
-
-            <a href="{% url 'coupon_active' %}" class="bg-white rounded-xl p-6 card-shadow border border-gray-100 hover-lift group block relative overflow-hidden">
-                <div class="absolute top-0 right-0 w-24 h-24 bg-green-500/5 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
-                
-                <div class="w-14 h-14 rounded-xl bg-green-500 text-white flex items-center justify-center text-2xl mb-5 shadow-sm">
-                    <i class="fa-solid fa-ticket"></i>
-                </div>
-                <h3 class="text-lg font-bold text-gray-800 mb-2 group-hover:text-green-600 transition-colors">Active Coupons</h3>
-                <p class="text-sm text-gray-500 mb-4 line-clamp-2">View and manage your live discount codes. Track how many times they have been used.</p>
-                <div class="text-green-600 text-sm font-bold flex items-center">
-                    Manage Live <i class="fa-solid fa-arrow-right ml-2 text-xs transition-transform group-hover:translate-x-1"></i>
-                </div>
-            </a>
-
-            <a href="{% url 'coupon_pending' %}" class="bg-white rounded-xl p-6 card-shadow border border-gray-100 hover-lift group block relative overflow-hidden">
-                <div class="absolute top-0 right-0 w-24 h-24 bg-yellow-500/10 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
-                
-                <div class="w-14 h-14 rounded-xl bg-yellow-500 text-white flex items-center justify-center text-2xl mb-5 shadow-sm">
+                <div class="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center text-amber-600 text-xl shadow-sm">
                     <i class="fa-solid fa-hourglass-half"></i>
                 </div>
-                <h3 class="text-lg font-bold text-gray-800 mb-2 group-hover:text-yellow-600 transition-colors">Pending Approval</h3>
-                <p class="text-sm text-gray-500 mb-4 line-clamp-2">Check the status of newly requested coupons waiting for admin review and approval.</p>
-                <div class="text-yellow-600 text-sm font-bold flex items-center">
-                    View Pending <i class="fa-solid fa-arrow-right ml-2 text-xs transition-transform group-hover:translate-x-1"></i>
-                </div>
-            </a>
-
-        </div>
-
-    </main>
-
-    <footer class="bg-primary_dark text-white mt-auto py-6 text-sm">
-        <div class="container mx-auto px-4 flex flex-col md:flex-row items-center justify-between text-gray-400 text-xs gap-4 text-center md:text-left">
-            <p>© 2024 FlipShop Inc. Seller Services.</p>
-            <div class="flex gap-4">
-                <a href="#" class="hover:text-accent transition">Help Center</a>
-                <a href="#" class="hover:text-accent transition">Seller Policies</a>
             </div>
         </div>
-    </footer>
 
-</body>
-</html>
+        <div class="glass-card rounded-2xl p-6 relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-50 rounded-bl-full -mr-8 -mt-8 z-0"></div>
+            <div class="relative z-10 flex items-start justify-between">
+                <div>
+                    <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Redemptions</p>
+                    <div class="flex items-baseline gap-2">
+                        <h3 class="text-4xl font-black text-gray-800">{{ total_uses|default:"0" }}</h3>
+                        <span class="text-indigo-500 bg-indigo-50 px-2 py-0.5 rounded text-xs font-bold"><i class="fa-solid fa-check-double mr-1"></i>Total Uses</span>
+                    </div>
+                </div>
+                <div class="w-12 h-12 rounded-xl bg-indigo-100 flex items-center justify-center text-indigo-600 text-xl shadow-sm">
+                    <i class="fa-solid fa-chart-pie"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="flex items-center gap-3 mb-6">
+        <h2 class="text-lg font-bold text-gray-900">Campaign Actions</h2>
+        <div class="h-px bg-gray-200 flex-grow"></div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+        <a href="{% url 'add_coupon' %}" class="glass-card rounded-2xl p-6 group block">
+            <div class="w-14 h-14 rounded-xl bg-indigo-600 text-white flex items-center justify-center text-2xl mb-5 shadow-md icon-wrapper">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+            </div>
+            <h3 class="text-lg font-bold text-gray-900 mb-2 group-hover:text-indigo-600 transition-colors">Create New Coupon</h3>
+            <p class="text-sm text-gray-500 mb-6 line-clamp-2 leading-relaxed">Generate a new discount code, set usage limits, and define minimum cart rules.</p>
+            <div class="text-indigo-600 text-sm font-bold flex items-center">
+                Launch Wizard <i class="fa-solid fa-arrow-right ml-2 text-xs transition-transform group-hover:translate-x-1.5"></i>
+            </div>
+        </a>
+
+        <a href="{% url 'coupon_active' %}" class="glass-card rounded-2xl p-6 group block">
+            <div class="w-14 h-14 rounded-xl bg-emerald-500 text-white flex items-center justify-center text-2xl mb-5 shadow-md icon-wrapper">
+                <i class="fa-solid fa-bolt"></i>
+            </div>
+            <h3 class="text-lg font-bold text-gray-900 mb-2 group-hover:text-emerald-600 transition-colors">Manage Active</h3>
+            <p class="text-sm text-gray-500 mb-6 line-clamp-2 leading-relaxed">View your live discount codes, track their performance, or deactivate them early.</p>
+            <div class="text-emerald-600 text-sm font-bold flex items-center">
+                View Live Dashboard <i class="fa-solid fa-arrow-right ml-2 text-xs transition-transform group-hover:translate-x-1.5"></i>
+            </div>
+        </a>
+
+        <a href="{% url 'coupon_pending' %}" class="glass-card rounded-2xl p-6 group block">
+            <div class="w-14 h-14 rounded-xl bg-amber-500 text-white flex items-center justify-center text-2xl mb-5 shadow-md icon-wrapper">
+                <i class="fa-solid fa-list-check"></i>
+            </div>
+            <h3 class="text-lg font-bold text-gray-900 mb-2 group-hover:text-amber-600 transition-colors">Review Pending</h3>
+            <p class="text-sm text-gray-500 mb-6 line-clamp-2 leading-relaxed">Check the status of newly requested coupons currently waiting for admin approval.</p>
+            <div class="text-amber-600 text-sm font-bold flex items-center">
+                Check Status <i class="fa-solid fa-arrow-right ml-2 text-xs transition-transform group-hover:translate-x-1.5"></i>
+            </div>
+        </a>
+
+    </div>
+
+</div>
+{% endblock %}

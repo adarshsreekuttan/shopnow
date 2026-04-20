@@ -1,0 +1,108 @@
+{% extends 'seller/seller_base.html' %} 
+{% load static %}
+
+{% block title %}Notifications | MarketShop Seller Hub{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Hides scrollbar for the filter pill menu but keeps it scrollable on mobile */
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full">
+    
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+        <div>
+            <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight">Notifications</h1>
+            <p class="text-sm text-gray-500 mt-1.5">Manage your orders, inventory alerts, and account updates.</p>
+        </div>
+        <button class="group flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-200 rounded-lg text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:text-primary hover:border-primary/30 shadow-sm transition-all duration-200 active:scale-95">
+            <svg class="w-4 h-4 text-gray-400 group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+            Mark all as read
+        </button>
+    </div>
+
+    <div class="flex gap-3 overflow-x-auto no-scrollbar mb-6 pb-2 border-b border-gray-100">
+        <button class="px-5 py-2 text-sm font-semibold bg-primary text-white rounded-full whitespace-nowrap shadow-md shadow-primary/20 transition-transform active:scale-95">
+            All Alerts
+        </button>
+        <button class="px-5 py-2 text-sm font-medium bg-white border border-gray-200 text-gray-600 rounded-full hover:bg-gray-50 hover:text-gray-900 whitespace-nowrap transition-all flex items-center gap-2">
+            Orders 
+            <span class="bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded-full font-bold">1</span>
+        </button>
+        <button class="px-5 py-2 text-sm font-medium bg-white border border-gray-200 text-gray-600 rounded-full hover:bg-gray-50 hover:text-gray-900 whitespace-nowrap transition-all flex items-center gap-2">
+            Stock Alerts 
+            <span class="bg-red-50 text-red-600 text-xs px-2 py-0.5 rounded-full font-bold">1</span>
+        </button>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <ul class="divide-y divide-gray-100">
+            {% for notification in notifications %}
+            
+            <li class="p-5 sm:p-6 flex gap-4 sm:gap-5 hover:bg-gray-50 transition-colors relative cursor-pointer group 
+                    {% if not notification.is_read %}bg-blue-50/40{% else %}bg-white{% endif %}">
+                
+                {% if not notification.is_read %}
+                <div class="absolute left-0 top-0 bottom-0 w-1 bg-indigo-600 rounded-r"></div>
+                {% endif %}
+
+                <div class="flex-shrink-0 mt-0.5">
+                    {% if notification.notification_type == 'order' %}
+                        <div class="w-12 h-12 rounded-2xl bg-emerald-100 flex items-center justify-center text-emerald-600 shadow-sm border border-emerald-200/50">
+                            <i class="fa-solid fa-box text-xl"></i>
+                        </div>
+                    {% elif notification.notification_type == 'stock' %}
+                        <div class="w-12 h-12 rounded-2xl bg-red-100 flex items-center justify-center text-red-600 shadow-sm border border-red-200/50">
+                            <i class="fa-solid fa-triangle-exclamation text-xl"></i>
+                        </div>
+                    {% else %}
+                        <div class="w-12 h-12 rounded-2xl bg-blue-100 flex items-center justify-center text-blue-600 shadow-sm border border-blue-200/50">
+                            <i class="fa-solid fa-bell text-xl"></i>
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <div class="flex-grow pr-6 sm:pr-0">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-1.5">
+                        <h3 class="text-base font-bold {% if not notification.is_read %}text-gray-900{% else %}text-gray-700{% endif %}">
+                            {{ notification.title }}
+                        </h3>
+                        <span class="text-xs text-indigo-600 font-bold">{{ notification.created_at|timesince }} ago</span>
+                    </div>
+                    
+                    <p class="text-sm text-gray-600 mb-4 leading-relaxed">
+                        {{ notification.message|safe }}
+                    </p>
+                    
+                    {% if notification.action_url %}
+                    <div class="flex gap-3">
+                        <a href="{{ notification.action_url }}" class="inline-flex items-center text-sm font-semibold text-white bg-indigo-600 px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors shadow-sm">
+                            View Details
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </li>
+            
+            {% empty %}
+            <li class="p-10 text-center text-gray-500">
+                <i class="fa-regular fa-bell-slash text-4xl mb-3 text-gray-300"></i>
+                <p>You have no notifications yet.</p>
+            </li>
+            {% endfor %}
+        </ul>
+        
+        <div class="bg-gray-50/50 p-4 border-t border-gray-100 flex justify-center">
+            <button class="text-sm font-semibold text-gray-500 hover:text-primary transition-colors flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                Load Older Notifications
+            </button>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
